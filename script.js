@@ -554,12 +554,12 @@ function renderPromos() {
     item.className = `accordion-item ${promo.active ? "active" : ""}`;
     item.style.animationDelay = `${0.1 + index * 0.1}s`;
 
-    let linksHTML = promo.links
-      .map(
-        (link) =>
-          `<a href="${link.url}" target="_blank" class="promo-link">${link.name}</a>`,
-      )
-      .join("");
+    let linksHTML = promo.links.reduce((tot, link) => {
+      if (link.url) {
+        tot += `<a href="${link.url}" target="_blank" class="promo-link">${link.name}</a>`;
+      }
+      return tot;
+    }, "");
 
     item.innerHTML = `
                     <div class="accordion-header">
