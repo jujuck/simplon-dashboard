@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Rock Metal - WCS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Courier+Prime:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="./style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="datetime-box">
+          <span class="datetime-item">
+            <span class="datetime-label">📅 DATE:</span>
+            <span class="datetime-value" id="date"></span>
+          </span>
+          <span class="datetime-item">
+            <span class="datetime-label">⏰ HEURE:</span>
+            <span class="datetime-value" id="time"></span>
+          </span>
+        </div>
+      </div>
+      <div class="main-grid">
+        <!-- ZONE 1: OUTILS ET RESSOURCES -->
+        <div class="zone">
+          <div class="zone-title">Outils & Ressources</div>
+          <div class="tools-grid"></div>
+        </div>
+
+        <!-- ZONE 2: ACCORDÉON PROMOS -->
+        <div class="zone accordion-container">
+          <div class="zone-title">Promos</div>
+          <div class="accordion"></div>
+        </div>
+      </div>
+    </div>
+    <script src="./script.js"></script>
+  </body>
+</html>
