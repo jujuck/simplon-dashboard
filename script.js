@@ -132,6 +132,7 @@ const dashboardData = {
         },
       ],
     },
+    // Data Eng P1
     {
       name: " Data Eng P1 / Naïdine - Alison",
       emoji: "🎯",
@@ -163,12 +164,14 @@ const dashboardData = {
         },
       ],
     },
+    // Data Eng P2
     {
       name: "Data Eng P2 / Alison - Orkun - Naïdine",
       emoji: "🚀",
       active: false,
       links: [],
     },
+    // TAI P3
     {
       name: "TAI P3 / Abdelilah - Arnaud",
       emoji: "📚",
@@ -195,8 +198,8 @@ const dashboardData = {
           url: "",
         },
         {
-          name: "NA Suivi tuteur",
-          url: "",
+          name: "Suivi tuteur",
+          url: "https://docs.google.com/document/d/1tyTd-sNE50sWc77JMOjeP7pwdjcumqGdoqlU6xZIwBo/edit?tab=t.3b7nr8of4uon#heading=h.ohc1z0nxh9uh",
         },
         {
           name: "Synchro CDP - météo",
@@ -204,6 +207,7 @@ const dashboardData = {
         },
       ],
     },
+    // TSSR P6
     {
       name: "TSSR P6 / Abdelilah - Nicolas S",
       emoji: "🏆",
@@ -239,6 +243,7 @@ const dashboardData = {
         },
       ],
     },
+    // TSSR P7
     {
       name: "TSSR P7 / Yanis - Mohammed",
       emoji: "🏆",
@@ -261,8 +266,8 @@ const dashboardData = {
           url: "https://docs.google.com/spreadsheets/d/1dEXkYTcVrDur_Siqizwxl8WtQZzErj3-/edit?gid=479885670#gid=479885670",
         },
         {
-          name: "NA Suivi tuteur",
-          url: "",
+          name: "Suivi tuteur",
+          url: "https://docs.google.com/document/d/1I9xjqze27VT1U-Qhy2TxbuBIXGHUhmCvhDSshcgbfIg/edit?tab=t.fvuk8adobmi3#heading=h.4mkh842jbd88",
         },
         {
           name: "Synchro CDP - météo",
@@ -270,6 +275,7 @@ const dashboardData = {
         },
       ],
     },
+    // TSSR P8
     {
       name: "TSSR P8 / Nicolas B - Nicolas S",
       emoji: "🚀",
@@ -301,6 +307,7 @@ const dashboardData = {
         },
       ],
     },
+    // AIS P6
     {
       name: "AIS P6 / Yanis - Rémi",
       emoji: "🎬",
@@ -336,6 +343,7 @@ const dashboardData = {
         },
       ],
     },
+    // AIS P7
     {
       name: "AIS P7 / Abdelilah - Nicolas",
       emoji: "🎬",
@@ -371,6 +379,7 @@ const dashboardData = {
         },
       ],
     },
+    // AIS P8
     {
       name: "AIS P8 / Yanis - Rémi",
       emoji: "🚀",
@@ -402,6 +411,7 @@ const dashboardData = {
         },
       ],
     },
+    // CDA P6
     {
       name: "CDA P6 /  Christophe / Thomas",
       emoji: "🎸",
@@ -437,6 +447,7 @@ const dashboardData = {
         },
       ],
     },
+    // CDA P7
     {
       name: "CDA P7 / Jean-Baptiste - Frank",
       emoji: "🎸",
@@ -472,6 +483,7 @@ const dashboardData = {
         },
       ],
     },
+    // CDA P8
     {
       name: "CDA P8 / Christophe - Jean-Baptiste",
       emoji: "🚀",
