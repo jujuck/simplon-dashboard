@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcours AIS — Administrateur d'Infrastructures Sécurisées</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09100f;
+    --surface: #0f1a18;
+    --border: #1a2e2a;
+    --text: #e2ebe8;
+    --muted: #5a7a72;
+    --p0: #38bdf8;
+    --p1: #4ade80;
+    --p2: #a78bfa;
+    --p3: #fb923c;
+    --p4: #f472b6;
+    --accent: #34d399;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  /* ── HEADER ── */
+  .header { text-align: center; margin-bottom: 64px; }
+  .header-badge {
+    display: inline-block;
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.3);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: clamp(28px,5vw,52px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--accent); }
+  .header-sub { color: var(--muted); font-size: 15px; font-family: 'Space Mono', monospace; }
+
+  /* ── SECTION TITLES ── */
+  .section-title { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; margin-top: 72px; }
+  .section-title h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .section-num {
+    width: 32px; height: 32px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── FRISE ── */
+  .timeline-wrapper { overflow-x: auto; padding-bottom: 16px; }
+  .timeline { min-width: 820px; position: relative; padding: 24px 0 0; }
+
+  .months-axis { display: grid; grid-template-columns: 170px repeat(12, 1fr); margin-bottom: 8px; }
+  .month-tick {
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    position: relative;
+  }
+  .month-tick::before {
+    content: ''; display: block; width: 1px; height: 6px;
+    background: var(--border); margin: 0 auto 4px;
+  }
+
+  .layers { display: flex; flex-direction: column; gap: 6px; }
+  .layer-row { display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 12px; min-height: 44px; }
+  .layer-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--muted);
+    text-align: right; padding-right: 12px; line-height: 1.3;
+  }
+  .layer-track { position: relative; height: 100%; min-height: 44px; display: flex; align-items: center; }
+
+  .grid-bg { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(12, 1fr); }
+  .grid-cell { border-left: 1px solid var(--border); }
+
+  .segment {
+    position: absolute; height: 34px; border-radius: 3px;
+    display: flex; align-items: center; padding: 0 10px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
+    overflow: hidden; cursor: default;
+    transition: filter 0.2s, transform 0.2s; white-space: nowrap;
+  }
+  .segment:hover { filter: brightness(1.25); transform: translateY(-2px); z-index: 10; }
+  .segment-label { overflow: hidden; text-overflow: ellipsis; }
+
+  .ph0 { background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.5); color: var(--p0); }
+  .ph1 { background: rgba(74,222,128,0.2); border: 1px solid rgba(74,222,128,0.5); color: var(--p1); }
+  .ph2 { background: rgba(167,139,250,0.2); border: 1px solid rgba(167,139,250,0.5); color: var(--p2); }
+  .ph3 { background: rgba(251,146,60,0.2); border: 1px solid rgba(251,146,60,0.5); color: var(--p3); }
+  .ph4 { background: rgba(244,114,182,0.2); border: 1px solid rgba(244,114,182,0.5); color: var(--p4); }
+
+  .alt-seg { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25); color: var(--accent); }
+  .alt-seg-ent { background: rgba(52,211,153,0.03); border: 1px dashed rgba(52,211,153,0.15); color: rgba(52,211,153,0.45); }
+
+  .phase-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── HEATMAP ── */
+  .heatmap-container { overflow-x: auto; padding-bottom: 16px; }
+  .heatmap { min-width: 700px; }
+  .heatmap-grid { display: grid; grid-template-columns: 260px repeat(5, 1fr); gap: 3px; }
+
+  .hm-col-label {
+    text-align: center; font-family: 'Space Mono', monospace;
+    font-size: 11px; font-weight: 700; padding: 10px 6px; letter-spacing: 0.04em;
+  }
+  .hm-cell-label { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 0; font-size: 12px; line-height: 1.3; }
+  .hm-code {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    padding: 2px 6px; border-radius: 2px; flex-shrink: 0;
+    font-weight: 700; min-width: 48px; text-align: center;
+  }
+  .code-c  { background: rgba(74,222,128,0.15); color: var(--p1); border: 1px solid rgba(74,222,128,0.3); }
+  .code-ct { background: rgba(52,211,153,0.15); color: var(--accent); border: 1px solid rgba(52,211,153,0.3); }
+
+  .hm-cell {
+    border-radius: 3px; display: flex; align-items: center; justify-content: center;
+    min-height: 44px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: default; transition: transform 0.15s, filter 0.15s; position: relative;
+  }
+  .hm-cell:hover { transform: scale(1.06); filter: brightness(1.3); z-index: 5; }
+
+  .lv0 { background: var(--surface); color: var(--border); }
+  .lv1.c  { background: rgba(74,222,128,0.15); color: var(--p1); border: 1px solid rgba(74,222,128,0.25); }
+  .lv2.c  { background: rgba(74,222,128,0.35); color: var(--p1); border: 1px solid rgba(74,222,128,0.55); }
+  .lv3.c  { background: rgba(74,222,128,0.62); color: #fff; border: 1px solid rgba(74,222,128,0.9); }
+  .lv1.ct { background: rgba(52,211,153,0.13); color: var(--accent); border: 1px solid rgba(52,211,153,0.25); }
+  .lv2.ct { background: rgba(52,211,153,0.33); color: var(--accent); border: 1px solid rgba(52,211,153,0.55); }
+  .lv3.ct { background: rgba(52,211,153,0.60); color: #fff; border: 1px solid rgba(52,211,153,0.9); }
+
+  .hm-section-header {
+    grid-column: 1 / -1; padding: 12px 0 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    border-top: 1px solid var(--border); margin-top: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hm-section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .hm-legend {
+    display: flex; align-items: center; gap: 6px; margin-top: 20px;
+    font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); flex-wrap: wrap;
+  }
+  .hm-legend-box { width: 20px; height: 20px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── TOOLTIP ── */
+  #global-tooltip {
+    position: fixed;
+    background: #0d1f1c;
+    border: 1px solid rgba(52,211,153,0.2);
+    padding: 12px 14px;
+    font-size: 11px; border-radius: 6px;
+    white-space: normal; pointer-events: none;
+    z-index: 9999; font-family: 'Space Mono', monospace;
+    color: var(--text); width: 290px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+    line-height: 1.5; opacity: 0; transition: opacity 0.12s;
+  }
+  #global-tooltip.visible { opacity: 1; }
+
+  .tt-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .tt-phase-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tt-title { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); text-transform: uppercase; }
+  .tt-level { margin-left: auto; font-size: 9px; padding: 2px 6px; border-radius: 2px; background: rgba(52,211,153,0.1); color: var(--accent); border: 1px solid rgba(52,211,153,0.2); white-space: nowrap; }
+  .tt-section { margin-bottom: 7px; }
+  .tt-section-label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .tt-activities { list-style: none; padding: 0; }
+  .tt-activities li { font-size: 10px; color: var(--text); padding: 2px 0 2px 10px; position: relative; line-height: 1.4; }
+  .tt-activities li::before { content: '›'; position: absolute; left: 0; color: var(--muted); }
+  .tt-tasks { font-size: 10px; color: rgba(226,235,232,0.65); line-height: 1.4; }
+  .tt-tools { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; }
+  .tt-tool { font-size: 9px; padding: 1px 5px; border-radius: 2px; background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); color: var(--accent); }
+  .tt-empty { font-size: 10px; color: var(--muted); font-style: italic; }
+
+  .footer { margin-top: 80px; text-align: center; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+
+<div id="global-tooltip"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-badge">RNCP37680 · Niveau 6</div>
+  <h1>Parcours <span>AIS</span><br>Administrateur d'Infrastructures Sécurisées</h1>
+  <p class="header-sub">455h centre · 12 mois · Alternance 1/4</p>
+</div>
+
+<!-- ── FRISE ── -->
+<div class="section-title">
+  <div class="section-num">01</div>
+  <h2>Frise chronologique en couches</h2>
+</div>
+
+<div class="timeline-wrapper">
+<div class="timeline">
+  <div class="months-axis">
+    <div class="label-spacer"></div>
+    <div class="month-tick">M1</div><div class="month-tick">M2</div><div class="month-tick">M3</div>
+    <div class="month-tick">M4</div><div class="month-tick">M5</div><div class="month-tick">M6</div>
+    <div class="month-tick">M7</div><div class="month-tick">M8</div><div class="month-tick">M9</div>
+    <div class="month-tick">M10</div><div class="month-tick">M11</div><div class="month-tick">M12</div>
+  </div>
+  <div class="layers" id="frise"></div>
+</div>
+</div>
+
+<div class="phase-legend" style="margin-top:20px;">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p0)"></div>Phase 0 — La Prairie (1 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p1)"></div>Phase 1 — J'administre une infrastructure (3 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p2)"></div>Phase 2 — Je sécurise l'infrastructure (3 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p3)"></div>Phase 3 — Je conçois et intègre des évolutions (2,5 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p4)"></div>Phase 4 — Chef d'œuvre & Titre Professionnel (2,5 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Semaines centre de formation</div>
+</div>
+
+<!-- ── HEATMAP ── -->
+<div class="section-title">
+  <div class="section-num">02</div>
+  <h2>Heatmap — Progression des compétences par phase</h2>
+</div>
+
+<div class="heatmap-container">
+<div class="heatmap">
+  <div class="heatmap-grid" id="heatmap">
+    <div class="hm-cell-label" style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;font-weight:700;">COMPÉTENCE</div>
+    <div class="hm-col-label" style="color:var(--p0)">PH0<br><span style="font-weight:400;font-size:9px;color:var(--muted)">1 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p1)">PH1<br><span style="font-weight:400;font-size:9px;color:var(--muted)">3 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p2)">PH2<br><span style="font-weight:400;font-size:9px;color:var(--muted)">3 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p3)">PH3<br><span style="font-weight:400;font-size:9px;color:var(--muted)">2,5 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p4)">PH4<br><span style="font-weight:400;font-size:9px;color:var(--muted)">2,5 mois</span></div>
+  </div>
+</div>
+</div>
+
+<div class="hm-legend" style="margin-top:20px;">
+  <span>Niveau :</span>
+  <div class="hm-legend-box lv0" style="border:1px solid var(--border)"></div><span>—</span>
+  <div class="hm-legend-box" style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3)"></div><span>1 · Imiter</span>
+  <div class="hm-legend-box" style="background:rgba(74,222,128,0.35);border:1px solid rgba(74,222,128,0.55)"></div><span>2 · Adapter</span>
+  <div class="hm-legend-box" style="background:rgba(74,222,128,0.62);border:1px solid rgba(74,222,128,0.9)"></div><span>3 · Transposer</span>
+  &nbsp;·&nbsp;
+  <div class="hm-legend-box" style="background:rgba(74,222,128,0.35);border:1px solid rgba(74,222,128,0.5)"></div><span>Compétences AIS (C)</span>
+  <div class="hm-legend-box" style="background:rgba(52,211,153,0.33);border:1px solid rgba(52,211,153,0.5)"></div><span>Transversales (CT)</span>
+</div>
+
+<div class="footer">
+  Administrateur d'Infrastructures Sécurisées · Simplon · RNCP37680 · Niveau 6
+</div>
+
+<script>
+// ════════════════════════════════════════
+// FRISE DATA  (5 phases, 12 mois)
+// PH0: M1 (1 mois) · PH1: M2-M4 (3 mois) · PH2: M5-M7 (3 mois)
+// PH3: M8-M10 (2.5 mois) · PH4: M10.5-M12 (2.5 mois)
+// ════════════════════════════════════════
+const totalMonths = 12;
+
+const layers = [
+  {
+    label: "PHASES",
+    segments: [
+      { start:0,    dur:1,    label:"Phase 0 · La Prairie", ph:"ph0" },
+      { start:1,    dur:3,    label:"Phase 1 · J'administre une infrastructure", ph:"ph1" },
+      { start:4,    dur:3,    label:"Phase 2 · Je sécurise l'infrastructure", ph:"ph2" },
+      { start:7,    dur:2.5,  label:"Phase 3 · Je conçois et intègre des évolutions", ph:"ph3" },
+      { start:9.5,  dur:2.5,  label:"Phase 4 · Chef d'œuvre & Titre Pro", ph:"ph4" },
+    ]
+  },
+  {
+    label: "HEURES CENTRE",
+    segments: [
+      { start:0,   dur:1,   label:"70h · La Prairie", ph:"ph0" },
+      { start:1,   dur:3,   label:"105h · 15 jours", ph:"ph1" },
+      { start:4,   dur:3,   label:"105h · 15 jours", ph:"ph2" },
+      { start:7,   dur:2.5, label:"98h · 14 jours", ph:"ph3" },
+      { start:9.5, dur:2.5, label:"77h · 11 jours", ph:"ph4" },
+    ]
+  },
+  {
+    label: "RYTHME ALTERNANCE",
+    segments: buildAlternanceSegments()
+  },
+  {
+    label: "COMPÉTENCES\nC1 → C10",
+    segments: [
+      { start:0,   dur:1,   label:"C3 C6 C9", ph:"ph0" },
+      { start:1,   dur:3,   label:"C1 C2 C3 C4 C6 C10", ph:"ph1" },
+      { start:4,   dur:3,   label:"C2 C3 C4 C6 C7 C8 C9", ph:"ph2" },
+      { start:7,   dur:2.5, label:"C1 C5 C6 C7 C8 C9 C10", ph:"ph3" },
+      { start:9.5, dur:2.5, label:"Toutes C1→C10", ph:"ph4" },
+    ]
+  },
+  {
+    label: "COMPÉTENCES\nTRANSVERSALES",
+    segments: [
+      { start:0,   dur:1,   label:"CT1 CT2 CT5 CT7 CT8", ph:"ph0" },
+      { start:1,   dur:3,   label:"CT4 CT5 CT6 CT8 CT9", ph:"ph1" },
+      { start:4,   dur:3,   label:"CT1-CT9", ph:"ph2" },
+      { start:7,   dur:2.5, label:"CT1-CT9", ph:"ph3" },
+      { start:9.5, dur:2.5, label:"Toutes CT", ph:"ph4" },
+    ]
+  },
+  {
+    label: "CERTIFICATIONS",
+    segments: [
+      { start:9.5, dur:2.5, label:"Préparation & Passage Titre Pro RNCP37680", ph:"ph3" },
+    ]
+  }
+];
+
+function buildAlternanceSegments() {
+  const segs = [];
+  // Phase 0 : full centre (1 mois)
+  segs.push({ start:0, dur:1, label:"Centre", ph:"alt-seg" });
+  // Phases 1-4 : 1 sem centre / 3 sem entreprise
+  for (let m = 1; m < 12; m++) {
+    segs.push({ start:m,       dur:0.25, label:"Ctr", ph:"alt-seg" });
+    segs.push({ start:m+0.25,  dur:0.75, label:"Entreprise", ph:"alt-seg-ent" });
+  }
+  return segs;
+}
+
+// Render frise
+const friseEl = document.getElementById('frise');
+
+layers.forEach(layer => {
+  const row = document.createElement('div');
+  row.className = 'layer-row';
+  const labelEl = document.createElement('div');
+  labelEl.className = 'layer-label';
+  labelEl.style.whiteSpace = 'pre-line';
+  labelEl.textContent = layer.label;
+  row.appendChild(labelEl);
+
+  const track = document.createElement('div');
+  track.className = 'layer-track';
+  const gridBg = document.createElement('div');
+  gridBg.className = 'grid-bg';
+  for (let i = 0; i < totalMonths; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell';
+    gridBg.appendChild(cell);
+  }
+  track.appendChild(gridBg);
+
+  layer.segments.forEach(seg => {
+    const el = document.createElement('div');
+    el.className = `segment ${seg.ph}`;
+    el.style.left  = `${(seg.start / totalMonths) * 100}%`;
+    el.style.width = `calc(${(seg.dur / totalMonths) * 100}% - 3px)`;
+    el.innerHTML   = `<span class="segment-label">${seg.label}</span>`;
+    track.appendChild(el);
+  });
+
+  row.appendChild(track);
+  friseEl.appendChild(row);
+});
+
+// ════════════════════════════════════════
+// HEATMAP DATA
+// Niveaux par phase : [PH0, PH1, PH2, PH3, PH4]
+// 0=non mobilisé · 1=Imiter · 2=Adapter · 3=Transposer
+// ════════════════════════════════════════
+
+const phNames  = ["Phase 0 · La Prairie", "Phase 1 · Administrer", "Phase 2 · Sécuriser", "Phase 3 · Concevoir", "Phase 4 · Chef d'œuvre"];
+const phColors = ["#38bdf8","#4ade80","#a78bfa","#fb923c","#f472b6"];
+const levelLabels = ["—","Niveau 1 · Imiter","Niveau 2 · Adapter","Niveau 3 · Transposer"];
+
+const heatmapData = {
+  sections: [
+    {
+      title: "A1 — Administrer et sécuriser les infrastructures",
+      type: "c",
+      rows: [
+        {
+          code:"C1", label:"Bonnes pratiques d'administration", levels:[0,1,2,2,3],
+          activities:[
+            null,
+            { acts:["Prise en main du poste","Suivi procédures ITSM","Gestion tickets GLPI"], tasks:"Application des procédures de gestion d'incidents, documentation des actions dans l'outil ITSM.", tools:["GLPI","Windows","UNIX/Linux"] },
+            { acts:["Mise en conformité réseau","Application PSSI","Documentation exploitation"], tasks:"Application des recommandations ANSSI, mise en conformité des configurations selon la politique de sécurité.", tools:["ANSSI","Checklist sécurité","CMDB"] },
+            { acts:["Revue pratiques","Veille technique","Amélioration procédures"], tasks:"Mise à jour des procédures, intégration des nouvelles bonnes pratiques, éco-conception.", tools:["ISO 20000","ITIL","Confluence"] },
+            { acts:["Valorisation dans chef d'œuvre","Rédaction rapport"], tasks:"Démonstration de la maîtrise des bonnes pratiques dans le projet final, dossier professionnel.", tools:["Confluence","Word","PowerPoint"] },
+          ]
+        },
+        {
+          code:"C2", label:"Infrastructures réseaux", levels:[0,1,2,2,3],
+          activities:[
+            null,
+            { acts:["Configuration VLAN","Routage statique/dynamique","Agrégat de liens"], tasks:"Mise en oeuvre et administration des composants réseau, configuration des équipements actifs.", tools:["Cisco IOS","Packet Tracer","Wireshark"] },
+            { acts:["Segmentation réseau","Filtrage","Cloisonnement VLAN"], tasks:"Segmentation selon recommandations ANSSI, mise en place du zoning réseau, filtrage des flux.", tools:["Pare-feu","ANSSI","Wireshark"] },
+            { acts:["Conception architecture réseau","Validation solution"], tasks:"Conception d'une architecture réseau répondant à un besoin, test et validation en maquette.", tools:["GNS3","draw.io","Cisco"] },
+            { acts:["Infrastructure réseau chef d'œuvre"], tasks:"Mise en oeuvre de l'architecture réseau du projet final, documentation complète.", tools:["Cisco","draw.io","Wireshark"] },
+          ]
+        },
+        {
+          code:"C3", label:"Infrastructures systèmes", levels:[1,1,2,2,3],
+          activities:[
+            { acts:["Prise en main Windows/Linux","Active Directory","Gestion utilisateurs"], tasks:"Familiarisation avec les OS, gestion des comptes utilisateurs AD, support technique basique.", tools:["Windows Server","Linux","Active Directory"] },
+            { acts:["Administration OS","Gestion services","Sauvegardes"], tasks:"Administration et sécurisation des services systèmes, gestion des mises à jour, vérification des sauvegardes.", tools:["Windows Server","Linux","Ansible"] },
+            { acts:["Durcissement systèmes","Journalisation","Mise en conformité"], tasks:"Mise en conformité des systèmes selon les recommandations, activation de la journalisation.", tools:["CIS Benchmarks","ANSSI","Syslog"] },
+            { acts:["Évolution système","Mise en production","Tests validation"], tasks:"Mise en production des évolutions système, test et validation des changements.", tools:["Ansible","PowerShell","Bash"] },
+            { acts:["Systèmes chef d'œuvre"], tasks:"Administration et sécurisation des infrastructures systèmes du projet final.", tools:["Linux","Windows","Ansible"] },
+          ]
+        },
+        {
+          code:"C4", label:"Infrastructures virtualisées", levels:[0,1,2,2,3],
+          activities:[
+            null,
+            { acts:["Déploiement VMs","Administration hyperviseur","Snapshots"], tasks:"Mise en place et administration des composants de virtualisation, gestion des machines virtuelles.", tools:["VMware","Hyper-V","Proxmox"] },
+            { acts:["Cloisonnement VMs","Sécurisation hyperviseur","Zoning SAN"], tasks:"Cloisonnement des données et traitements, sécurisation des accès aux VMs, zoning SAN.", tools:["VMware","Hyper-V","SAN"] },
+            { acts:["Architecture virtualisée","Conteneurisation","Test environnements"], tasks:"Conception et mise en oeuvre d'une architecture virtualisée, test en environnement simulé.", tools:["Docker","Kubernetes","VMware"] },
+            { acts:["Virtualisation chef d'œuvre"], tasks:"Infrastructure virtualisée du projet final, documentation technique complète.", tools:["VMware","Docker","draw.io"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "A2 — Concevoir et mettre en œuvre une solution d'évolution",
+      type: "c",
+      rows: [
+        {
+          code:"C5", label:"Concevoir une solution d'évolution", levels:[0,0,0,1,3],
+          activities:[
+            null,
+            null,
+            null,
+            { acts:["Analyse du besoin","Étude de solutions","Rédaction proposition"], tasks:"Analyse de la demande, étude comparative de solutions, rédaction d'une proposition argumentée.", tools:["draw.io","Word","Excel"] },
+            { acts:["Conception chef d'œuvre","Cahier des charges"], tasks:"Conception complète de la solution pour le projet final, présentation devant jury.", tools:["draw.io","Word","PowerPoint"] },
+          ]
+        },
+        {
+          code:"C6", label:"Mettre en production des évolutions", levels:[1,1,2,3,3],
+          activities:[
+            { acts:["Migration SaaS","Mise en production simple","Documentation"], tasks:"Mise en place d'une solution SaaS, formation des utilisateurs, mise à jour de la documentation.", tools:["M365","G Suite","GLPI"] },
+            { acts:["Mise en production WIFI","Mise à jour firmware","Déploiement composant"], tasks:"Mise en production d'évolutions infrastructure selon procédure, test du bon fonctionnement.", tools:["GLPI","Windows","Cisco"] },
+            { acts:["Déploiement sécurisé","Mise en conformité"], tasks:"Mise en production avec prise en compte de la sécurité, minimisation de l'impact sur la production.", tools:["Ansible","CMDB","Change management"] },
+            { acts:["Mise en production projet","Planification tâches","Pilotage"], tasks:"Mise en production planifiée d'une évolution complexe, pilotage des intervenants.", tools:["Jira","Ansible","Git"] },
+            { acts:["Mise en production chef d'œuvre"], tasks:"Déploiement complet du projet final, documentation de l'ensemble du processus.", tools:["Ansible","Git","Confluence"] },
+          ]
+        },
+        {
+          code:"C7", label:"Supervision des infrastructures", levels:[0,0,1,2,3],
+          activities:[
+            null,
+            null,
+            { acts:["Mise en oeuvre monitoring","Définition seuils","Tableaux de bord"], tasks:"Mise en oeuvre des sondes et moniteurs, définition des indicateurs et seuils d'alerte.", tools:["Zabbix","Nagios","Grafana"] },
+            { acts:["Optimisation supervision","Mise à jour sondes"], tasks:"Optimisation du monitoring, mise à jour suite évolution, définition de nouveaux points de contrôle.", tools:["Zabbix","Grafana","Prometheus"] },
+            { acts:["Supervision chef d'œuvre"], tasks:"Mise en oeuvre de la supervision dans le projet final, tableaux de bord et alerting.", tools:["Zabbix","Grafana","ELK"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "A3 — Participer à la gestion de la cybersécurité",
+      type: "c",
+      rows: [
+        {
+          code:"C8", label:"Mesure et analyse du niveau de sécurité", levels:[0,0,1,2,3],
+          activities:[
+            null,
+            null,
+            { acts:["Analyse de risques","Identification menaces","Audit configuration"], tasks:"Participation à l'analyse des risques, audit de la configuration des services et composants.", tools:["ANSSI","OpenVAS","CIS Benchmarks"] },
+            { acts:["Analyse failles","Évaluation impact","Points de contrôle"], tasks:"Analyse de l'impact d'une faille découverte, définition des points de contrôle de sécurité.", tools:["OpenVAS","Nessus","ANSSI"] },
+            { acts:["Analyse sécurité chef d'œuvre"], tasks:"Évaluation du niveau de sécurité dans le projet final, rapport d'analyse.", tools:["OpenVAS","ANSSI","Word"] },
+          ]
+        },
+        {
+          code:"C9", label:"Politique de sécurité (PSSI)", levels:[1,0,1,2,3],
+          activities:[
+            { acts:["Sensibilisation sécurité","Règles de base"], tasks:"Initiation aux bonnes pratiques de sécurité, respect du règlement intérieur et des premières règles.", tools:["Simplonline","Discord"] },
+            null,
+            { acts:["Application PSSI","Formation utilisateurs","Procédures sécurité"], tasks:"Contribution à la mise en oeuvre de la PSSI, accompagnement des utilisateurs, rédaction de procédures.", tools:["Word","PowerPoint","ANSSI"] },
+            { acts:["Conception PSSI","Security by design","RGPD"], tasks:"Participation à l'élaboration de la politique de sécurité, prise en compte du RGPD dès la conception.", tools:["Word","ANSSI","CNIL"] },
+            { acts:["PSSI chef d'œuvre"], tasks:"Intégration de la politique de sécurité dans le projet final, documentation et présentation.", tools:["Word","ANSSI","PowerPoint"] },
+          ]
+        },
+        {
+          code:"C10", label:"Détection et traitement des incidents", levels:[0,1,1,2,3],
+          activities:[
+            null,
+            { acts:["Diagnostic incident","Résolution incident","Retour d'expérience"], tasks:"Identification et résolution d'un incident en suivant la procédure, conservation des traces, rédaction du REX.", tools:["GLPI","Wireshark","Bash"] },
+            { acts:["Analyse journaux","Centralisation logs","Détection anomalies"], tasks:"Analyse des journaux d'événements, centralisation et supervision des logs, détection d'anomalies.", tools:["ELK","Syslog","SIEM"] },
+            { acts:["Réponse à incident","Analyse forensique basique"], tasks:"Réponse structurée à un incident de sécurité, analyse et qualification de l'incident.", tools:["SIEM","ELK","GLPI"] },
+            { acts:["Gestion incidents chef d'œuvre"], tasks:"Mise en oeuvre d'un processus de détection et traitement des incidents dans le projet final.", tools:["SIEM","ELK","Confluence"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Compétences Transversales",
+      type: "ct",
+      rows: [
+        {
+          code:"CT1", label:"Planifier le travail individuel et en équipe", levels:[1,0,1,2,3],
+          activities:[
+            { acts:["Organisation Prairie","Gestion du temps","Outils numériques"], tasks:"Planification du travail sur la prairie, utilisation des outils numériques de gestion.", tools:["Discord","Simplonline","Trello"] },
+            null,
+            { acts:["Planification interventions","Gestion tâches MCO"], tasks:"Planification des interventions d'administration et de maintenance, gestion des priorités.", tools:["Jira","Trello","Outlook"] },
+            { acts:["Planification projet","Ordonnancement tâches","Outils gestion projet"], tasks:"Définition et planification des tâches du projet, utilisation d'un outil de gestion de projet.", tools:["Jira","MS Project","Gantt"] },
+            { acts:["Planification chef d'œuvre"], tasks:"Planification complète du projet final, suivi de l'avancement.", tools:["Jira","MS Project","Confluence"] },
+          ]
+        },
+        {
+          code:"CT2", label:"Piloter l'organisation du travail collectif", levels:[1,0,1,2,3],
+          activities:[
+            { acts:["Dynamique de promotion","Travail en équipe"], tasks:"Participation à l'émergence de la dynamique collective, engagement dans les projets de groupe.", tools:["Discord","Teams"] },
+            null,
+            { acts:["Coordination équipe","Gestion imprévus"], tasks:"Coordination des interventions en équipe, gestion des imprévus lors des maintenances.", tools:["Teams","Jira","Outlook"] },
+            { acts:["Pilotage projet","Communication équipe"], tasks:"Pilotage des tâches collectives du projet, communication et coordination avec les intervenants.", tools:["Jira","Teams","Confluence"] },
+            { acts:["Pilotage chef d'œuvre"], tasks:"Pilotage de l'ensemble du projet final, coordination avec les parties prenantes.", tools:["Jira","Teams","Confluence"] },
+          ]
+        },
+        {
+          code:"CT3", label:"Définir le périmètre d'un problème", levels:[0,0,1,2,3],
+          activities:[
+            null,
+            null,
+            { acts:["Qualification incident","Identification de la portée"], tasks:"Identification et qualification du périmètre d'un incident ou d'un problème de sécurité.", tools:["GLPI","Wireshark","Checklist"] },
+            { acts:["Analyse d'impact","Définition périmètre solution"], tasks:"Définition précise du périmètre d'un problème ou d'un besoin d'évolution, démarche inductive.", tools:["Word","draw.io","Excel"] },
+            { acts:["Définition périmètre chef d'œuvre"], tasks:"Analyse et définition du périmètre du projet final, cahier des charges.", tools:["Word","draw.io","PowerPoint"] },
+          ]
+        },
+        {
+          code:"CT4", label:"Rechercher des pistes de résolution", levels:[0,1,2,2,3],
+          activities:[
+            null,
+            { acts:["Démarche de diagnostic","Recherche solution incident"], tasks:"Application d'une démarche structurée de diagnostic, recherche méthodique de solutions.", tools:["GLPI","Google","Documentation constructeur"] },
+            { acts:["Recherche solutions sécurité","Veille ANSSI"], tasks:"Recherche de solutions de sécurisation, exploitation des recommandations ANSSI.", tools:["ANSSI","CVE","Documentation"] },
+            { acts:["Benchmark solutions","Évaluation techniques"], tasks:"Recherche et évaluation comparative de solutions techniques, test en environnement de maquette.", tools:["Excel","Documentation","Banc de test"] },
+            { acts:["Recherche solutions chef d'œuvre"], tasks:"Recherche et sélection des solutions techniques du projet final.", tools:["Documentation","ANSSI","Excel"] },
+          ]
+        },
+        {
+          code:"CT5", label:"Partager la solution (documentation)", levels:[1,1,2,2,3],
+          activities:[
+            { acts:["Documentation SaaS","Mise à jour wiki"], tasks:"Rédaction de la documentation de la solution mise en place, mise à jour du wiki de la promotion.", tools:["Confluence","Word","Markdown"] },
+            { acts:["Documentation incident","Mise à jour CMDB","REX"], tasks:"Documentation des incidents résolus, mise à jour de la CMDB et des procédures, rédaction de REX.", tools:["GLPI","CMDB","Confluence"] },
+            { acts:["Documentation sécurité","Procédures PSSI"], tasks:"Rédaction et mise à jour des procédures de sécurité, documentation des configurations.", tools:["Confluence","Word","SharePoint"] },
+            { acts:["Documentation projet","Procédures exploitation"], tasks:"Création ou mise à jour des informations et procédures d'exploitation, transfert de compétences.", tools:["Confluence","Word","Markdown"] },
+            { acts:["Dossier professionnel","Rapport chef d'œuvre"], tasks:"Rédaction du dossier professionnel, rapport complet du projet chef d'œuvre.", tools:["Word","Confluence","Markdown"] },
+          ]
+        },
+        {
+          code:"CT6", label:"Présenter un travail réalisé", levels:[0,1,2,2,3],
+          activities:[
+            null,
+            { acts:["Restitution Prairie","Présentation projet Phase 1"], tasks:"Présentation du projet réalisé, démonstration, réponse aux questions.", tools:["PowerPoint","Teams"] },
+            { acts:["Présentation résultats sécurité","Soutenance intermédiaire"], tasks:"Présentation de l'audit de sécurité, démonstration des solutions mises en place.", tools:["PowerPoint","draw.io","Teams"] },
+            { acts:["Présentation proposition technique","Démonstration prototype"], tasks:"Présentation de la proposition technique argumentée, démonstration du prototype.", tools:["PowerPoint","draw.io","Teams"] },
+            { acts:["Soutenance titre professionnel"], tasks:"Présentation du chef d'œuvre devant le jury, démonstration, réponse aux questions du jury.", tools:["PowerPoint","draw.io","Teams"] },
+          ]
+        },
+        {
+          code:"CT7", label:"S'intégrer à l'environnement professionnel", levels:[1,0,1,0,0],
+          activities:[
+            { acts:["Découverte métier AIS","Veille professionnelle","Règlement intérieur"], tasks:"Intégration à la promotion, découverte du métier, mise en place d'une routine de veille.", tools:["Simplonline","Discord","LinkedIn"] },
+            null,
+            { acts:["Culture sécurité","Codes pros numériques","Intégration entreprise"], tasks:"Adoption des pratiques professionnelles en entreprise, culture de la sécurité informatique.", tools:["Slack","Teams","GLPI"] },
+            null,
+            null,
+          ]
+        },
+        {
+          code:"CT8", label:"Interagir de façon constructive", levels:[1,1,2,2,3],
+          activities:[
+            { acts:["Communication en promotion","Pair learning","Feedback bienveillant"], tasks:"Communication bienveillante, apprentissage par les pairs, échanges constructifs.", tools:["Discord","Teams"] },
+            { acts:["Communication client simulé","Code review","Feedback formateur"], tasks:"Communication avec les utilisateurs, retours constructifs lors des projets.", tools:["Teams","GLPI","Outlook"] },
+            { acts:["Échanges sur procédures","Communication inter-équipes"], tasks:"Communication inter-équipes, échanges techniques constructifs, résolution de conflits.", tools:["Teams","Slack","Outlook"] },
+            { acts:["Communication Dev/Ops","Rituels projet"], tasks:"Facilitation de la communication lors des projets d'évolution, rituels d'équipe.", tools:["Teams","Jira","Confluence"] },
+            { acts:["Communication en soutenance","Réponse jury"], tasks:"Communication professionnelle devant le jury, échanges constructifs.", tools:["PowerPoint","Teams"] },
+          ]
+        },
+        {
+          code:"CT9", label:"Faciliter un temps de travail collectif", levels:[0,1,2,2,3],
+          activities:[
+            null,
+            { acts:["Animation réunions","Facilitation revue de sprint","Stand-up"], tasks:"Facilitation des rituels d'équipe, organisation des réunions d'avancement.", tools:["Miro","Teams","Jira"] },
+            { acts:["Facilitation retrospective","Partage bonnes pratiques sécurité"], tasks:"Animation des retrospectives, organisation des échanges sur les pratiques de sécurité.", tools:["Miro","Teams","Confluence"] },
+            { acts:["Facilitation décisions techniques","Organisation démonstrations"], tasks:"Facilitation des décisions collectives lors des choix de solutions techniques.", tools:["Miro","Teams","Confluence"] },
+            { acts:["Facilitation soutenance collective"], tasks:"Organisation de la soutenance, facilitation des échanges lors de la présentation.", tools:["Teams","Miro","PowerPoint"] },
+          ]
+        },
+      ]
+    }
+  ]
+};
+
+// ─── TOOLTIP ───
+const gTooltip = document.getElementById('global-tooltip');
+let ttVisible = false;
+
+function buildTooltipHTML(phIdx, code, lv, actData) {
+  const lvLabel = levelLabels[lv];
+  const phName  = phNames[phIdx];
+  const phColor = phColors[phIdx];
+
+  let inner = `
+    <div class="tt-header">
+      <div class="tt-phase-dot" style="background:${phColor}"></div>
+      <div class="tt-title">${phName}</div>
+      <div class="tt-level">${lvLabel}</div>
+    </div>`;
+
+  if (!actData) {
+    inner += `<div class="tt-empty">Compétence non mobilisée dans cette phase.</div>`;
+  } else {
+    if (actData.acts?.length) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Activités</div>
+        <ul class="tt-activities">${actData.acts.map(a => `<li>${a}</li>`).join('')}</ul>
+      </div>`;
+    }
+    if (actData.tasks) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Tâches type</div>
+        <div class="tt-tasks">${actData.tasks}</div>
+      </div>`;
+    }
+    if (actData.tools?.length) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Outils envisagés</div>
+        <div class="tt-tools">${actData.tools.map(t => `<span class="tt-tool">${t}</span>`).join('')}</div>
+      </div>`;
+    }
+  }
+  return inner;
+}
+
+function showTooltip(e, html) {
+  gTooltip.innerHTML = html;
+  gTooltip.classList.add('visible');
+  ttVisible = true;
+  positionTooltip(e);
+}
+function hideTooltip() {
+  gTooltip.classList.remove('visible');
+  ttVisible = false;
+}
+function positionTooltip(e) {
+  const margin = 12;
+  const tw = gTooltip.offsetWidth;
+  const th = gTooltip.offsetHeight;
+  let x = e.clientX + margin;
+  let y = e.clientY - th / 2;
+  if (x + tw > window.innerWidth  - margin) x = e.clientX - tw - margin;
+  if (y < margin)                           y = margin;
+  if (y + th > window.innerHeight - margin) y = window.innerHeight - th - margin;
+  gTooltip.style.left = x + 'px';
+  gTooltip.style.top  = y + 'px';
+}
+document.addEventListener('mousemove', e => { if (ttVisible) positionTooltip(e); });
+
+// ─── RENDER HEATMAP ───
+const hmGrid = document.getElementById('heatmap');
+
+heatmapData.sections.forEach(section => {
+  const sh = document.createElement('div');
+  sh.className = 'hm-section-header';
+  sh.textContent = section.title;
+  hmGrid.appendChild(sh);
+
+  section.rows.forEach(row => {
+    const labelCell = document.createElement('div');
+    labelCell.className = 'hm-cell-label';
+    const codeSpan = document.createElement('span');
+    codeSpan.className = `hm-code code-${section.type}`;
+    codeSpan.textContent = row.code;
+    labelCell.appendChild(codeSpan);
+    labelCell.appendChild(document.createTextNode(row.label));
+    hmGrid.appendChild(labelCell);
+
+    row.levels.forEach((lv, i) => {
+      const cell = document.createElement('div');
+      const extraClass = lv > 0 ? ` ${section.type}` : '';
+      cell.className = `hm-cell lv${lv}${extraClass}`;
+      if (lv > 0) cell.textContent = lv;
+      const actData = row.activities ? row.activities[i] : null;
+      const html = buildTooltipHTML(i, row.code, lv, actData);
+      cell.addEventListener('mouseenter', e => showTooltip(e, html));
+      cell.addEventListener('mouseleave', hideTooltip);
+      hmGrid.appendChild(cell);
+    });
+  });
+});
+</script>
+</body>
+</html>

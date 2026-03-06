@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcours CDA DevOps — Visuels pédagogiques</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09100f;
+    --surface: #0f1a18;
+    --border: #1a2e2a;
+    --text: #e2ebe8;
+    --muted: #5a7a72;
+    --p0: #38bdf8;
+    --p1: #4ade80;
+    --p2: #a78bfa;
+    --p3: #fb923c;
+    --p4: #f472b6;
+    --p5: #facc15;
+    --accent: #34d399;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  /* ── HEADER ── */
+  .header { text-align: center; margin-bottom: 64px; }
+  .header-badge {
+    display: inline-block;
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.3);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: clamp(28px,5vw,52px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--accent); }
+  .header-sub { color: var(--muted); font-size: 15px; font-family: 'Space Mono', monospace; }
+
+  /* ── SECTION TITLES ── */
+  .section-title { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; margin-top: 72px; }
+  .section-title h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .section-num {
+    width: 32px; height: 32px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── FRISE ── */
+  .timeline-wrapper { overflow-x: auto; padding-bottom: 16px; }
+  .timeline { min-width: 980px; position: relative; padding: 24px 0 0; }
+
+  .months-axis { display: grid; grid-template-columns: 170px repeat(18, 1fr); margin-bottom: 8px; }
+  .month-tick {
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    position: relative;
+  }
+  .month-tick::before {
+    content: ''; display: block; width: 1px; height: 6px;
+    background: var(--border); margin: 0 auto 4px;
+  }
+
+  .layers { display: flex; flex-direction: column; gap: 6px; }
+  .layer-row { display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 12px; min-height: 44px; }
+  .layer-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--muted);
+    text-align: right; padding-right: 12px; line-height: 1.3;
+  }
+  .layer-track { position: relative; height: 100%; min-height: 44px; display: flex; align-items: center; }
+
+  .grid-bg { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(18, 1fr); }
+  .grid-cell { border-left: 1px solid var(--border); }
+
+  .segment {
+    position: absolute; height: 34px; border-radius: 3px;
+    display: flex; align-items: center; padding: 0 10px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
+    overflow: hidden; cursor: default;
+    transition: filter 0.2s, transform 0.2s; white-space: nowrap;
+  }
+  .segment:hover { filter: brightness(1.25); transform: translateY(-2px); z-index: 10; }
+  .segment-label { overflow: hidden; text-overflow: ellipsis; }
+
+  .ph0 { background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.5); color: var(--p0); }
+  .ph1 { background: rgba(74,222,128,0.2); border: 1px solid rgba(74,222,128,0.5); color: var(--p1); }
+  .ph2 { background: rgba(167,139,250,0.2); border: 1px solid rgba(167,139,250,0.5); color: var(--p2); }
+  .ph3 { background: rgba(251,146,60,0.2); border: 1px solid rgba(251,146,60,0.5); color: var(--p3); }
+  .ph4 { background: rgba(244,114,182,0.2); border: 1px solid rgba(244,114,182,0.5); color: var(--p4); }
+  .ph5 { background: rgba(250,204,21,0.2); border: 1px solid rgba(250,204,21,0.5); color: var(--p5); }
+
+  .alt-seg { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25); color: var(--accent); }
+  .alt-seg-ent { background: rgba(52,211,153,0.03); border: 1px dashed rgba(52,211,153,0.15); color: rgba(52,211,153,0.45); }
+
+  .phase-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── HEATMAP ── */
+  .heatmap-container { overflow-x: auto; padding-bottom: 16px; }
+  .heatmap { min-width: 820px; }
+  .heatmap-grid { display: grid; grid-template-columns: 240px repeat(6, 1fr); gap: 3px; }
+
+  .hm-col-label {
+    text-align: center; font-family: 'Space Mono', monospace;
+    font-size: 11px; font-weight: 700; padding: 10px 6px; letter-spacing: 0.04em;
+  }
+  .hm-cell-label { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 0; font-size: 12px; line-height: 1.3; }
+  .hm-code {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    padding: 2px 6px; border-radius: 2px; flex-shrink: 0;
+    font-weight: 700; min-width: 52px; text-align: center;
+  }
+  .code-c   { background: rgba(74,222,128,0.15); color: var(--p1); border: 1px solid rgba(74,222,128,0.3); }
+  .code-dv  { background: rgba(56,189,248,0.15); color: var(--p0); border: 1px solid rgba(56,189,248,0.3); }
+  .code-ct  { background: rgba(52,211,153,0.15); color: var(--accent); border: 1px solid rgba(52,211,153,0.3); }
+
+  .hm-cell {
+    border-radius: 3px; display: flex; align-items: center; justify-content: center;
+    min-height: 44px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: default; transition: transform 0.15s, filter 0.15s; position: relative;
+  }
+  .hm-cell:hover { transform: scale(1.06); filter: brightness(1.3); z-index: 5; }
+
+  .lv0 { background: var(--surface); color: var(--border); }
+  /* C (green) */
+  .lv1.c { background: rgba(74,222,128,0.15); color: var(--p1); border: 1px solid rgba(74,222,128,0.25); }
+  .lv2.c { background: rgba(74,222,128,0.35); color: var(--p1); border: 1px solid rgba(74,222,128,0.55); }
+  .lv3.c { background: rgba(74,222,128,0.62); color: #fff; border: 1px solid rgba(74,222,128,0.9); }
+  /* DevOps (cyan) */
+  .lv1.dv { background: rgba(56,189,248,0.15); color: var(--p0); border: 1px solid rgba(56,189,248,0.25); }
+  .lv2.dv { background: rgba(56,189,248,0.35); color: var(--p0); border: 1px solid rgba(56,189,248,0.55); }
+  .lv3.dv { background: rgba(56,189,248,0.62); color: #fff; border: 1px solid rgba(56,189,248,0.9); }
+  /* CT (emerald) */
+  .lv1.ct { background: rgba(52,211,153,0.13); color: var(--accent); border: 1px solid rgba(52,211,153,0.25); }
+  .lv2.ct { background: rgba(52,211,153,0.33); color: var(--accent); border: 1px solid rgba(52,211,153,0.55); }
+  .lv3.ct { background: rgba(52,211,153,0.60); color: #fff; border: 1px solid rgba(52,211,153,0.9); }
+
+  .hm-section-header {
+    grid-column: 1 / -1; padding: 12px 0 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    border-top: 1px solid var(--border); margin-top: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hm-section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .hm-legend {
+    display: flex; align-items: center; gap: 6px; margin-top: 20px;
+    font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); flex-wrap: wrap;
+  }
+  .hm-legend-box { width: 20px; height: 20px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── GLOBAL TOOLTIP ── */
+  #global-tooltip {
+    position: fixed;
+    background: #0d1f1c;
+    border: 1px solid rgba(52,211,153,0.2);
+    padding: 12px 14px;
+    font-size: 11px; border-radius: 6px;
+    white-space: normal; pointer-events: none;
+    z-index: 9999; font-family: 'Space Mono', monospace;
+    color: var(--text); width: 290px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+    line-height: 1.5; opacity: 0; transition: opacity 0.12s;
+  }
+  #global-tooltip.visible { opacity: 1; }
+
+  .tt-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .tt-phase-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tt-title { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); text-transform: uppercase; }
+  .tt-level { margin-left: auto; font-size: 9px; padding: 2px 6px; border-radius: 2px; background: rgba(52,211,153,0.1); color: var(--accent); border: 1px solid rgba(52,211,153,0.2); white-space: nowrap; }
+  .tt-section { margin-bottom: 7px; }
+  .tt-section-label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .tt-activities { list-style: none; padding: 0; }
+  .tt-activities li { font-size: 10px; color: var(--text); padding: 2px 0 2px 10px; position: relative; line-height: 1.4; }
+  .tt-activities li::before { content: '›'; position: absolute; left: 0; color: var(--muted); }
+  .tt-tasks { font-size: 10px; color: rgba(226,235,232,0.65); line-height: 1.4; }
+  .tt-tools { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; }
+  .tt-tool { font-size: 9px; padding: 1px 5px; border-radius: 2px; background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); color: var(--accent); }
+  .tt-empty { font-size: 10px; color: var(--muted); font-style: italic; }
+
+  .footer { margin-top: 80px; text-align: center; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+
+<div id="global-tooltip"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-badge">RNCP37873 · RS6840</div>
+  <h1>Parcours <span>CDA DevOps</span><br>Concepteur Développeur d'Applications</h1>
+  <p class="header-sub">595h centre · 18 mois · Alternance 1/3</p>
+</div>
+
+<!-- ── FRISE ── -->
+<div class="section-title">
+  <div class="section-num">01</div>
+  <h2>Frise chronologique en couches</h2>
+</div>
+
+<div class="timeline-wrapper">
+<div class="timeline">
+  <div class="months-axis">
+    <div class="label-spacer"></div>
+    <div class="month-tick">M1</div><div class="month-tick">M2</div><div class="month-tick">M3</div>
+    <div class="month-tick">M4</div><div class="month-tick">M5</div><div class="month-tick">M6</div>
+    <div class="month-tick">M7</div><div class="month-tick">M8</div><div class="month-tick">M9</div>
+    <div class="month-tick">M10</div><div class="month-tick">M11</div><div class="month-tick">M12</div>
+    <div class="month-tick">M13</div><div class="month-tick">M14</div><div class="month-tick">M15</div>
+    <div class="month-tick">M16</div><div class="month-tick">M17</div><div class="month-tick">M18</div>
+  </div>
+  <div class="layers" id="frise"></div>
+</div>
+</div>
+
+<div class="phase-legend" style="margin-top:20px;">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p0)"></div>Phase 0 — La Prairie (1 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p1)"></div>Phase 1 — Périmètre fonctionnel (3 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p2)"></div>Phase 2 — Développement par les tests (3 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p3)"></div>Phase 3 — Intégration continue (3 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p4)"></div>Phase 4 — Livraison continue & micro-services (2 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p5)"></div>Phase 5 — Projet chef d'œuvre (6 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Semaines centre de formation</div>
+</div>
+
+<!-- ── HEATMAP ── -->
+<div class="section-title">
+  <div class="section-num">02</div>
+  <h2>Heatmap — Progression des compétences par phase</h2>
+</div>
+
+<div class="heatmap-container">
+<div class="heatmap">
+  <div class="heatmap-grid" id="heatmap">
+    <div class="hm-cell-label" style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;font-weight:700;">COMPÉTENCE</div>
+    <div class="hm-col-label" style="color:var(--p0)">PH0<br><span style="font-weight:400;font-size:9px;color:var(--muted)">1 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p1)">PH1<br><span style="font-weight:400;font-size:9px;color:var(--muted)">3 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p2)">PH2<br><span style="font-weight:400;font-size:9px;color:var(--muted)">3 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p3)">PH3<br><span style="font-weight:400;font-size:9px;color:var(--muted)">3 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p4)">PH4<br><span style="font-weight:400;font-size:9px;color:var(--muted)">2 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p5)">PH5<br><span style="font-weight:400;font-size:9px;color:var(--muted)">6 mois</span></div>
+  </div>
+</div>
+</div>
+
+<div class="hm-legend" style="margin-top:20px;">
+  <span>Niveau :</span>
+  <div class="hm-legend-box lv0" style="border:1px solid var(--border)"></div><span>—</span>
+  <div class="hm-legend-box" style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3)"></div><span>1 · Imiter</span>
+  <div class="hm-legend-box" style="background:rgba(74,222,128,0.35);border:1px solid rgba(74,222,128,0.55)"></div><span>2 · Adapter</span>
+  <div class="hm-legend-box" style="background:rgba(74,222,128,0.62);border:1px solid rgba(74,222,128,0.9)"></div><span>3 · Transposer</span>
+  &nbsp;·&nbsp;
+  <div class="hm-legend-box" style="background:rgba(74,222,128,0.35);border:1px solid rgba(74,222,128,0.5)"></div><span>Compétences CDA (C)</span>
+  <div class="hm-legend-box" style="background:rgba(56,189,248,0.35);border:1px solid rgba(56,189,248,0.5)"></div><span>Spécialisation DevOps</span>
+  <div class="hm-legend-box" style="background:rgba(52,211,153,0.33);border:1px solid rgba(52,211,153,0.5)"></div><span>Transversales</span>
+</div>
+
+<div class="footer">
+  Concepteur Développeur d'Applications · Simplon · RNCP37873 · RS6840 DevOps
+</div>
+
+<script>
+// ════════════════════════════════════════
+// FRISE DATA  (6 phases, 18 mois)
+// PH0: M1 (1 mois) · PH1: M2-M4 (3 mois) · PH2: M5-M7 (3 mois)
+// PH3: M8-M10 (3 mois) · PH4: M11-M12 (2 mois) · PH5: M13-M18 (6 mois)
+// ════════════════════════════════════════
+const layers = [
+  {
+    label: "PHASES",
+    segments: [
+      { start:0,  dur:1,  label:"Phase 0 · La Prairie", ph:"ph0" },
+      { start:1,  dur:3,  label:"Phase 1 · Périmètre fonctionnel", ph:"ph1" },
+      { start:4,  dur:3,  label:"Phase 2 · Développement par les tests", ph:"ph2" },
+      { start:7,  dur:3,  label:"Phase 3 · Intégration continue", ph:"ph3" },
+      { start:10, dur:2,  label:"Phase 4 · Livraison continue & micro-services", ph:"ph4" },
+      { start:12, dur:6,  label:"Phase 5 · Chef d'œuvre DevOps", ph:"ph5" },
+    ]
+  },
+  {
+    label: "HEURES CENTRE",
+    segments: [
+      { start:0,  dur:1,  label:"70h · 2 sem.", ph:"ph0" },
+      { start:1,  dur:3,  label:"105h · 3 sem.", ph:"ph1" },
+      { start:4,  dur:3,  label:"105h · 3 sem.", ph:"ph2" },
+      { start:7,  dur:3,  label:"105h · 3 sem.", ph:"ph3" },
+      { start:10, dur:2,  label:"70h · 2 sem.", ph:"ph4" },
+      { start:12, dur:6,  label:"175h · 5 sem.", ph:"ph5" },
+    ]
+  },
+  {
+    label: "RYTHME ALTERNANCE",
+    segments: buildAlternanceSegments()
+  },
+  {
+    label: "COMPÉTENCES CDA\nC1 → C11",
+    segments: [
+      { start:0,  dur:1,  label:"C1 C2 C3 C4 C5", ph:"ph0" },
+      { start:1,  dur:3,  label:"C1 C2 C3 C5 C6 C7 C8 C9", ph:"ph1" },
+      { start:4,  dur:3,  label:"C1→C9 C11", ph:"ph2" },
+      { start:7,  dur:3,  label:"C1→C11", ph:"ph3" },
+      { start:10, dur:2,  label:"C1→C11", ph:"ph4" },
+      { start:12, dur:6,  label:"Toutes", ph:"ph5" },
+    ]
+  },
+  {
+    label: "SPÉCIALISATION\nDEVOPS1→4",
+    segments: [
+      { start:0,  dur:1,  label:"D1 D2 D3", ph:"ph0" },
+      { start:1,  dur:3,  label:"D1 D2 D3", ph:"ph1" },
+      { start:4,  dur:3,  label:"D1 D2 D3", ph:"ph2" },
+      { start:7,  dur:3,  label:"D1 D2 D3 D4", ph:"ph3" },
+      { start:10, dur:2,  label:"D2 D3 D4", ph:"ph4" },
+      { start:12, dur:6,  label:"Toutes", ph:"ph5" },
+    ]
+  },
+  {
+    label: "CERTIFICATIONS",
+    segments: [
+      { start:14, dur:4, label:"Préparation RNCP + RS6840", ph:"ph3" },
+      { start:16, dur:2, label:"Passage titre + certification DevOps", ph:"ph5" },
+    ]
+  }
+];
+
+function buildAlternanceSegments() {
+  const segs = [];
+  // Phase 0 : 2 sem centre + (pas entreprise — full centre)
+  segs.push({ start:0, dur:1, label:"Centre", ph:"alt-seg" });
+  // Phases 1-4 : 1 sem centre / 3 sem entreprise
+  for (let m = 1; m <= 11; m++) {
+    segs.push({ start:m,       dur:0.25, label:"Ctr", ph:"alt-seg" });
+    segs.push({ start:m+0.25,  dur:0.75, label:"Entreprise", ph:"alt-seg-ent" });
+  }
+  // Phase 5 : même rythme
+  for (let m = 12; m <= 17; m++) {
+    segs.push({ start:m,       dur:0.25, label:"Ctr", ph:"alt-seg" });
+    segs.push({ start:m+0.25,  dur:0.75, label:"Entreprise", ph:"alt-seg-ent" });
+  }
+  return segs;
+}
+
+// Render frise
+const friseEl = document.getElementById('frise');
+const totalMonths = 18;
+
+layers.forEach(layer => {
+  const row = document.createElement('div');
+  row.className = 'layer-row';
+  const labelEl = document.createElement('div');
+  labelEl.className = 'layer-label';
+  labelEl.style.whiteSpace = 'pre-line';
+  labelEl.textContent = layer.label;
+  row.appendChild(labelEl);
+
+  const track = document.createElement('div');
+  track.className = 'layer-track';
+  const gridBg = document.createElement('div');
+  gridBg.className = 'grid-bg';
+  for (let i = 0; i < 18; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell';
+    gridBg.appendChild(cell);
+  }
+  track.appendChild(gridBg);
+
+  layer.segments.forEach(seg => {
+    const el = document.createElement('div');
+    el.className = `segment ${seg.ph}`;
+    el.style.left  = `${(seg.start / totalMonths) * 100}%`;
+    el.style.width = `calc(${(seg.dur / totalMonths) * 100}% - 3px)`;
+    el.innerHTML   = `<span class="segment-label">${seg.label}</span>`;
+    track.appendChild(el);
+  });
+
+  row.appendChild(track);
+  friseEl.appendChild(row);
+});
+
+// ════════════════════════════════════════
+// HEATMAP DATA
+// levels[ph0, ph1, ph2, ph3, ph4, ph5]
+// 0=absent · 1=imiter · 2=adapter · 3=transposer
+// ════════════════════════════════════════
+const phColors = ["#38bdf8","#4ade80","#a78bfa","#fb923c","#f472b6","#facc15"];
+const phNames  = ["Phase 0 · La Prairie","Phase 1 · Périmètre fonctionnel","Phase 2 · Développement par les tests","Phase 3 · Intégration continue","Phase 4 · Livraison continue & micro-services","Phase 5 · Chef d'œuvre DevOps"];
+const levelLabels = ["—","N1 · Imiter","N2 · Adapter","N3 · Transposer"];
+
+const heatmapData = {
+  sections: [
+    {
+      title: "Compétences CDA",
+      type: "c",
+      rows: [
+        {
+          code:"C1", label:"Configurer son environnement de travail", levels:[2,2,2,3,2,3],
+          activities:[
+            { acts:["Configuration poste dev","Installation outils","Init projet Git"], tasks:"Setup IDE, Git, Docker, outils pédagogiques. Documentation technique en anglais.", tools:["Git","Docker","VS Code","Linux"] },
+            { acts:["Environnement full-stack local","Config SGBD","Serveur de test"], tasks:"Installation framework back + front, SGBD, serveur local, gestion des dépendances.", tools:["Node.js","MySQL","Docker","npm"] },
+            { acts:["Environnement de test conteneurisé","Config framework front/back"], tasks:"Docker Compose pour dev et test, configuration frameworks modernes, variables d'environnement.", tools:["Docker","Docker Compose","React","Laravel"] },
+            { acts:["Environnement CI/CD","Config pipeline","Conteneurs multi-services"], tasks:"Configuration de l'environnement d'intégration continue, scripts de build, registres d'images.", tools:["Docker","GitLab CI","GitHub Actions","Git"] },
+            { acts:["Environnement micro-services","Orchestration conteneurs"], tasks:"Docker Compose multi-services, variables d'env par service, health checks.", tools:["Docker Compose","Git","GitLab"] },
+            { acts:["Environnement complet projet chef d'œuvre"], tasks:"Setup complet autonome de l'environnement du projet final, CI/CD intégrée.", tools:["Docker","Git","GitLab CI"] },
+          ]
+        },
+        {
+          code:"C2", label:"Développer des interfaces utilisateur", levels:[2,2,2,3,2,3],
+          activities:[
+            { acts:["Interface appelant des API web","Responsive design","Maquettage UML"], tasks:"Prototype HTML/CSS/JS responsive, intégration API REST, mise en page adaptative.", tools:["HTML","CSS","JavaScript","Figma"] },
+            { acts:["Composants d'interface dynamiques","Validation côté client","Formulaires sécurisés"], tasks:"Développement front-end avec framework, validation des entrées, composants réutilisables.", tools:["React","Vue.js","Bootstrap","Figma"] },
+            { acts:["Tests composants interface","Amélioration et sécurisation UI","TDD front"], tasks:"Tests unitaires composants, correction bugs par les tests, sécurisation formulaires (XSS).", tools:["Jest","Cypress","React","Vue.js"] },
+            { acts:["Optimisation performance interface","Tests de charge front","CI front"], tasks:"Analyse Lighthouse, optimisation bundle, lazy loading, tests de performance automatisés.", tools:["Lighthouse","Webpack","React","GitLab CI"] },
+            { acts:["Composants micro-services front","Interfaces services indépendants"], tasks:"Développement d'interfaces pour des micro-services, communication API inter-services.", tools:["React","Vue.js","Docker"] },
+            { acts:["Interface complète projet chef d'œuvre"], tasks:"Développement complet de l'interface du projet final, tests, documentation.", tools:["React","Vue.js","Figma"] },
+          ]
+        },
+        {
+          code:"C3", label:"Développer des composants métier", levels:[2,2,2,3,2,3],
+          activities:[
+            { acts:["Logique métier front","Algorithmes JS","Gestion données API"], tasks:"Développement composants métier côté client, traitement des données, appels API.", tools:["JavaScript","TypeScript","Postman"] },
+            { acts:["API REST complète","Composants back-end OO","Authentification"], tasks:"Développement API REST sécurisée, modèles OO, authentification JWT, gestion erreurs.", tools:["Node.js","Express","PHP","Symfony"] },
+            { acts:["Tests composants métier","TDD back-end","Design patterns"], tasks:"Tests unitaires back-end, développement test-driven, application de patrons de conception.", tools:["PHPUnit","Jest","Pytest","Symfony"] },
+            { acts:["Optimisation composants","Sécurisation back","Tests sécurité"], tasks:"Optimisation architecture, security patterns, audits OWASP, performance serveur.", tools:["OWASP","SonarQube","Symfony","Express"] },
+            { acts:["Composants back micro-services","Services indépendants"], tasks:"Développement composants back par service, API inter-services, communication asynchrone.", tools:["Express","FastAPI","Docker","RabbitMQ"] },
+            { acts:["Composants métier projet chef d'œuvre"], tasks:"Développement et documentation complète des composants métier du projet.", tools:["Symfony","Node.js","Express"] },
+          ]
+        },
+        {
+          code:"C4", label:"Contribuer à la gestion de projet", levels:[1,0,2,2,2,3],
+          activities:[
+            { acts:["Planification tâches","Rituels agile","Suivi avancement"], tasks:"Découpage tâches, estimation, communication régulière, respect des délais.", tools:["Trello","Jira","GitLab"] },
+            null,
+            { acts:["Gestion sprint agile","Backlog","Revues de code"], tasks:"Animation rituels agiles, gestion de backlog, pull requests, code review.", tools:["Jira","GitLab","GitHub"] },
+            { acts:["Coordination équipe CI","Interprétation rapports CI","Fusion branches"], tasks:"Organisation équipe DevOps, gestion des branches, pilotage par les métriques CI.", tools:["GitLab","Jira","GitHub Actions"] },
+            { acts:["Coordination pipeline CD","Rôles équipe DevOps"], tasks:"Définition des rôles DevOps, accompagnement à la mise en place de l'équipe.", tools:["GitLab","Jira"] },
+            { acts:["Gestion complète projet chef d'œuvre"], tasks:"Planification, suivi, reporting et coordination complète du projet final.", tools:["Jira","GitLab","Trello"] },
+          ]
+        },
+        {
+          code:"C5", label:"Analyser les besoins et maquetter", levels:[2,2,2,3,2,3],
+          activities:[
+            { acts:["Expression du besoin","Diagrammes UML","Maquettes Figma"], tasks:"Analyse des besoins, création diagrammes cas d'usage, maquettes responsive.", tools:["Figma","draw.io","UML"] },
+            { acts:["Cahier des charges","Spécifications fonctionnelles","Mise à jour UML"], tasks:"Rédaction specs, diagrammes de classes/séquences, maquettes enchaînements.", tools:["Figma","draw.io","Confluence"] },
+            { acts:["Plan de tests fonctionnels","Critères de qualité","User stories"], tasks:"Rédaction plan de tests à partir des specs, définition des critères d'acceptance.", tools:["Jira","Confluence","Figma"] },
+            { acts:["Spécifications architecture CI","Documentation pipeline"], tasks:"Documentation technique de l'architecture et du pipeline, specs de déploiement.", tools:["Confluence","draw.io","GitLab"] },
+            { acts:["Architecture micro-services","Schéma services","Dossier technique"], tasks:"Dessiner l'architecture en services, définir les critères qualité/sécurité, dossier technique.", tools:["draw.io","Confluence","Lucidchart"] },
+            { acts:["Specs complètes projet chef d'œuvre"], tasks:"Cahier des charges, maquettes, diagrammes UML, spécifications techniques complètes.", tools:["Figma","draw.io","Confluence"] },
+          ]
+        },
+        {
+          code:"C6", label:"Définir l'architecture logicielle", levels:[0,2,2,3,3,3],
+          activities:[
+            null,
+            { acts:["Architecture MVC/n-tiers","Choix framework","Documentation archi"], tasks:"Choix et configuration architecture MVC ou n-tiers, documentation des décisions techniques.", tools:["Symfony","Laravel","Node.js","draw.io"] },
+            { acts:["Architecture avancée","Design patterns","Refactoring"], tasks:"Application patterns (Repository, Factory…), amélioration architecture existante, refactoring.", tools:["PHP","Node.js","draw.io","SonarQube"] },
+            { acts:["Architecture pour CI","Optimisation archi","Sécurisation"], tasks:"Adaptation architecture pour CI/CD, optimisation performance globale, sécurisation.", tools:["GitLab CI","SonarQube","Docker"] },
+            { acts:["Architecture micro-services","Transition monolithique→micro-services"], tasks:"Conception et réalisation architecture micro-services, orchestration, documentation.", tools:["Docker Compose","draw.io","Lucidchart"] },
+            { acts:["Architecture complète projet chef d'œuvre"], tasks:"Conception et documentation de l'architecture logicielle du projet final.", tools:["draw.io","Confluence","Docker"] },
+          ]
+        },
+        {
+          code:"C7", label:"Base de données relationnelle", levels:[0,2,3,3,2,3],
+          activities:[
+            null,
+            { acts:["Conception MCD/MLD","Script SQL création","Sauvegarde/restauration"], tasks:"Modélisation BDD, script de création, requêtes CRUD, authentification accès BDD.", tools:["MySQL","MariaDB","PostgreSQL","DBeaver"] },
+            { acts:["BDD avancée","Procédures stockées","Triggers","Sécurisation accès"], tasks:"Procédures stockées, déclencheurs, sécurisation CORS/JWT, sauvegarde automatisée.", tools:["PostgreSQL","MySQL","phpMyAdmin"] },
+            { acts:["Optimisation BDD","Index et vues","Tests performances"], tasks:"Optimisation modèle de données, index, clés, moteur de données, tests de charge BDD.", tools:["PostgreSQL","MySQLTuner","SonarQube"] },
+            { acts:["BDD en contexte micro-services","Données par service"], tasks:"Un SGBD par service, isolation des données, migration et scripts d'évolution.", tools:["PostgreSQL","MongoDB","Docker"] },
+            { acts:["BDD complète projet chef d'œuvre"], tasks:"Conception, implémentation et optimisation de la BDD du projet final.", tools:["PostgreSQL","MySQL","Doctrine"] },
+          ]
+        },
+        {
+          code:"C8", label:"Composants d'accès aux données SQL/NoSQL", levels:[0,2,3,3,2,3],
+          activities:[
+            null,
+            { acts:["ORM/ODM","Composants CRUD","API points d'accès"], tasks:"Développement modèles ORM, fonctions CRUD sécurisées, endpoints API RESTful.", tools:["Doctrine","Sequelize","Mongoose","Postman"] },
+            { acts:["Composants NoSQL","Transactions","Tests accès données"], tasks:"Intégration bases NoSQL, traitements transactionnels, tests unitaires composants données.", tools:["MongoDB","Redis","Mongoose","Jest"] },
+            { acts:["Optimisation accès BDD","Vues","Cache"], tasks:"Requêtes optimisées, vues SQL, mise en cache, profiling des requêtes.", tools:["Redis","Doctrine","Query Builder"] },
+            { acts:["Accès données par service","API inter-services"], tasks:"Isolation des accès données par micro-service, API de communication entre services.", tools:["Mongoose","Doctrine","REST","GraphQL"] },
+            { acts:["Accès données projet chef d'œuvre"], tasks:"Développement complet des composants d'accès données du projet.", tools:["Doctrine","Mongoose","Redis"] },
+          ]
+        },
+        {
+          code:"C9", label:"Plans de tests d'une application", levels:[0,1,2,3,2,3],
+          activities:[
+            null,
+            { acts:["Tests unitaires basiques","Intégration tests dans le code","Plan de tests"], tasks:"Écriture des premiers tests unitaires, exécution, interprétation des résultats.", tools:["Jest","PHPUnit","Pytest","Postman"] },
+            { acts:["TDD","Plan de tests complet","Tests fonctionnels et E2E"], tasks:"Développement piloté par les tests, tests d'intégration, tests end-to-end, synthèse de tests.", tools:["Jest","Cypress","PHPUnit","Docker"] },
+            { acts:["Tests dans CI","Tests de sécurité statiques","Tests de performance"], tasks:"Intégration tests dans le pipeline, analyse statique code, tests de charge, rapports.", tools:["GitLab CI","SonarQube","Jest","Lighthouse"] },
+            { acts:["Tests acceptation et intégration","Tests système"], tasks:"Planification tests d'acceptation, tests système, tests de déploiement.", tools:["Cypress","Jest","JMeter"] },
+            { acts:["Plan de tests complet projet chef d'œuvre"], tasks:"Rédaction et exécution plan de tests, jeu d'essais, analyse des écarts.", tools:["Jest","Cypress","PHPUnit"] },
+          ]
+        },
+        {
+          code:"C10", label:"Préparer et documenter le déploiement", levels:[0,0,0,2,2,3],
+          activities:[
+            null, null, null,
+            { acts:["Scripts de déploiement","Documentation pipeline","Environnements staging"], tasks:"Préparation scripts d'évolution, documentation déploiement, environnements de staging.", tools:["GitLab CI","Docker","Bash","Markdown"] },
+            { acts:["Pipeline CD documenté","Guide déploiement continu"], tasks:"Documentation complète du pipeline CD, procédures de déploiement continu, runbooks.", tools:["GitLab CI","Confluence","Docker"] },
+            { acts:["Documentation déploiement projet chef d'œuvre"], tasks:"Documentation technique complète du déploiement du projet final.", tools:["Confluence","GitLab","Markdown"] },
+          ]
+        },
+        {
+          code:"C11", label:"Contribuer à la mise en production DevOps", levels:[0,0,2,3,3,3],
+          activities:[
+            null, null,
+            { acts:["Versionnement avancé Git","Gestion branches","Merge requests"], tasks:"Workflow Git avancé, gestion conflits, merge requests, revue de code.", tools:["Git","GitLab","GitHub"] },
+            { acts:["Pipeline CI mis en production","Déploiement continu","Monitoring"], tasks:"Mise en place pipeline complet, déploiement automatisé, suivi des déploiements.", tools:["GitLab CI","GitHub Actions","Docker"] },
+            { acts:["Pipeline CD","Micro-services en production","Orchestration"], tasks:"Livraison continue, orchestration conteneurs, déploiement multi-services.", tools:["Docker Compose","GitLab CI","Kubernetes basique"] },
+            { acts:["Mise en production projet chef d'œuvre"], tasks:"Déploiement complet du projet final avec pipeline CI/CD.", tools:["GitLab CI","Docker","GitHub Actions"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Spécialisation DevOps",
+      type: "dv",
+      rows: [
+        {
+          code:"DEVOPS1", label:"Environnement de conteneurisation", levels:[1,2,3,3,3,3],
+          activities:[
+            { acts:["Découverte Docker","Premiers conteneurs","Environnement dev unifié"], tasks:"Installation Docker, Dockerfiles de base, lancement conteneurs, initiation documentation anglais.", tools:["Docker","Docker Hub","VS Code"] },
+            { acts:["Docker Compose","Conteneurisation full-stack","Env de test conteneurisé"], tasks:"Docker Compose pour stack complète (app + BDD), volumes, réseaux, healthchecks.", tools:["Docker","Docker Compose","MySQL"] },
+            { acts:["Conteneurs de test","Isolation environnements","Config avancée"], tasks:"Séparation env dev/test, configuration Dockerfiles multi-stage, optimisation images.", tools:["Docker","Docker Compose","Jest","Cypress"] },
+            { acts:["Conteneurs dans le pipeline CI","Build automatisé","Registre d'images"], tasks:"Build d'images dans le CI, push vers registre, scanning de vulnérabilités des images.", tools:["Docker","GitLab Registry","GitHub Container Registry"] },
+            { acts:["Orchestration multi-conteneurs","Docker Compose production","Config micro-services"], tasks:"Orchestration Docker Compose, configs par service, déploiement multi-environnements.", tools:["Docker Compose","Docker Swarm","Portainer"] },
+            { acts:["Environnement conteneurisé projet chef d'œuvre"], tasks:"Environnement complet conteneurisé du projet final, déployable en CI/CD.", tools:["Docker","Docker Compose","GitLab"] },
+          ]
+        },
+        {
+          code:"DEVOPS2", label:"Flux de travail Git", levels:[1,2,3,3,3,3],
+          activities:[
+            { acts:["Git flow basique","Branches feature","Commits conventionnels"], tasks:"Init dépôt, branches, commits, merge simple, résolution conflits basiques.", tools:["Git","GitLab","GitHub"] },
+            { acts:["Git flow avancé","Tags de version","Pull/Merge requests"], tasks:"Workflow Git adapté à l'équipe, tagging, revue de code, protection de branches.", tools:["Git","GitLab","GitHub","Conventional Commits"] },
+            { acts:["Workflow Git pour TDD","Branches de test","Intégration continue Git"], tasks:"Gestion branches de test, fusion conditionnelle aux résultats de tests, hooks Git.", tools:["Git","GitLab","GitHub"] },
+            { acts:["Git dans pipeline CI","Gestion artefacts","Déclencheurs automatiques"], tasks:"Triggers CI sur événements Git, gestion des artefacts par branche, stratégies de merge.", tools:["GitLab CI","GitHub Actions","Git"] },
+            { acts:["Git flow production CD","Release branches","Hotfix workflow"], tasks:"Workflow de livraison continue, release branches, hotfix, rollback stratégies.", tools:["Git","GitLab","GitHub Actions"] },
+            { acts:["Versionnement avancé projet chef d'œuvre"], tasks:"Versionnement complet du projet final, historique propre, tags de version.", tools:["Git","GitLab","GitHub"] },
+          ]
+        },
+        {
+          code:"DEVOPS3", label:"Tests statiques et dynamiques", levels:[1,2,3,3,3,3],
+          activities:[
+            { acts:["Premiers tests unitaires","Tests dans Docker","Validation CI basique"], tasks:"Intégration tests unitaires dans l'environnement conteneurisé, exécution automatisée.", tools:["Jest","PHPUnit","Docker"] },
+            { acts:["Tests statiques code","Linters","Couverture de tests"], tasks:"Analyse statique, linting, métriques de couverture, qualité du code.", tools:["ESLint","SonarQube","Jest","PHPUnit"] },
+            { acts:["TDD dans Docker","Tests d'intégration","Tests fonctionnels automatisés"], tasks:"Tests automatisés complets dans conteneurs, plans de tests structurés, synthèses.", tools:["Cypress","Jest","Docker","SonarQube"] },
+            { acts:["Tests dans pipeline CI","Rapport automatique","Seuils de qualité"], tasks:"Intégration tests statiques/dynamiques dans CI, seuils de qualité, rapports automatiques.", tools:["GitLab CI","SonarQube","Jest","Lighthouse"] },
+            { acts:["Tests de validation déploiement","Tests d'acceptation","Tests système"], tasks:"Tests de déploiement, tests système, validation des micro-services.", tools:["Cypress","Jest","Postman","Docker"] },
+            { acts:["Tests complets projet chef d'œuvre"], tasks:"Plan de tests complet, tests automatisés intégrés dans CI/CD du projet.", tools:["Jest","Cypress","SonarQube"] },
+          ]
+        },
+        {
+          code:"DEVOPS4", label:"Chaîne d'intégration continue", levels:[0,0,0,2,3,3],
+          activities:[
+            null, null, null,
+            { acts:["Mise en place pipeline CI","Configuration triggers","Build automatisé"], tasks:"Choix outil CI, fichier de configuration, déclencheurs sur événements Git, étapes de build.", tools:["GitLab CI","GitHub Actions","Docker"] },
+            { acts:["Pipeline CI/CD complet","Livraison continue","Staging automatisé"], tasks:"Extension CI vers CD, déploiement staging automatique, orchestration pipeline complet.", tools:["GitLab CI","GitHub Actions","Docker Compose"] },
+            { acts:["Pipeline CI/CD projet chef d'œuvre"], tasks:"Configuration et documentation du pipeline CI/CD du projet final.", tools:["GitLab CI","GitHub Actions","Docker"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Compétences Transversales",
+      type: "ct",
+      rows: [
+        {
+          code:"CT1", label:"Planifier le travail individuel et en équipe", levels:[1,2,2,2,2,3],
+          activities:[
+            { acts:["Planification Prairie","Découpage tâches","Agenda personnel"], tasks:"Estimation des tâches, organisation personnelle, priorisation.", tools:["Trello","Notion"] },
+            { acts:["Sprint planning","Rétroplanning projet","Outils agiles"], tasks:"Planification sprint, gestion du backlog, estimation story points.", tools:["Jira","Trello","GitLab"] },
+            { acts:["Planification tests","Organisation équipe agile"], tasks:"Planification des cycles de tests, organisation du travail en parallèle.", tools:["Jira","GitLab","Confluence"] },
+            { acts:["Planification pipeline CI","Roadmap technique"], tasks:"Planification des étapes CI, organisation des livraisons, suivi des métriques.", tools:["GitLab","Jira","Confluence"] },
+            { acts:["Planification livraisons CD","Coordination DevOps"], tasks:"Planification livraisons continues, coordination équipe Dev+Ops.", tools:["Jira","GitLab","Confluence"] },
+            { acts:["Planification complète chef d'œuvre"], tasks:"Organisation et suivi complet du projet final, présentation planification au jury.", tools:["Jira","Notion","Gantt"] },
+          ]
+        },
+        {
+          code:"CT2", label:"Piloter l'organisation collective", levels:[1,1,2,2,2,3],
+          activities:[
+            { acts:["Dynamique de promotion","Arbre de compétences collectif"], tasks:"Participation à l'émergence du collectif, engagement dans la promotion.", tools:["Discord","Teams"] },
+            { acts:["Rituels agiles","Stand-up","Rétrospectives"], tasks:"Animation et participation aux rituels agiles, gestion des imprévus.", tools:["Jira","Teams","Miro"] },
+            { acts:["Organisation équipe tests","Revues croisées"], tasks:"Échange de plans de tests entre équipes, revues de code croisées.", tools:["GitLab","GitHub","Miro"] },
+            { acts:["Coordination CI","Gestion fusion branches","Reporting"], tasks:"Pilotage de la fusion de branches, communication sur l'état du pipeline.", tools:["GitLab","Jira","Teams"] },
+            { acts:["Création équipe DevOps","Sélection outils chaîne DevOps"], tasks:"Constitution équipe DevOps, accompagnement sélection outils Dev+Ops.", tools:["Confluence","Jira","Teams"] },
+            { acts:["Pilotage projet chef d'œuvre","Soutenance collective"], tasks:"Organisation de la soutenance, coordination des présentations.", tools:["Jira","Teams","Confluence"] },
+          ]
+        },
+        {
+          code:"CT3", label:"Définir le périmètre d'un problème", levels:[1,2,2,2,2,3],
+          activities:[
+            { acts:["Débogage structuré","Identification erreurs","Arbre de causes"], tasks:"Isolation du problème, formulation hypothesis, recherche documentation.", tools:["Chrome DevTools","VS Code"] },
+            { acts:["Débogage back/front","Analyse erreurs API","Documentation problème"], tasks:"Débogage structuré front et back, analyse logs, documentation du problème rencontré.", tools:["Postman","Chrome DevTools","SonarQube"] },
+            { acts:["Analyse rapports de tests","Interprétation failures CI"], tasks:"Lecture et interprétation rapports de tests, identification des causes de regression.", tools:["Jest","GitLab CI","SonarQube"] },
+            { acts:["Analyse performance","Identification goulots"], tasks:"Profiling, identification des problèmes de performance, diagnostic sécurité.", tools:["Lighthouse","JMeter","SonarQube"] },
+            { acts:["Diagnostic pipeline CD","Analyse incidents déploiement"], tasks:"Débogage pipeline CD, identification causes d'échec de déploiement.", tools:["GitLab","Docker logs","Portainer"] },
+            { acts:["Résolution problèmes chef d'œuvre"], tasks:"Approche structurée pour tous les problèmes techniques du projet final.", tools:["VS Code","GitLab","SonarQube"] },
+          ]
+        },
+        {
+          code:"CT4", label:"Rechercher des solutions méthodiquement", levels:[1,2,2,2,2,3],
+          activities:[
+            { acts:["Veille technologique","Documentation officielle","Pair programming"], tasks:"Utilisation documentation en anglais, recherche méthodique de solutions, pair programming.", tools:["MDN","Stack Overflow","GitHub"] },
+            { acts:["OWASP","Patterns architecturaux","Benchmarks techniques"], tasks:"Application guides OWASP, choix de patterns, comparaison d'approches techniques.", tools:["OWASP","MDN","GitHub"] },
+            { acts:["Patterns de tests","Bibliothèques de tests","Solutions TDD"], tasks:"Recherche patterns de tests adaptés, sélection bibliothèques, comparaison approches.", tools:["Jest docs","Cypress docs","Testing Library"] },
+            { acts:["Patterns sécurité","Optimisations","Outils CI"], tasks:"Recherche security patterns, outils de profiling, solutions d'optimisation.", tools:["OWASP","SonarQube docs","GitLab docs"] },
+            { acts:["Patterns micro-services","Outils orchestration"], tasks:"Recherche patterns micro-services, sélection outils d'orchestration.", tools:["Docker docs","Kubernetes docs","Martin Fowler"] },
+            { acts:["Solutions techniques projet chef d'œuvre"], tasks:"Veille et recherche de solutions pour les défis techniques du projet final.", tools:["GitHub","Stack Overflow","Docs officielles"] },
+          ]
+        },
+        {
+          code:"CT5", label:"Partager et documenter les solutions", levels:[1,2,2,2,2,3],
+          activities:[
+            { acts:["README","Commentaires code","Documentation technique"], tasks:"Rédaction README, commentaires de code, documentation des choix techniques.", tools:["Markdown","Git","Confluence"] },
+            { acts:["Documentation API","Diagrammes UML","Guides techniques"], tasks:"Documentation API REST, mise à jour diagrammes, documentation d'architecture.", tools:["Swagger","Confluence","draw.io"] },
+            { acts:["Documentation tests","Synthèse de tests","Rapports de qualité"], tasks:"Documentation des plans de tests, synthèses, rapports de qualité partagés.", tools:["Confluence","GitLab","Markdown"] },
+            { acts:["Documentation pipeline CI","Guides contribution","Runbooks"], tasks:"Documentation pipeline CI, guides de contribution, procédures d'exploitation.", tools:["Confluence","GitLab","Markdown"] },
+            { acts:["Documentation CD","Dossier technique DevOps"], tasks:"Documentation complète pipeline CD, dossier technique pour les équipes.", tools:["Confluence","GitLab","Markdown"] },
+            { acts:["Documentation projet chef d'œuvre"], tasks:"Dossier professionnel, rapport projet, documentation technique complète.", tools:["Confluence","Word","Markdown"] },
+          ]
+        },
+        {
+          code:"CT6", label:"Présenter un travail réalisé", levels:[1,1,2,2,2,3],
+          activities:[
+            { acts:["Restitution Prairie","Démonstration projet","Présentation promotion"], tasks:"Présentation du projet Prairie, démonstration live, réponse aux questions.", tools:["PowerPoint","VS Code","Figma"] },
+            { acts:["Démo API","Présentation revue de code","Soutenance intermédiaire"], tasks:"Démonstration API, présentation des choix techniques, code review orale.", tools:["Postman","PowerPoint","GitLab"] },
+            { acts:["Présentation synthèse tests","Revue de sprint"], tasks:"Présentation des résultats de tests, démonstration des fonctionnalités testées.", tools:["PowerPoint","Cypress","GitLab"] },
+            { acts:["Présentation pipeline CI","Démonstration intégration continue"], tasks:"Démonstration pipeline CI en live, présentation métriques qualité.", tools:["GitLab CI","PowerPoint","SonarQube"] },
+            { acts:["Présentation architecture micro-services","Documentation technique"], tasks:"Présentation architecture, démonstration déploiement, remise dossier technique.", tools:["PowerPoint","draw.io","Docker"] },
+            { acts:["Soutenance titre professionnel","Passage certification DevOps"], tasks:"Présentation chef d'œuvre devant le jury, démonstration, soutenance certification RS6840.", tools:["PowerPoint","GitLab","Docker"] },
+          ]
+        },
+        {
+          code:"CT7", label:"Intégration à l'environnement professionnel", levels:[1,1,1,2,2,3],
+          activities:[
+            { acts:["Découverte culture Simplon","Projet professionnel","Règlement intérieur"], tasks:"Intégration à la promotion, rédaction projet professionnel, engagement Simplon.", tools:["Discord","Simplonline"] },
+            { acts:["Culture agile","Intégration en entreprise","Codes pro numériques"], tasks:"Adoption des pratiques agiles, intégration équipe alternance, codes professionnels.", tools:["Slack","Teams","Jira"] },
+            { acts:["Culture DevOps","Pratiques équipe développement"], tasks:"Adoption pratiques DevOps, intégration dans équipe de développement.", tools:["GitLab","Slack","Teams"] },
+            { acts:["Posture DevOps en équipe","Partage de pratiques"], tasks:"Contribution à la culture DevOps de l'équipe, partage des bonnes pratiques CI.", tools:["Confluence","GitLab","Teams"] },
+            { acts:["Contribution culture DevOps","Leadership technique basique"], tasks:"Accompagnement des pairs, partage d'expertise DevOps, contribution à l'équipe.", tools:["Confluence","Teams","Slack"] },
+            { acts:["Valorisation culture DevOps dans chef d'œuvre"], tasks:"Intégration des pratiques DevOps dans le projet final, démonstration de la posture.", tools:["GitLab","Confluence","Teams"] },
+          ]
+        },
+        {
+          code:"CT8", label:"Interagir de façon constructive", levels:[1,1,2,2,2,3],
+          activities:[
+            { acts:["Communication en promotion","Pair programming","Feedback bienveillant"], tasks:"Communication bienveillante, pair programming, échanges constructifs en équipe.", tools:["Discord","Teams"] },
+            { acts:["Code review constructive","Communication client simulé","Feedback formateur"], tasks:"Revue de code respectueuse, communication régulière avec le formateur.", tools:["GitLab","GitHub","Teams"] },
+            { acts:["Échanges sur plans de tests","Communication entre équipes","Résolution conflits Git"], tasks:"Communication inter-équipes, résolution conflits de code, échanges techniques.", tools:["GitLab","Teams","Slack"] },
+            { acts:["Communication CI/CD","Reporting équipe","Rituels agiles"], tasks:"Communication sur l'état du pipeline, partage des métriques, rituels de qualité.", tools:["GitLab","Teams","Jira"] },
+            { acts:["Définition rôles équipe DevOps","Communication Dev-Ops"], tasks:"Facilitation communication Dev/Ops, définition des responsabilités.", tools:["Confluence","Teams","Jira"] },
+            { acts:["Communication en soutenance","Réponse aux questions jury"], tasks:"Communication professionnelle devant le jury, échanges constructifs.", tools:["PowerPoint","Teams"] },
+          ]
+        },
+        {
+          code:"CT9", label:"Faciliter un temps de travail collectif", levels:[0,1,2,2,2,3],
+          activities:[
+            null,
+            { acts:["Animation stand-up","Facilitation retrospective","Organisation réunions bi/fr"], tasks:"Facilitation rituels agiles, organisation réunions en français et anglais.", tools:["Miro","Teams","Jira"] },
+            { acts:["Facilitation sprint review","Échange plans de tests entre équipes"], tasks:"Animation de la revue de sprint, organisation des échanges de plans de tests.", tools:["Miro","Teams","GitLab"] },
+            { acts:["Facilitation CI retrospective","Partage bonnes pratiques"], tasks:"Organisation retours d'expérience CI, partage des pratiques de l'équipe.", tools:["Miro","Confluence","Teams"] },
+            { acts:["Facilitation équipe DevOps","Constitution équipe"], tasks:"Accompagnement constitution équipe DevOps, facilitation des décisions collectives.", tools:["Miro","Confluence","Teams"] },
+            { acts:["Facilitation soutenance collective","Organisation démonstration"], tasks:"Organisation de la soutenance, facilitation des échanges lors de la présentation.", tools:["Teams","Miro","PowerPoint"] },
+          ]
+        },
+      ]
+    }
+  ]
+};
+
+// ─── GLOBAL TOOLTIP ───
+const gTooltip = document.getElementById('global-tooltip');
+let ttVisible = false;
+
+function buildTooltipHTML(phIdx, code, lv, actData) {
+  const lvLabel = levelLabels[lv];
+  const phName  = phNames[phIdx];
+  const phColor = phColors[phIdx];
+
+  let inner = `
+    <div class="tt-header">
+      <div class="tt-phase-dot" style="background:${phColor}"></div>
+      <div class="tt-title">${phName}</div>
+      <div class="tt-level">${lvLabel}</div>
+    </div>`;
+
+  if (!actData) {
+    inner += `<div class="tt-empty">Compétence non mobilisée dans cette phase.</div>`;
+  } else {
+    if (actData.acts?.length) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Activités</div>
+        <ul class="tt-activities">${actData.acts.map(a => `<li>${a}</li>`).join('')}</ul>
+      </div>`;
+    }
+    if (actData.tasks) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Tâches type</div>
+        <div class="tt-tasks">${actData.tasks}</div>
+      </div>`;
+    }
+    if (actData.tools?.length) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Outils envisagés</div>
+        <div class="tt-tools">${actData.tools.map(t => `<span class="tt-tool">${t}</span>`).join('')}</div>
+      </div>`;
+    }
+  }
+  return inner;
+}
+
+function showTooltip(e, html) {
+  gTooltip.innerHTML = html;
+  gTooltip.classList.add('visible');
+  ttVisible = true;
+  positionTooltip(e);
+}
+function hideTooltip() {
+  gTooltip.classList.remove('visible');
+  ttVisible = false;
+}
+function positionTooltip(e) {
+  const margin = 12;
+  const tw = gTooltip.offsetWidth;
+  const th = gTooltip.offsetHeight;
+  let x = e.clientX + margin;
+  let y = e.clientY - th / 2;
+  if (x + tw > window.innerWidth  - margin) x = e.clientX - tw - margin;
+  if (y < margin)                           y = margin;
+  if (y + th > window.innerHeight - margin) y = window.innerHeight - th - margin;
+  gTooltip.style.left = x + 'px';
+  gTooltip.style.top  = y + 'px';
+}
+document.addEventListener('mousemove', e => { if (ttVisible) positionTooltip(e); });
+
+// ─── RENDER HEATMAP ───
+const hmGrid = document.getElementById('heatmap');
+
+heatmapData.sections.forEach(section => {
+  const sh = document.createElement('div');
+  sh.className = 'hm-section-header';
+  sh.textContent = section.title;
+  hmGrid.appendChild(sh);
+
+  section.rows.forEach(row => {
+    const labelCell = document.createElement('div');
+    labelCell.className = 'hm-cell-label';
+    const codeSpan = document.createElement('span');
+    codeSpan.className = `hm-code code-${section.type}`;
+    codeSpan.textContent = row.code;
+    labelCell.appendChild(codeSpan);
+    labelCell.appendChild(document.createTextNode(row.label));
+    hmGrid.appendChild(labelCell);
+
+    row.levels.forEach((lv, i) => {
+      const cell = document.createElement('div');
+      const extraClass = lv > 0 ? ` ${section.type}` : '';
+      cell.className = `hm-cell lv${lv}${extraClass}`;
+      if (lv > 0) cell.textContent = lv;
+      const actData = row.activities ? row.activities[i] : null;
+      const html = buildTooltipHTML(i, row.code, lv, actData);
+      cell.addEventListener('mouseenter', e => showTooltip(e, html));
+      cell.addEventListener('mouseleave', hideTooltip);
+      hmGrid.appendChild(cell);
+    });
+  });
+});
+</script>
+</body>
+</html>

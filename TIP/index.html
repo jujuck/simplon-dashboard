@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcours TIP — Technicien·ne Informatique de Proximité</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #100d18;
+    --surface: #1a1526;
+    --border: #2a1f3a;
+    --text: #ede8f5;
+    --muted: #7060a0;
+    --p0: #c084fc;
+    --p1: #818cf8;
+    --p2: #38bdf8;
+    --p3: #34d399;
+    --p4: #fb923c;
+    --p5: #f472b6;
+    --p6: #facc15;
+    --accent: #a78bfa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  .header { text-align: center; margin-bottom: 64px; }
+  .header-badge {
+    display: inline-block;
+    background: rgba(167,139,250,0.1);
+    border: 1px solid rgba(167,139,250,0.3);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: clamp(28px,5vw,52px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--accent); }
+  .header-sub { color: var(--muted); font-size: 15px; font-family: 'Space Mono', monospace; }
+
+  .section-title { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; margin-top: 72px; }
+  .section-title h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .section-num {
+    width: 32px; height: 32px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── FRISE ── */
+  .timeline-wrapper { overflow-x: auto; padding-bottom: 16px; }
+  .timeline { min-width: 860px; position: relative; padding: 24px 0 0; }
+
+  .months-axis { display: grid; grid-template-columns: 180px repeat(9, 1fr); margin-bottom: 8px; }
+  .month-tick {
+    text-align: center; font-family: 'Space Mono', monospace;
+    font-size: 10px; color: var(--muted); position: relative;
+  }
+  .month-tick::before {
+    content: ''; display: block; width: 1px; height: 6px;
+    background: var(--border); margin: 0 auto 4px;
+  }
+
+  .layers { display: flex; flex-direction: column; gap: 6px; }
+  .layer-row { display: grid; grid-template-columns: 180px 1fr; align-items: center; gap: 12px; min-height: 44px; }
+  .layer-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--muted);
+    text-align: right; padding-right: 12px; line-height: 1.3;
+  }
+  .layer-track { position: relative; height: 100%; min-height: 44px; display: flex; align-items: center; }
+
+  .grid-bg { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(9, 1fr); }
+  .grid-cell { border-left: 1px solid var(--border); }
+
+  .segment {
+    position: absolute; height: 34px; border-radius: 3px;
+    display: flex; align-items: center; padding: 0 10px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
+    overflow: hidden; cursor: default;
+    transition: filter 0.2s, transform 0.2s; white-space: nowrap;
+  }
+  .segment:hover { filter: brightness(1.25); transform: translateY(-2px); z-index: 10; }
+  .segment-label { overflow: hidden; text-overflow: ellipsis; }
+
+  .ph0 { background: rgba(192,132,252,0.2); border: 1px solid rgba(192,132,252,0.5); color: var(--p0); }
+  .ph1 { background: rgba(129,140,248,0.2); border: 1px solid rgba(129,140,248,0.5); color: var(--p1); }
+  .ph2 { background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.5); color: var(--p2); }
+  .ph3 { background: rgba(52,211,153,0.2); border: 1px solid rgba(52,211,153,0.5); color: var(--p3); }
+  .ph4 { background: rgba(251,146,60,0.2); border: 1px solid rgba(251,146,60,0.5); color: var(--p4); }
+  .ph5 { background: rgba(244,114,182,0.2); border: 1px solid rgba(244,114,182,0.5); color: var(--p5); }
+  .ph6 { background: rgba(250,204,21,0.2); border: 1px solid rgba(250,204,21,0.5); color: var(--p6); }
+
+  .centre-seg { background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.3); color: var(--accent); }
+  .stage-seg  { background: rgba(244,114,182,0.08); border: 1px dashed rgba(244,114,182,0.3); color: var(--p5); }
+
+  .phase-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── HEATMAP ── */
+  .heatmap-container { overflow-x: auto; padding-bottom: 16px; }
+  .heatmap { min-width: 700px; }
+  .heatmap-grid { display: grid; grid-template-columns: 260px repeat(7, 1fr); gap: 3px; }
+
+  .hm-col-label {
+    text-align: center; font-family: 'Space Mono', monospace;
+    font-size: 10px; font-weight: 700; padding: 10px 4px; letter-spacing: 0.04em;
+  }
+  .hm-cell-label { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 0; font-size: 12px; line-height: 1.3; }
+  .hm-code {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    padding: 2px 5px; border-radius: 2px; flex-shrink: 0;
+    font-weight: 700; min-width: 44px; text-align: center;
+  }
+  .code-c  { background: rgba(167,139,250,0.15); color: var(--accent); border: 1px solid rgba(167,139,250,0.3); }
+  .code-ct { background: rgba(52,211,153,0.15); color: var(--p3); border: 1px solid rgba(52,211,153,0.3); }
+
+  .hm-cell {
+    border-radius: 3px; display: flex; align-items: center; justify-content: center;
+    min-height: 40px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: default; transition: transform 0.15s, filter 0.15s; position: relative;
+  }
+  .hm-cell:hover { transform: scale(1.06); filter: brightness(1.3); z-index: 5; }
+
+  .lv0 { background: var(--surface); color: var(--border); }
+  .lv1.c  { background: rgba(167,139,250,0.15); color: var(--accent); border: 1px solid rgba(167,139,250,0.25); }
+  .lv2.c  { background: rgba(167,139,250,0.35); color: var(--accent); border: 1px solid rgba(167,139,250,0.55); }
+  .lv3.c  { background: rgba(167,139,250,0.62); color: #fff; border: 1px solid rgba(167,139,250,0.9); }
+  .lv1.ct { background: rgba(52,211,153,0.13); color: var(--p3); border: 1px solid rgba(52,211,153,0.25); }
+  .lv2.ct { background: rgba(52,211,153,0.33); color: var(--p3); border: 1px solid rgba(52,211,153,0.55); }
+  .lv3.ct { background: rgba(52,211,153,0.60); color: #fff; border: 1px solid rgba(52,211,153,0.9); }
+
+  .hm-section-header {
+    grid-column: 1 / -1; padding: 12px 0 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    border-top: 1px solid var(--border); margin-top: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hm-section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .hm-legend {
+    display: flex; align-items: center; gap: 6px; margin-top: 20px;
+    font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); flex-wrap: wrap;
+  }
+  .hm-legend-box { width: 20px; height: 20px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── TOOLTIP ── */
+  #global-tooltip {
+    position: fixed;
+    background: #130f20;
+    border: 1px solid rgba(167,139,250,0.2);
+    padding: 12px 14px; font-size: 11px; border-radius: 6px;
+    white-space: normal; pointer-events: none;
+    z-index: 9999; font-family: 'Space Mono', monospace;
+    color: var(--text); width: 290px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+    line-height: 1.5; opacity: 0; transition: opacity 0.12s;
+  }
+  #global-tooltip.visible { opacity: 1; }
+
+  .tt-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .tt-phase-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tt-title { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); text-transform: uppercase; }
+  .tt-level { margin-left: auto; font-size: 9px; padding: 2px 6px; border-radius: 2px; background: rgba(167,139,250,0.1); color: var(--accent); border: 1px solid rgba(167,139,250,0.2); white-space: nowrap; }
+  .tt-section { margin-bottom: 7px; }
+  .tt-section-label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .tt-activities { list-style: none; padding: 0; }
+  .tt-activities li { font-size: 10px; color: var(--text); padding: 2px 0 2px 10px; position: relative; line-height: 1.4; }
+  .tt-activities li::before { content: '›'; position: absolute; left: 0; color: var(--muted); }
+  .tt-tasks { font-size: 10px; color: rgba(237,232,245,0.65); line-height: 1.4; }
+  .tt-tools { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; }
+  .tt-tool { font-size: 9px; padding: 1px 5px; border-radius: 2px; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2); color: var(--accent); }
+  .tt-empty { font-size: 10px; color: var(--muted); font-style: italic; }
+
+  .footer { margin-top: 80px; text-align: center; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+
+  /* Bandeau spécifique pour signaler la rupture de rythme */
+  .timeline-band {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 16px; padding: 10px 14px;
+    background: rgba(167,139,250,0.05);
+    border: 1px solid rgba(167,139,250,0.15);
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted);
+  }
+  .timeline-band span { display: flex; align-items: center; gap: 6px; }
+  .band-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div id="global-tooltip"></div>
+
+<div class="header">
+  <div class="header-badge">RNCP40799 · Niveau 4</div>
+  <h1>Parcours <span>TIP</span><br>Technicien·ne Informatique de Proximité</h1>
+  <p class="header-sub">980h total · 9 mois · Centre intensif + Stage + Certification</p>
+</div>
+
+<!-- ── FRISE ── -->
+<div class="section-title">
+  <div class="section-num">01</div>
+  <h2>Frise chronologique en couches</h2>
+</div>
+
+<div class="timeline-band">
+  <span><div class="band-dot" style="background:var(--accent);border:1px solid rgba(167,139,250,0.5)"></div>M1–M4 : Formation intensive en centre (567h — 4 mois)</span>
+  <span><div class="band-dot" style="background:var(--p5);border:1px dashed rgba(244,114,182,0.4)"></div>M5–M6 : Stage en entreprise (308h dont 28h centre — 2 mois)</span>
+  <span><div class="band-dot" style="background:var(--p6);border:1px solid rgba(250,204,21,0.4)"></div>M7 : Préparation & passage titre pro (105h — ~3 semaines)</span>
+</div>
+
+<div class="timeline-wrapper">
+<div class="timeline">
+  <div class="months-axis">
+    <div class="label-spacer"></div>
+    <div class="month-tick">M1</div><div class="month-tick">M2</div>
+    <div class="month-tick">M3</div><div class="month-tick">M4</div>
+    <div class="month-tick">M5</div><div class="month-tick">M6</div>
+    <div class="month-tick">M7</div><div class="month-tick">M8</div>
+    <div class="month-tick">M9</div>
+  </div>
+  <div class="layers" id="frise"></div>
+</div>
+</div>
+
+<div class="phase-legend" style="margin-top:20px;">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p0)"></div>Prairie — Intégrer un utilisateur (70h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p1)"></div>Phase 1 — Gérer un parc & support utilisateurs (105h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p2)"></div>Phase 2 — Réseau d'entreprise (140h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p3)"></div>Phase 3 — Déploiement logiciels & innovation (182h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p4)"></div>Phase 4 — Maintenir équipements & réseaux (182h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p5)"></div>Phase 5 — Stage en entreprise (280h + 28h centre)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p6)"></div>Phase 6 — Préparation & Titre Pro (105h)</div>
+</div>
+
+<!-- ── HEATMAP ── -->
+<div class="section-title">
+  <div class="section-num">02</div>
+  <h2>Heatmap — Progression des compétences par phase</h2>
+</div>
+
+<div class="heatmap-container">
+<div class="heatmap">
+  <div class="heatmap-grid" id="heatmap">
+    <div class="hm-cell-label" style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;font-weight:700;">COMPÉTENCE</div>
+    <div class="hm-col-label" style="color:var(--p0)">Prairie<br><span style="font-weight:400;font-size:9px;color:var(--muted)">70h</span></div>
+    <div class="hm-col-label" style="color:var(--p1)">PH1<br><span style="font-weight:400;font-size:9px;color:var(--muted)">105h</span></div>
+    <div class="hm-col-label" style="color:var(--p2)">PH2<br><span style="font-weight:400;font-size:9px;color:var(--muted)">140h</span></div>
+    <div class="hm-col-label" style="color:var(--p3)">PH3<br><span style="font-weight:400;font-size:9px;color:var(--muted)">182h</span></div>
+    <div class="hm-col-label" style="color:var(--p4)">PH4<br><span style="font-weight:400;font-size:9px;color:var(--muted)">182h</span></div>
+    <div class="hm-col-label" style="color:var(--p5)">PH5<br><span style="font-weight:400;font-size:9px;color:var(--muted)">Stage</span></div>
+    <div class="hm-col-label" style="color:var(--p6)">PH6<br><span style="font-weight:400;font-size:9px;color:var(--muted)">105h</span></div>
+  </div>
+</div>
+</div>
+
+<div class="hm-legend" style="margin-top:20px;">
+  <span>Niveau :</span>
+  <div class="hm-legend-box lv0" style="border:1px solid var(--border)"></div><span>—</span>
+  <div class="hm-legend-box" style="background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3)"></div><span>1 · Imiter</span>
+  <div class="hm-legend-box" style="background:rgba(167,139,250,0.35);border:1px solid rgba(167,139,250,0.55)"></div><span>2 · Adapter</span>
+  <div class="hm-legend-box" style="background:rgba(167,139,250,0.62);border:1px solid rgba(167,139,250,0.9)"></div><span>3 · Transposer</span>
+  &nbsp;·&nbsp;
+  <div class="hm-legend-box" style="background:rgba(167,139,250,0.35);border:1px solid rgba(167,139,250,0.5)"></div><span>Compétences TIP (C)</span>
+  <div class="hm-legend-box" style="background:rgba(52,211,153,0.33);border:1px solid rgba(52,211,153,0.5)"></div><span>Transversales (CT)</span>
+</div>
+
+<div class="footer">
+  Technicien·ne Informatique de Proximité · Simplon · RNCP40799 · Niveau 4
+</div>
+
+<script>
+// ══════════════════════════════════════
+// FRISE — 9 mois repères (7 mois effectifs)
+// Prairie: M1 (0.75m) · PH1: M1-M2 (1.25m) · PH2: M2-M3 (1.5m)
+// PH3: M3-M4 (2m) · PH4: M4-M5 (2m) · PH5: M5-M7 (2m) · PH6: M7 (0.75m)
+// Total intensif : 4 mois → ~4/9 de la frise
+// Stage : 2 mois → ~2/9
+// Certif : ~3 semaines → ~0.75/9
+// ══════════════════════════════════════
+const totalMonths = 9;
+
+const layers = [
+  {
+    label: "PHASES",
+    segments: [
+      { start:0,    dur:0.75, label:"Prairie · Intégrer un utilisateur", ph:"ph0" },
+      { start:0.75, dur:1.25, label:"Phase 1 · Gérer un parc & support", ph:"ph1" },
+      { start:2,    dur:1.5,  label:"Phase 2 · Réseau d'entreprise", ph:"ph2" },
+      { start:3.5,  dur:2,    label:"Phase 3 · Déploiement logiciels", ph:"ph3" },
+      { start:5.5,  dur:2,    label:"Phase 4 · Maintenir équipements & réseaux", ph:"ph4" },
+      { start:5.5,  dur:0,    label:"",  ph:"ph4" }, // séparateur visuel
+    ]
+  },
+  {
+    label: "HEURES CENTRE",
+    segments: [
+      { start:0,    dur:0.75, label:"70h", ph:"ph0" },
+      { start:0.75, dur:1.25, label:"105h", ph:"ph1" },
+      { start:2,    dur:1.5,  label:"140h", ph:"ph2" },
+      { start:3.5,  dur:2,    label:"182h", ph:"ph3" },
+      { start:5.5,  dur:2,    label:"182h", ph:"ph4" },
+    ]
+  },
+  {
+    label: "MODE\nFORMATION",
+    segments: [
+      { start:0,   dur:7.5, label:"Formation intensive en centre de formation — présentiel", ph:"centre-seg" },
+      { start:7.5, dur:0,   label:"", ph:"centre-seg"},
+    ]
+  },
+  {
+    label: "PHASE 5\nSTAGE",
+    segments: [
+      { start:7.5, dur:0.25, label:"Prép.", ph:"ph5" },
+      { start:7.75, dur:1.5, label:"Stage entreprise — 280h", ph:"stage-seg" },
+      { start:9.25, dur:0.25, label:"Retour", ph:"ph5" },
+    ]
+  },
+  {
+    label: "PHASE 6\nCERTIF.",
+    segments: [
+      { start:9.5, dur:0.75, label:"Préparation & Passage Titre Pro (105h)", ph:"ph6" },
+    ]
+  },
+  {
+    label: "COMPÉTENCES\nC1 → C8",
+    segments: [
+      { start:0,    dur:0.75, label:"C1 C2 C4", ph:"ph0" },
+      { start:0.75, dur:1.25, label:"C1 C2 C3 C4 C5", ph:"ph1" },
+      { start:2,    dur:1.5,  label:"C1 C6 C7 C8", ph:"ph2" },
+      { start:3.5,  dur:2,    label:"C1 C2 C3 C5 C6", ph:"ph3" },
+      { start:5.5,  dur:2,    label:"Toutes C1→C8", ph:"ph4" },
+      { start:7.5,  dur:0.25, label:"Selon mission", ph:"ph5" },
+      { start:9.5,  dur:0.75, label:"Toutes C1→C8", ph:"ph6" },
+    ]
+  },
+  {
+    label: "CERTIFICATIONS",
+    segments: [
+      { start:9.5, dur:0.75, label:"Passage Titre Pro RNCP40799", ph:"ph4" },
+    ]
+  }
+];
+
+const friseEl = document.getElementById('frise');
+
+layers.forEach(layer => {
+  const row = document.createElement('div');
+  row.className = 'layer-row';
+  const labelEl = document.createElement('div');
+  labelEl.className = 'layer-label';
+  labelEl.style.whiteSpace = 'pre-line';
+  labelEl.textContent = layer.label;
+  row.appendChild(labelEl);
+
+  const track = document.createElement('div');
+  track.className = 'layer-track';
+  const gridBg = document.createElement('div');
+  gridBg.className = 'grid-bg';
+  for (let i = 0; i < totalMonths; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell';
+    gridBg.appendChild(cell);
+  }
+  track.appendChild(gridBg);
+
+  layer.segments.forEach(seg => {
+    if (seg.dur === 0) return;
+    const el = document.createElement('div');
+    el.className = `segment ${seg.ph}`;
+    el.style.left  = `${(seg.start / totalMonths) * 100}%`;
+    el.style.width = `calc(${(seg.dur / totalMonths) * 100}% - 3px)`;
+    el.innerHTML   = `<span class="segment-label">${seg.label}</span>`;
+    track.appendChild(el);
+  });
+
+  row.appendChild(track);
+  friseEl.appendChild(row);
+});
+
+// ══════════════════════════════════════
+// HEATMAP — 7 colonnes [Prairie, PH1, PH2, PH3, PH4, PH5-Stage, PH6]
+// ══════════════════════════════════════
+
+const phNames  = ["Prairie","Phase 1 · Parc & Support","Phase 2 · Réseau","Phase 3 · Logiciels & Innovation","Phase 4 · Maintenance avancée","Phase 5 · Stage entreprise","Phase 6 · Titre Pro"];
+const phColors = ["#c084fc","#818cf8","#38bdf8","#34d399","#fb923c","#f472b6","#facc15"];
+const levelLabels = ["—","Niveau 1 · Imiter","Niveau 2 · Adapter","Niveau 3 · Transposer"];
+
+const heatmapData = {
+  sections: [
+    {
+      title: "Support utilisateur — C1 à C3",
+      type: "c",
+      rows: [
+        {
+          code:"C1", label:"Gérer demandes / incidents & suivi parc", levels:[1,2,2,3,3,3,3],
+          activities:[
+            { acts:["Prise de poste","Ticket utilisateur basique","Suivi parc"], tasks:"Configuration d'un poste de travail, gestion d'un premier ticket, initiation au suivi du parc informatique.", tools:["GLPI","Windows","Documentation"] },
+            { acts:["Gestion inventaire","Support N1 documenté","Ticketing ITIL"], tasks:"Gestion du parc via outil d'inventaire, traitement des tickets incidents selon les procédures ITIL.", tools:["GLPI","OCS Inventory","Freshdesk"] },
+            { acts:["Gestion incidents réseau","Suivi parc étendu"], tasks:"Gestion des incidents liés au réseau, mise à jour du parc lors d'évolutions d'infrastructure.", tools:["GLPI","Zabbix","Nagios"] },
+            { acts:["Incidents applicatifs","Gestion tickets complexes"], tasks:"Gestion des demandes liées aux déploiements logiciels, incidents nouveaux non documentés.", tools:["GLPI","Freshdesk","Confluence"] },
+            { acts:["Incidents avancés","Base de connaissances","Reporting"], tasks:"Résolution d'incidents complexes, alimentation de la base de connaissances, compte-rendu d'intervention.", tools:["GLPI","Confluence","Zabbix"] },
+            { acts:["Support en situation réelle","Gestion parc entreprise"], tasks:"Mobilisation en conditions réelles : gestion des demandes et incidents en entreprise.", tools:["Outil ITSM entreprise","Documentation"] },
+            { acts:["Révision pour l'examen","Simulation mise en situation"], tasks:"Préparation à la mise en situation jury, révision des procédures de gestion des incidents.", tools:["GLPI","Documentation","PowerPoint"] },
+          ]
+        },
+        {
+          code:"C2", label:"Assister et accompagner l'utilisateur", levels:[1,2,0,3,0,3,3],
+          activities:[
+            { acts:["Config poste nouveau collaborateur","Formation prise en main"], tasks:"Préparation d'un poste pour un nouveau collaborateur, accompagnement à la prise en main du matériel et des logiciels.", tools:["Windows","M365","TeamViewer"] },
+            { acts:["Support utilisateur N1","Assistance périphériques","Formation bureautique"], tasks:"Support de niveau 1 sur les usages bureautiques, assistance à la configuration de périphériques.", tools:["AnyDesk","M365","LibreOffice"] },
+            null,
+            { acts:["Accompagnement nouveau logiciel","Documentation utilisateur","Super utilisateur"], tasks:"Accompagnement des collaborateurs à l'adoption d'un nouveau logiciel, création de documentation et guides.", tools:["Confluence","PowerPoint","Notion"] },
+            null,
+            { acts:["Assistance utilisateurs en entreprise"], tasks:"Accompagnement des utilisateurs en situation réelle : prise en main, formation, réponse aux questions.", tools:["Outil ITSM","Documentation","TeamViewer"] },
+            { acts:["Simulation entretien jury","Démonstration assistance"], tasks:"Préparation à la mise en situation : simulation d'un accompagnement utilisateur devant le jury.", tools:["Windows","M365","PowerPoint"] },
+          ]
+        },
+        {
+          code:"C3", label:"Diagnostiquer un incident technique", levels:[0,1,0,2,3,3,3],
+          activities:[
+            null,
+            { acts:["Diagnostic composant","Remplacement disque dur","Démarche structurée"], tasks:"Application d'une démarche de diagnostic structurée, identification et remplacement de composants défectueux.", tools:["CrystalDiskInfo","MemTest86","Gestionnaire des tâches"] },
+            null,
+            { acts:["Diagnostic applicatif","Incidents non documentés","Résolution autonome"], tasks:"Diagnostic d'incidents applicatifs, résolution de problèmes nouveaux par démarche inductive.", tools:["Observateur événements","Process Monitor","Documentation"] },
+            { acts:["Diagnostic avancé","Incidents réseau complexes","Urgences terrain"], tasks:"Diagnostic approfondi d'incidents matériels et réseau complexes, interventions en urgence.", tools:["Wireshark","ipconfig/tracert","Zabbix"] },
+            { acts:["Diagnostic en entreprise"], tasks:"Diagnostic d'incidents dans les conditions réelles de l'entreprise.", tools:["Outils entreprise","Documentation","GLPI"] },
+            { acts:["Simulation diagnostic jury"], tasks:"Mise en situation de diagnostic devant le jury d'examen.", tools:["Matériel de diagnostic","Documentation"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Équipements numériques — C4 à C6",
+      type: "c",
+      rows: [
+        {
+          code:"C4", label:"Préparer et déployer des équipements", levels:[1,2,0,0,3,3,3],
+          activities:[
+            { acts:["Installation Windows","Configuration logiciels","Paramétrage boîte mail"], tasks:"Installation et configuration d'un OS, installation des logiciels et périphériques, configuration de la messagerie.", tools:["Windows","M365","AnyDesk"] },
+            { acts:["Déploiement flotte","Config OS multiples","Sauvegarde/restauration"], tasks:"Installation et configuration d'une flotte d'ordinateurs, gestion des images système.", tools:["Windows","Linux","Clonezilla"] },
+            null, null,
+            { acts:["Déploiement avancé","Régie nouveau site","Recommandation équipements"], tasks:"Déploiement d'équipements sur un nouveau site, recommandation de solutions adaptées aux besoins.", tools:["Windows","Linux","MDM"] },
+            { acts:["Déploiement en entreprise"], tasks:"Mise en service des équipements numériques dans les conditions réelles.", tools:["OS entreprise","MDM","Documentation"] },
+            { acts:["Révision déploiement pour examen"], tasks:"Préparation à la mise en situation de déploiement devant le jury.", tools:["Windows","Linux","Documentation"] },
+          ]
+        },
+        {
+          code:"C5", label:"Maintenir et assurer la disponibilité", levels:[0,1,0,2,3,3,3],
+          activities:[
+            null,
+            { acts:["Sauvegarde/restauration","Remplacement composant","Maintenance préventive"], tasks:"Mise en oeuvre des sauvegardes, remplacement de composants défectueux (RAM, disque), maintenance préventive.", tools:["Clonezilla","CrystalDiskInfo","Tournevis précision"] },
+            null,
+            { acts:["Maintien disponibilité logiciels","Mises à jour sécurité","Supervision basique"], tasks:"Gestion des mises à jour applicatives, maintien de la disponibilité des outils déployés.", tools:["WSUS","Ninite","GLPI"] },
+            { acts:["Maintenance corrective avancée","Supervision réseau","Protection antivirus"], tasks:"Réparations avancées (carte graphique, processeur), supervision du réseau, gestion des antivirus.", tools:["Zabbix","Nagios","Kaspersky","ESET"] },
+            { acts:["Maintenance en entreprise"], tasks:"Maintenance des équipements dans les conditions réelles de l'entreprise.", tools:["Outils entreprise","Documentation"] },
+            { acts:["Révision maintenance pour examen"], tasks:"Préparation à l'épreuve de maintenance devant le jury.", tools:["Matériel","Documentation","GLPI"] },
+          ]
+        },
+        {
+          code:"C6", label:"Contribuer à la sécurité des équipements", levels:[0,0,1,2,3,3,3],
+          activities:[
+            null, null,
+            { acts:["Sécurité basique réseau","Pare-feu Windows","RGPD sensibilisation"], tasks:"Configuration du pare-feu, sensibilisation à la sécurité des données, premières mesures de sécurisation.", tools:["Windows Defender","Kaspersky","Documentation"] },
+            { acts:["Politique sécurité","IAGen et sécurité","Sensibilisation utilisateurs"], tasks:"Application et diffusion de la politique de sécurité, accompagnement des utilisateurs aux bonnes pratiques d'hygiène informatique.", tools:["GPO","Windows Defender","PowerPoint"] },
+            { acts:["Sécurité avancée","Intervention poste infecté","Mises à jour sécurisées"], tasks:"Intervention en urgence sur un poste infecté, mise en place de solutions de protection avancées.", tools:["Kaspersky","ESET","Windows Server"] },
+            { acts:["Sécurité en entreprise"], tasks:"Mise en oeuvre des mesures de sécurité dans les conditions réelles de l'entreprise.", tools:["Antivirus entreprise","GPO","Documentation"] },
+            { acts:["Révision sécurité pour examen"], tasks:"Préparation aux questions de sécurité lors de l'entretien technique du jury.", tools:["Documentation","Checklists ANSSI"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Infrastructure réseau — C7 à C8",
+      type: "c",
+      rows: [
+        {
+          code:"C7", label:"Déployer et sécuriser les équipements réseaux", levels:[0,0,1,0,3,3,3],
+          activities:[
+            null, null,
+            { acts:["Config routeur/switch","VLAN basique","Tests câblage RJ45"], tasks:"Configuration des équipements réseau actifs, tests de câblage, mise en place de VLANs basiques.", tools:["Cisco","RJ45 testeur","ipconfig/tracert"] },
+            null,
+            { acts:["Renouvellement équipements réseau","Config avancée","Sécurisation réseau"], tasks:"Renouvellement et installation d'une infrastructure réseau, configuration avancée des équipements, sécurisation.", tools:["Cisco","Windows Server 2022","Wireshark"] },
+            { acts:["Réseau en entreprise"], tasks:"Déploiement et sécurisation des équipements réseau dans les conditions réelles.", tools:["Équipements entreprise","Documentation"] },
+            { acts:["Révision réseau pour examen"], tasks:"Préparation à la mise en situation réseau devant le jury.", tools:["Cisco","Wireshark","Documentation"] },
+          ]
+        },
+        {
+          code:"C8", label:"Intervenir sur Active Directory", levels:[0,0,1,0,3,3,3],
+          activities:[
+            null, null,
+            { acts:["Création comptes AD","Gestion droits d'accès","GPO basique"], tasks:"Intégration de nouveaux utilisateurs sur Active Directory, gestion des droits d'accès et des GPO.", tools:["Active Directory","ADsys","Windows Server 2022"] },
+            null,
+            { acts:["AD avancé","Gestion OUs","Audit sécurité AD"], tasks:"Administration avancée de l'annuaire, gestion des unités organisationnelles, audit et sécurisation.", tools:["Active Directory","Windows Server 2022","PowerShell"] },
+            { acts:["AD en entreprise"], tasks:"Administration de l'annuaire Active Directory dans les conditions réelles de l'entreprise.", tools:["Active Directory","Windows Server"] },
+            { acts:["Révision AD pour examen"], tasks:"Préparation aux questions sur Active Directory lors de l'entretien technique.", tools:["Active Directory","PowerShell","Documentation"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Compétences Transversales",
+      type: "ct",
+      rows: [
+        {
+          code:"CT1", label:"Planifier le travail individuel et collectif", levels:[0,0,0,1,2,3,2],
+          activities:[
+            null, null, null,
+            { acts:["Organisation déploiement logiciels","Planification accompagnement"], tasks:"Planification de l'accompagnement de plusieurs utilisateurs, organisation du déploiement d'un nouveau logiciel.", tools:["Trello","Jira","Outlook"] },
+            { acts:["Planification interventions","Coordination équipe SI"], tasks:"Planification des interventions maintenance, coordination avec l'équipe SI du site.", tools:["Jira","Trello","Outlook"] },
+            { acts:["Organisation stage","Gestion mission entreprise"], tasks:"Organisation de la recherche d'entreprise, planification de la prise de poste et des missions.", tools:["Notion","Outlook","GLPI"] },
+            { acts:["Planification préparation examen"], tasks:"Organisation de la préparation au titre professionnel, planning de révision.", tools:["Notion","Calendrier","Word"] },
+          ]
+        },
+        {
+          code:"CT2", label:"Piloter l'organisation du travail collectif", levels:[0,0,0,1,2,3,2],
+          activities:[
+            null, null, null,
+            { acts:["Coordination formation utilisateurs","Animation groupe"], tasks:"Organisation de sessions de formation collectives, coordination avec les équipes métier.", tools:["Teams","Trello","PowerPoint"] },
+            { acts:["Coordination équipe SI","Reporting interventions"], tasks:"Coordination avec l'équipe SI, compte-rendu des interventions, pilotage des priorités.", tools:["GLPI","Teams","Outlook"] },
+            { acts:["Intégration équipe IT","Participation à l'organisation"], tasks:"Intégration dans l'équipe technique de l'entreprise, contribution à l'organisation collective.", tools:["Outil interne","Teams","GLPI"] },
+            { acts:["Dossier professionnel","Préparation collective"], tasks:"Rédaction du dossier professionnel, préparation collective à l'examen.", tools:["Word","Teams","PowerPoint"] },
+          ]
+        },
+        {
+          code:"CT3", label:"Définir le périmètre d'un problème", levels:[0,1,2,3,3,3,3],
+          activities:[
+            null,
+            { acts:["Diagnostic incident utilisateur","Identification périmètre"], tasks:"Identification du périmètre d'un incident par questionnement structuré de l'utilisateur.", tools:["GLPI","Documentation","Téléphone"] },
+            { acts:["Périmètre incident réseau","Qualification problème AD"], tasks:"Qualification du périmètre d'un incident réseau ou d'un problème d'annuaire.", tools:["ping/tracert","AD","Zabbix"] },
+            { acts:["Périmètre incident applicatif","Cas non documentés"], tasks:"Définition du périmètre d'incidents nouveaux et non documentés, démarche inductive.", tools:["Observateur événements","Documentation","GLPI"] },
+            { acts:["Périmètre incidents complexes","Analyse urgences"], tasks:"Qualification rapide du périmètre lors d'interventions urgentes, analyse de la portée.", tools:["Zabbix","Wireshark","GLPI"] },
+            { acts:["Diagnostic en autonomie"], tasks:"Qualification des problèmes rencontrés en entreprise en toute autonomie.", tools:["Outils entreprise","Documentation"] },
+            { acts:["Simulation jury — diagnostic"], tasks:"Définition précise du périmètre du problème lors de la mise en situation examen.", tools:["Matériel","Documentation"] },
+          ]
+        },
+        {
+          code:"CT4", label:"Rechercher des pistes de résolution", levels:[1,2,3,3,3,3,3],
+          activities:[
+            { acts:["Démarche résolution basique","Documentation technique"], tasks:"Application d'une démarche de résolution de problèmes structurée, utilisation de la documentation technique.", tools:["Google","Documentation","Stack Overflow"] },
+            { acts:["Recherche solution incidents","Diagnostics comparatifs"], tasks:"Recherche méthodique de solutions pour des pannes matérielles et logicielles.", tools:["Google","Documentation constructeur","Forums techniques"] },
+            { acts:["Recherche solution réseau","Base de connaissances"], tasks:"Recherche de solutions pour les incidents réseau et AD, alimentation de la base de connaissances.", tools:["Documentation Cisco","Microsoft Docs","GLPI"] },
+            { acts:["Recherche cas non documentés","Veille technique"], tasks:"Recherche de solutions pour des problèmes nouveaux, utilisation des ressources IA génératives.", tools:["Google","ChatGPT","Documentation"] },
+            { acts:["Résolution urgences","Diagnostics complexes"], tasks:"Recherche et application rapide de solutions lors d'urgences techniques.", tools:["Google","Documentation","Zabbix"] },
+            { acts:["Résolution en autonomie"], tasks:"Recherche et application de solutions en conditions réelles d'entreprise.", tools:["Ressources entreprise","Google","Documentation"] },
+            { acts:["Révision pour examen","Questions ouvertes"], tasks:"Préparation aux questions ouvertes de l'entretien technique du jury.", tools:["Documentation","Fiches révision"] },
+          ]
+        },
+        {
+          code:"CT5", label:"Partager la solution (documentation)", levels:[0,1,2,3,3,3,3],
+          activities:[
+            null,
+            { acts:["Documentation incident","Mise à jour inventaire","Compte-rendu ticket"], tasks:"Documentation des interventions dans l'outil de ticketing, mise à jour de l'inventaire.", tools:["GLPI","Confluence","Word"] },
+            { acts:["Documentation réseau","Procédures AD"], tasks:"Documentation des configurations réseau et des procédures Active Directory.", tools:["Confluence","Word","draw.io"] },
+            { acts:["Documentation logiciel","Guide utilisateur","Base de connaissances"], tasks:"Rédaction de documentation utilisateur pour les nouveaux logiciels, alimentation de la base de connaissances.", tools:["Confluence","Notion","Word"] },
+            { acts:["Documentation interventions avancées","REX"], tasks:"Documentation des interventions complexes, retours d'expérience, recommandations.", tools:["Confluence","GLPI","Word"] },
+            { acts:["Rapport de stage","Journal de bord"], tasks:"Rédaction du rapport de stage, documentation des missions réalisées.", tools:["Word","Notion","Confluence"] },
+            { acts:["Dossier professionnel"], tasks:"Constitution du dossier professionnel pour le passage du titre.", tools:["Word","PowerPoint","Confluence"] },
+          ]
+        },
+        {
+          code:"CT6", label:"Présenter un travail réalisé", levels:[1,2,3,3,3,3,3],
+          activities:[
+            { acts:["Restitution Prairie","Présentation poste configuré"], tasks:"Présentation du poste de travail préparé, démonstration, réponse aux questions.", tools:["PowerPoint","Teams"] },
+            { acts:["Présentation résultats phase 1","Soutenance intermédiaire"], tasks:"Présentation des projets réalisés, démonstration des interventions, réponse aux questions.", tools:["PowerPoint","Teams"] },
+            { acts:["Présentation réseau","Démonstration AD"], tasks:"Présentation des configurations réseau et Active Directory, démonstration live.", tools:["PowerPoint","draw.io","Teams"] },
+            { acts:["Présentation déploiement logiciel","Formation utilisateurs"], tasks:"Présentation du déploiement réalisé, animation d'une session de formation.", tools:["PowerPoint","Confluence","Teams"] },
+            { acts:["Présentation maintenance","Bilan interventions"], tasks:"Présentation des interventions de maintenance avancées, bilan des résolutions.", tools:["PowerPoint","GLPI","Teams"] },
+            { acts:["Soutenance rapport de stage"], tasks:"Soutenance orale du rapport de stage devant la promotion (10-15 min).", tools:["PowerPoint","Teams"] },
+            { acts:["Soutenance titre professionnel","Entretien technique jury"], tasks:"Mise en situation devant le jury, entretien technique, réponse aux questions ouvertes.", tools:["PowerPoint","Matériel","Documentation"] },
+          ]
+        },
+        {
+          code:"CT7", label:"S'intégrer à l'environnement professionnel", levels:[1,0,0,0,0,3,0],
+          activities:[
+            { acts:["Découverte métier TIP","Veille professionnelle","Règlement intérieur"], tasks:"Intégration à la promotion, découverte du métier via analyse de fiches de poste, mise en place de la veille.", tools:["Simplonline","Discord","LinkedIn"] },
+            null, null, null, null,
+            { acts:["Prise de poste entreprise","Intégration équipe IT","Codes professionnels"], tasks:"Intégration dans l'équipe IT de l'entreprise, compréhension de l'organisation, adoption des codes pros.", tools:["Outils entreprise","Teams","GLPI"] },
+            null,
+          ]
+        },
+        {
+          code:"CT8", label:"Interagir de façon constructive", levels:[1,0,0,1,0,3,3],
+          activities:[
+            { acts:["Communication promotion","Pair learning","Feedback bienveillant"], tasks:"Communication bienveillante au sein de la promotion, apprentissage par les pairs.", tools:["Discord","Teams"] },
+            null, null,
+            { acts:["Communication avec utilisateurs","Pédagogie adoption logiciel"], tasks:"Interactions respectueuses avec les utilisateurs lors des formations et du support.", tools:["Teams","Outlook","PowerPoint"] },
+            null,
+            { acts:["Interactions équipe entreprise","Communication hiérarchique"], tasks:"Interactions professionnelles avec l'équipe IT et les utilisateurs en entreprise.", tools:["Teams","Outlook","GLPI"] },
+            { acts:["Communication jury","Entretien professionnel"], tasks:"Communication professionnelle lors de la mise en situation et de l'entretien avec le jury.", tools:["PowerPoint","Documentation"] },
+          ]
+        },
+        {
+          code:"CT9", label:"Faciliter un temps de travail collectif", levels:[0,0,0,1,2,3,2],
+          activities:[
+            null, null, null,
+            { acts:["Animation formation utilisateurs","Organisation sessions groupe"], tasks:"Facilitation des sessions de formation collectives, gestion des échanges entre participants.", tools:["Teams","Miro","PowerPoint"] },
+            { acts:["Coordination équipe SI","Facilitation interventions collectives"], tasks:"Facilitation des interventions en équipe, communication constructive avec les équipes du site.", tools:["Teams","GLPI","Outlook"] },
+            { acts:["Facilitation en entreprise"], tasks:"Animation de réunions ou ateliers dans l'équipe IT de l'entreprise.", tools:["Teams","Miro","Outils entreprise"] },
+            { acts:["Facilitation préparation collective"], tasks:"Organisation collective de la préparation à l'examen.", tools:["Teams","Miro","Word"] },
+          ]
+        },
+      ]
+    }
+  ]
+};
+
+// ─── TOOLTIP ───
+const gTooltip = document.getElementById('global-tooltip');
+let ttVisible = false;
+
+function buildTooltipHTML(phIdx, code, lv, actData) {
+  const lvLabel = levelLabels[lv];
+  const phName  = phNames[phIdx];
+  const phColor = phColors[phIdx];
+
+  let inner = `
+    <div class="tt-header">
+      <div class="tt-phase-dot" style="background:${phColor}"></div>
+      <div class="tt-title">${phName}</div>
+      <div class="tt-level">${lvLabel}</div>
+    </div>`;
+
+  if (!actData) {
+    inner += `<div class="tt-empty">Compétence non mobilisée dans cette phase.</div>`;
+  } else {
+    if (actData.acts?.length) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Activités</div>
+        <ul class="tt-activities">${actData.acts.map(a => `<li>${a}</li>`).join('')}</ul>
+      </div>`;
+    }
+    if (actData.tasks) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Tâches type</div>
+        <div class="tt-tasks">${actData.tasks}</div>
+      </div>`;
+    }
+    if (actData.tools?.length) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Outils envisagés</div>
+        <div class="tt-tools">${actData.tools.map(t => `<span class="tt-tool">${t}</span>`).join('')}</div>
+      </div>`;
+    }
+  }
+  return inner;
+}
+
+function showTooltip(e, html) {
+  gTooltip.innerHTML = html;
+  gTooltip.classList.add('visible');
+  ttVisible = true;
+  positionTooltip(e);
+}
+function hideTooltip() {
+  gTooltip.classList.remove('visible');
+  ttVisible = false;
+}
+function positionTooltip(e) {
+  const margin = 12;
+  const tw = gTooltip.offsetWidth;
+  const th = gTooltip.offsetHeight;
+  let x = e.clientX + margin;
+  let y = e.clientY - th / 2;
+  if (x + tw > window.innerWidth  - margin) x = e.clientX - tw - margin;
+  if (y < margin)                           y = margin;
+  if (y + th > window.innerHeight - margin) y = window.innerHeight - th - margin;
+  gTooltip.style.left = x + 'px';
+  gTooltip.style.top  = y + 'px';
+}
+document.addEventListener('mousemove', e => { if (ttVisible) positionTooltip(e); });
+
+// ─── RENDER HEATMAP ───
+const hmGrid = document.getElementById('heatmap');
+
+heatmapData.sections.forEach(section => {
+  const sh = document.createElement('div');
+  sh.className = 'hm-section-header';
+  sh.textContent = section.title;
+  hmGrid.appendChild(sh);
+
+  section.rows.forEach(row => {
+    const labelCell = document.createElement('div');
+    labelCell.className = 'hm-cell-label';
+    const codeSpan = document.createElement('span');
+    codeSpan.className = `hm-code code-${section.type}`;
+    codeSpan.textContent = row.code;
+    labelCell.appendChild(codeSpan);
+    labelCell.appendChild(document.createTextNode(row.label));
+    hmGrid.appendChild(labelCell);
+
+    row.levels.forEach((lv, i) => {
+      const cell = document.createElement('div');
+      const extraClass = lv > 0 ? ` ${section.type}` : '';
+      cell.className = `hm-cell lv${lv}${extraClass}`;
+      if (lv > 0) cell.textContent = lv;
+      const actData = row.activities ? row.activities[i] : null;
+      const html = buildTooltipHTML(i, row.code, lv, actData);
+      cell.addEventListener('mouseenter', e => showTooltip(e, html));
+      cell.addEventListener('mouseleave', hideTooltip);
+      hmGrid.appendChild(cell);
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcours TSSR — Visuels pédagogiques</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --border: #1e2230;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --p0: #38bdf8;
+    --p1: #818cf8;
+    --p2: #34d399;
+    --p3: #fb923c;
+    --p4: #f472b6;
+    --accent: #facc15;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(250,204,21,0.1);
+    border: 1px solid rgba(250,204,21,0.3);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  h1 span { color: var(--accent); }
+  .header-sub {
+    color: var(--muted);
+    font-size: 15px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+    margin-top: 72px;
+  }
+  .section-title h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .section-num {
+    width: 32px; height: 32px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ─────────────────────────────────────────
+     FRISE EN COUCHES
+  ───────────────────────────────────────── */
+  .timeline-wrapper {
+    overflow-x: auto;
+    padding-bottom: 16px;
+  }
+  .timeline {
+    min-width: 900px;
+    position: relative;
+    padding: 24px 0 0;
+  }
+
+  /* Axe mois */
+  .months-axis {
+    display: grid;
+    grid-template-columns: 160px repeat(18, 1fr);
+    margin-bottom: 8px;
+  }
+  .months-axis .label-spacer { }
+  .month-tick {
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    position: relative;
+  }
+  .month-tick::before {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 6px;
+    background: var(--border);
+    margin: 0 auto 4px;
+  }
+
+  /* Ligne de séparation */
+  .axis-line {
+    grid-column: 2 / -1;
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 20px;
+  }
+
+  /* Couches */
+  .layers {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .layer-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+  }
+  .layer-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: right;
+    padding-right: 12px;
+    line-height: 1.3;
+  }
+  .layer-track {
+    position: relative;
+    height: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Grille de fond */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(18, 1fr);
+  }
+  .grid-cell {
+    border-left: 1px solid var(--border);
+  }
+
+  /* Segments */
+  .segment {
+    position: absolute;
+    height: 34px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    overflow: hidden;
+    cursor: default;
+    transition: filter 0.2s, transform 0.2s;
+    white-space: nowrap;
+  }
+  .segment:hover {
+    filter: brightness(1.25);
+    transform: translateY(-2px);
+    z-index: 10;
+  }
+  .segment-label { overflow: hidden; text-overflow: ellipsis; }
+
+  /* Phase colours */
+  .ph0 { background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.5); color: var(--p0); }
+  .ph1 { background: rgba(129,140,248,0.2); border: 1px solid rgba(129,140,248,0.5); color: var(--p1); }
+  .ph2 { background: rgba(52,211,153,0.2); border: 1px solid rgba(52,211,153,0.5); color: var(--p2); }
+  .ph3 { background: rgba(251,146,60,0.2); border: 1px solid rgba(251,146,60,0.5); color: var(--p3); }
+  .ph4 { background: rgba(244,114,182,0.2); border: 1px solid rgba(244,114,182,0.5); color: var(--p4); }
+
+  /* Rythme alternance */
+  .alt-seg { background: rgba(250,204,21,0.08); border: 1px solid rgba(250,204,21,0.2); color: var(--accent); }
+  .alt-seg-ent { background: rgba(250,204,21,0.03); border: 1px dashed rgba(250,204,21,0.15); color: rgba(250,204,21,0.5); }
+
+  /* Légende phases */
+  .phase-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ─────────────────────────────────────────
+     HEATMAP
+  ───────────────────────────────────────── */
+  .heatmap-container {
+    overflow-x: auto;
+    padding-bottom: 16px;
+  }
+  .heatmap {
+    min-width: 780px;
+  }
+
+  .heatmap-grid {
+    display: grid;
+    grid-template-columns: 220px repeat(5, 1fr);
+    gap: 3px;
+  }
+
+  .hm-header {
+    display: contents;
+  }
+  .hm-col-label {
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 10px 6px;
+    letter-spacing: 0.04em;
+  }
+
+  .hm-row {
+    display: contents;
+  }
+
+  .hm-cell-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px 8px 0;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+  .hm-code {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    font-weight: 700;
+    min-width: 36px;
+    text-align: center;
+  }
+  .code-c { background: rgba(129,140,248,0.15); color: var(--p1); border: 1px solid rgba(129,140,248,0.3); }
+  .code-cs { background: rgba(251,146,60,0.15); color: var(--p3); border: 1px solid rgba(251,146,60,0.3); }
+  .code-ct { background: rgba(52,211,153,0.15); color: var(--p2); border: 1px solid rgba(52,211,153,0.3); }
+
+  .hm-cell {
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: default;
+    transition: transform 0.15s, filter 0.15s;
+    position: relative;
+  }
+  .hm-cell:hover {
+    transform: scale(1.06);
+    filter: brightness(1.3);
+    z-index: 5;
+  }
+
+  /* Level 0 = absent */
+  .lv0 { background: var(--surface); color: var(--border); }
+  .lv1 { background: rgba(56,189,248,0.18); color: var(--p0); border: 1px solid rgba(56,189,248,0.3); }
+  .lv2 { background: rgba(56,189,248,0.38); color: var(--p0); border: 1px solid rgba(56,189,248,0.6); }
+  .lv3 { background: rgba(56,189,248,0.65); color: #fff; border: 1px solid rgba(56,189,248,0.9); }
+
+  .lv1.cs, .lv2.cs, .lv3.cs { }
+  .lv1.cs { background: rgba(251,146,60,0.18); color: var(--p3); border: 1px solid rgba(251,146,60,0.3); }
+  .lv2.cs { background: rgba(251,146,60,0.38); color: var(--p3); border: 1px solid rgba(251,146,60,0.6); }
+  .lv3.cs { background: rgba(251,146,60,0.65); color: #fff; border: 1px solid rgba(251,146,60,0.9); }
+
+  .lv1.ct { background: rgba(52,211,153,0.15); color: var(--p2); border: 1px solid rgba(52,211,153,0.3); }
+  .lv2.ct { background: rgba(52,211,153,0.35); color: var(--p2); border: 1px solid rgba(52,211,153,0.6); }
+  .lv3.ct { background: rgba(52,211,153,0.6); color: #fff; border: 1px solid rgba(52,211,153,0.9); }
+
+  .hm-section-header {
+    grid-column: 1 / -1;
+    padding: 12px 0 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hm-section-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Global floating tooltip — rattaché au body, hors de tout stacking context */
+  #global-tooltip {
+    position: fixed;
+    background: #161a26;
+    border: 1px solid rgba(250,204,21,0.2);
+    padding: 12px 14px;
+    font-size: 11px;
+    border-radius: 6px;
+    white-space: normal;
+    pointer-events: none;
+    z-index: 9999;
+    font-family: 'Space Mono', monospace;
+    color: var(--text);
+    width: 280px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity 0.12s;
+  }
+  #global-tooltip.visible { opacity: 1; }
+
+  .tt-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tt-phase-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tt-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .tt-level {
+    margin-left: auto;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    background: rgba(250,204,21,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(250,204,21,0.2);
+    white-space: nowrap;
+  }
+  .tt-section {
+    margin-bottom: 7px;
+  }
+  .tt-section-label {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+  .tt-activities {
+    list-style: none;
+    padding: 0;
+  }
+  .tt-activities li {
+    font-size: 10px;
+    color: var(--text);
+    padding: 2px 0 2px 10px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .tt-activities li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+  .tt-tasks {
+    font-size: 10px;
+    color: rgba(232,234,240,0.65);
+    line-height: 1.4;
+  }
+  .tt-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 2px;
+  }
+  .tt-tool {
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    background: rgba(56,189,248,0.1);
+    border: 1px solid rgba(56,189,248,0.2);
+    color: var(--p0);
+  }
+  .tt-empty {
+    font-size: 10px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Heatmap legend */
+  .hm-legend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 20px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+  }
+  .hm-legend-box {
+    width: 20px; height: 20px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* Separator */
+  .sep { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+
+  /* Footer */
+  .footer {
+    margin-top: 80px;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<!-- Tooltip global (hors de tout stacking context) -->
+<div id="global-tooltip"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-badge">RNCP37682 · RS6803</div>
+  <h1>Parcours <span>TSSR</span><br>Réseaux &amp; Cybersécurité</h1>
+  <p class="header-sub">686h centre · 18 mois · Alternance 1/3</p>
+</div>
+
+<!-- ── FRISE EN COUCHES ── -->
+<div class="section-title">
+  <div class="section-num">01</div>
+  <h2>Frise chronologique en couches</h2>
+</div>
+
+<div class="timeline-wrapper">
+<div class="timeline">
+
+  <!-- Axe mois -->
+  <div class="months-axis">
+    <div class="label-spacer"></div>
+    <div class="month-tick">M1</div>
+    <div class="month-tick">M2</div>
+    <div class="month-tick">M3</div>
+    <div class="month-tick">M4</div>
+    <div class="month-tick">M5</div>
+    <div class="month-tick">M6</div>
+    <div class="month-tick">M7</div>
+    <div class="month-tick">M8</div>
+    <div class="month-tick">M9</div>
+    <div class="month-tick">M10</div>
+    <div class="month-tick">M11</div>
+    <div class="month-tick">M12</div>
+    <div class="month-tick">M13</div>
+    <div class="month-tick">M14</div>
+    <div class="month-tick">M15</div>
+    <div class="month-tick">M16</div>
+    <div class="month-tick">M17</div>
+    <div class="month-tick">M18</div>
+  </div>
+
+  <div class="layers" id="frise"></div>
+
+</div>
+</div>
+
+<!-- Légende phases -->
+<div class="phase-legend" style="margin-top:20px;">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p0)"></div>Phase 0 — La Prairie (1 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p1)"></div>Phase 1 — Maintien opérationnel (5 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p2)"></div>Phase 2 — Passage à l'échelle (6 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p3)"></div>Phase 3 — Optimisation & Sécurité (4 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p4)"></div>Phase 4 — Projet & Certifications (2 mois)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Semaines centre de formation</div>
+</div>
+
+
+<!-- ── HEATMAP ── -->
+<div class="section-title">
+  <div class="section-num">02</div>
+  <h2>Heatmap — Progression des compétences par phase</h2>
+</div>
+
+<div class="heatmap-container">
+<div class="heatmap">
+  <div class="heatmap-grid" id="heatmap">
+
+    <!-- Headers -->
+    <div class="hm-cell-label" style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;font-weight:700;">COMPÉTENCE</div>
+    <div class="hm-col-label" style="color:var(--p0)">PH0<br><span style="font-weight:400;font-size:9px;color:var(--muted)">1 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p1)">PH1<br><span style="font-weight:400;font-size:9px;color:var(--muted)">5 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p2)">PH2<br><span style="font-weight:400;font-size:9px;color:var(--muted)">6 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p3)">PH3<br><span style="font-weight:400;font-size:9px;color:var(--muted)">4 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p4)">PH4<br><span style="font-weight:400;font-size:9px;color:var(--muted)">2 mois</span></div>
+
+  </div>
+</div>
+</div>
+
+<!-- Heatmap Legend -->
+<div class="hm-legend" style="margin-top:20px;">
+  <span>Niveau :</span>
+  <div class="hm-legend-box lv0" style="border:1px solid var(--border)"></div><span>—</span>
+  <div class="hm-legend-box lv1"></div><span>1 · Imiter</span>
+  <div class="hm-legend-box lv2"></div><span>2 · Adapter</span>
+  <div class="hm-legend-box lv3"></div><span>3 · Transposer</span>
+  &nbsp;·&nbsp;
+  <div class="hm-legend-box" style="background:rgba(129,140,248,0.35);border:1px solid rgba(129,140,248,0.5)"></div><span>Compétences techniques</span>
+  <div class="hm-legend-box" style="background:rgba(251,146,60,0.35);border:1px solid rgba(251,146,60,0.5)"></div><span>Cybersécurité</span>
+  <div class="hm-legend-box" style="background:rgba(52,211,153,0.35);border:1px solid rgba(52,211,153,0.5)"></div><span>Transversales</span>
+</div>
+
+<div class="footer">
+  Technicien Supérieur Systèmes, Réseaux &amp; Cybersécurité · Simplon · RNCP37682
+</div>
+
+<script>
+// ════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════
+
+// FRISE : chaque couche = { label, segments: [{start(mois 0-based), duration, label, ph}] }
+// Mois numérotés 0 = M1 … 17 = M18
+const layers = [
+  {
+    label: "PHASES",
+    segments: [
+      { start: 0, dur: 1, label: "Phase 0 · La Prairie", ph: "ph0" },
+      { start: 1, dur: 5, label: "Phase 1 · Maintien opérationnel", ph: "ph1" },
+      { start: 6, dur: 6, label: "Phase 2 · Passage à l'échelle", ph: "ph2" },
+      { start: 12, dur: 4, label: "Phase 3 · Optimisation & Sécurité SI", ph: "ph3" },
+      { start: 16, dur: 2, label: "Phase 4 · Projet & Certifications", ph: "ph4" },
+    ]
+  },
+  {
+    label: "HEURES CENTRE",
+    segments: [
+      { start: 0, dur: 1, label: "70h · 2 semaines", ph: "ph0" },
+      { start: 1, dur: 5, label: "175h", ph: "ph1" },
+      { start: 6, dur: 6, label: "210h", ph: "ph2" },
+      { start: 12, dur: 3, label: "105h", ph: "ph3" },
+      { start: 15, dur: 1, label: "Entreprise", ph: "alt-seg-ent" },
+      { start: 16, dur: 2, label: "70h", ph: "ph4" },
+    ]
+  },
+  {
+    label: "RYTHME ALTERNANCE",
+    segments: buildAlternanceSegments()
+  },
+  {
+    label: "COMPÉTENCES TECH\nC1 → C9",
+    segments: [
+      { start: 0, dur: 1, label: "C1 C2 C4 C5", ph: "ph0" },
+      { start: 1, dur: 5, label: "C1 → C7", ph: "ph1" },
+      { start: 6, dur: 6, label: "C2 → C9", ph: "ph2" },
+      { start: 12, dur: 4, label: "C2→C6 C8", ph: "ph3" },
+      { start: 16, dur: 2, label: "Toutes", ph: "ph4" },
+    ]
+  },
+  {
+    label: "COMPÉTENCES CYBER\nCS1 → CS4",
+    segments: [
+      { start: 0, dur: 1, label: "CS2", ph: "ph0" },
+      { start: 1, dur: 5, label: "CS1 CS2 CS4", ph: "ph1" },
+      { start: 6, dur: 6, label: "CS1", ph: "ph2" },
+      { start: 12, dur: 4, label: "CS1 CS2 CS3 CS4", ph: "ph3" },
+      { start: 16, dur: 2, label: "Toutes", ph: "ph4" },
+    ]
+  },
+  {
+    label: "CERTIFICATIONS",
+    segments: [
+      { start: 14, dur: 2, label: "Préparation RNCP", ph: "ph3" },
+      { start: 16, dur: 2, label: "Passage titre + RS6803", ph: "ph4" },
+    ]
+  }
+];
+
+function buildAlternanceSegments() {
+  // Phase 0 : 2 semaines centre + 2 semaines entreprise dans mois 0-1
+  const segs = [];
+  // Phase 0 (mois 0-0.99) : 2 sem centre = ~0.5 mois, 2 sem ent = ~0.5 mois
+  segs.push({ start: 0, dur: 0.5, label: "Centre", ph: "alt-seg" });
+  segs.push({ start: 0.5, dur: 0.5, label: "Entreprise", ph: "alt-seg-ent" });
+  // Phase 1-4 (mois 1-17) : 1/4 centre, 3/4 entreprise chaque mois
+  for (let m = 1; m <= 17; m++) {
+    segs.push({ start: m, dur: 0.25, label: "Ctr", ph: "alt-seg" });
+    segs.push({ start: m + 0.25, dur: 0.75, label: "Entreprise", ph: "alt-seg-ent" });
+  }
+  return segs;
+}
+
+// Render frise
+const friseEl = document.getElementById('frise');
+const totalMonths = 18;
+
+layers.forEach(layer => {
+  const row = document.createElement('div');
+  row.className = 'layer-row';
+
+  const labelEl = document.createElement('div');
+  labelEl.className = 'layer-label';
+  labelEl.style.whiteSpace = 'pre-line';
+  labelEl.textContent = layer.label;
+  row.appendChild(labelEl);
+
+  const track = document.createElement('div');
+  track.className = 'layer-track';
+
+  // Grid bg
+  const gridBg = document.createElement('div');
+  gridBg.className = 'grid-bg';
+  for (let i = 0; i < 18; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell';
+    gridBg.appendChild(cell);
+  }
+  track.appendChild(gridBg);
+
+  layer.segments.forEach(seg => {
+    const el = document.createElement('div');
+    el.className = `segment ${seg.ph}`;
+    el.style.left = `${(seg.start / totalMonths) * 100}%`;
+    el.style.width = `calc(${(seg.dur / totalMonths) * 100}% - 3px)`;
+    el.innerHTML = `<span class="segment-label">${seg.label}</span>`;
+    track.appendChild(el);
+  });
+
+  row.appendChild(track);
+  friseEl.appendChild(row);
+});
+
+// ════════════════════════════════════════
+// HEATMAP DATA
+// ════════════════════════════════════════
+// Levels: 0=absent, 1=imiter, 2=adapter, 3=transposer
+// activities: par phase [ph0..ph4] → { acts[], tasks, tools[] } | null
+
+const phColors = ["#38bdf8","#818cf8","#34d399","#fb923c","#f472b6"];
+const phNames  = ["Phase 0 · La Prairie","Phase 1 · Maintien opérationnel","Phase 2 · Passage à l'échelle","Phase 3 · Optimisation & Sécurité","Phase 4 · Projet & Certifications"];
+const levelLabels = ["—","N1 · Imiter","N2 · Adapter","N3 · Transposer"];
+
+const heatmapData = {
+  sections: [
+    {
+      title: "Compétences Techniques",
+      type: "c",
+      rows: [
+        {
+          code: "C1", label: "Support utilisateur — Centre de services", levels: [1,2,3,3,3],
+          activities: [
+            { acts:["Traitement tickets helpdesk","Réinstallation OS infecté","Paramétrage équipements utilisateurs"], tasks:"Prise en charge incidents N1, configuration postes, raccordement réseau, formation utilisateurs.", tools:["Windows 10","GLPI","Office 365"] },
+            { acts:["Gestion parc informatique","Résolution incidents N1/N2","Documentation procédures"], tasks:"Catégorisation tickets, escalade N2, traçabilité des interventions dans l'outil ITSM.", tools:["GLPI","Windows","Office 365"] },
+            { acts:["Supervision services helpdesk","Optimisation processus tickets","Indicateurs de performance"], tasks:"Suivi des SLA, tableaux de bord d'incidents, amélioration des procédures de traitement.", tools:["GLPI","Zabbix","Powershell"] },
+            { acts:["Contrôle qualité support","Audit processus ITSM","Amélioration continue"], tasks:"Revue des indicateurs, refonte des procédures, formation équipe sur bonnes pratiques.", tools:["GLPI","Zabbix"] },
+            { acts:["Intégration au chef d'œuvre","Valorisation des acquis"], tasks:"Mobilisation des compétences support dans le projet final et la soutenance.", tools:["GLPI"] },
+          ]
+        },
+        {
+          code: "C2", label: "Serveurs Windows & Active Directory", levels: [1,2,3,3,3],
+          activities: [
+            { acts:["Configuration postes Windows","Jointure domaine AD","Gestion comptes utilisateurs"], tasks:"Intégration poste au domaine, création comptes, attribution GPO de base.", tools:["Windows 10","Active Directory"] },
+            { acts:["Administration AD (OU, groupes, GPO)","Serveur fichiers NTFS","Annuaire entreprise"], tasks:"Création arborescence OU, politique de mots de passe, partages réseau, droits NTFS.", tools:["Windows Server","AD","GPO"] },
+            { acts:["Migration service cloud","Automatisation déploiement AD","Administration avancée"], tasks:"Synchronisation AD Azure, scripts d'administration, automatisation provisioning utilisateurs.", tools:["Windows Server","Powershell","Azure AD"] },
+            { acts:["Sécurisation AD","Journalisation audit","Contrôle accès externes"], tasks:"Durcissement AD (ANSSI), audit des connexions, stratégies de sécurité avancées.", tools:["Windows Server","AD","Powershell","Zabbix"] },
+            { acts:["Intégration au chef d'œuvre"], tasks:"Mobilisation des compétences Windows/AD dans le projet de fin de formation.", tools:["Windows Server","AD"] },
+          ]
+        },
+        {
+          code: "C3", label: "Serveurs Linux", levels: [0,2,3,3,3],
+          activities: [
+            null,
+            { acts:["Installation Ubuntu Server","Gestion utilisateurs & droits","Services LAMP","Sécurisation CLI"], tasks:"Configuration système Linux, droits chmod/chown, installation Apache/MySQL/PHP, hardening.", tools:["Ubuntu","bash","Apache2","MariaDB"] },
+            { acts:["Scripts d'automatisation bash/python","Services avancés","Journalisation système"], tasks:"Cron jobs, scripts de sauvegarde automatique, configuration syslog, montée en version.", tools:["Ubuntu","bash","python","Zabbix"] },
+            { acts:["Sécurisation Linux (ANSSI)","Configuration sonde réseau","Collecte événements sécurité"], tasks:"Durcissement Debian ANSSI, installation Suricata/agents ELK, iptables avancé.", tools:["Ubuntu","Suricata","ELK Stack","iptables"] },
+            { acts:["Intégration au chef d'œuvre"], tasks:"Déploiement et configuration Linux dans le projet final.", tools:["Ubuntu","bash"] },
+          ]
+        },
+        {
+          code: "C4", label: "Réseau IP", levels: [1,2,3,3,3],
+          activities: [
+            { acts:["Réseau SOHO","Adressage IP de base","Raccordement équipements"], tasks:"Plan d'adressage, configuration switch/routeur, accès Internet, documentation réseau.", tools:["Switch niveau 2","Câblage RJ45"] },
+            { acts:["Cartographie SI","Configuration VLAN","Réseau sans fil entreprise"], tasks:"Topologie réseau, segmentation VLAN, configuration AP WiFi, documentation.", tools:["Switch niveau 2","Wireshark","Cisco"] },
+            { acts:["Routage inter-VLAN","QoS","Supervision réseau"], tasks:"Configuration routage, règles de filtrage, indicateurs santé réseau, supervision.", tools:["Switch niveau 3","Zabbix","Wireshark"] },
+            { acts:["Architecture multi-zone","DMZ","VPN inter-sites","Protocoles de routage"], tasks:"Refonte architecture réseau sécurisée, configuration BGP/OSPF, tunnels VPN.", tools:["Switch niveau 3","pfSense","OpenVPN"] },
+            { acts:["Intégration au chef d'œuvre"], tasks:"Conception réseau dans le projet final.", tools:["Switch","Wireshark"] },
+          ]
+        },
+        {
+          code: "C5", label: "Infrastructure virtualisée", levels: [1,2,3,3,3],
+          activities: [
+            { acts:["Création VM basique","Snapshots","Clonage"], tasks:"Déploiement premières VMs, gestion ressources, réseau virtuel de base.", tools:["VirtualBox","VMware"] },
+            { acts:["Infrastructure hyperviseur","VM serveur fichiers","Templates VM"], tasks:"Déploiement hyperviseur type 1, configuration réseau virtuel, vMotion basique.", tools:["VMware ESXi","Hyper-V","VirtualBox"] },
+            { acts:["Automatisation déploiement VMs","Templates infrastructure","Haute disponibilité"], tasks:"Scripting déploiement VMs, configurations HA/clustering, optimisation ressources.", tools:["VMware","Powershell","Ansible"] },
+            { acts:["Virtualisation sécurisée","Isolation zones réseau","Micro-segmentation"], tasks:"DMZ virtualisée, isolation réseau entre VMs, sécurisation hyperviseur.", tools:["VMware","pfSense","Zabbix"] },
+            { acts:["Infrastructure chef d'œuvre"], tasks:"Virtualisation de l'environnement du projet final.", tools:["VMware","Hyper-V"] },
+          ]
+        },
+        {
+          code: "C6", label: "Automatisation — Scripts", levels: [0,1,2,3,3],
+          activities: [
+            null,
+            { acts:["Scripts bash basiques","Scripts Powershell AD","Automatisation tâches simples"], tasks:"Variables, boucles, fonctions, scripts de gestion AD, planification cron/tâches.", tools:["bash","Powershell","Python"] },
+            { acts:["Script journalisation espace disque","Alertes email automatiques","Déploiement automatisé postes"], tasks:"Scripts de monitoring, seuils d'alerte, automatisation provisioning, intégration GLPI.", tools:["Powershell","Python","bash","Zabbix"] },
+            { acts:["Scripts collecte événements","Automatisation règles SIEM","Rapports sécurité automatiques"], tasks:"Parsers de logs, règles Logstash, dashboards automatiques, playbooks de réponse.", tools:["Python","bash","ELK Stack","Ansible"] },
+            { acts:["Scripts dans le chef d'œuvre"], tasks:"Automatisation intégrée dans le projet final et valorisée en soutenance.", tools:["Python","Powershell","bash"] },
+          ]
+        },
+        {
+          code: "C7", label: "Accès Internet & interconnexions", levels: [0,2,3,3,3],
+          activities: [
+            null,
+            { acts:["Configuration NAT/PAT","Mise en place VPN","DMZ basique"], tasks:"Translation d'adresses, règles firewall entrantes, tunnel VPN client-to-site.", tools:["pfSense","Cisco","OpenVPN"] },
+            { acts:["VPN inter-sites","Services cloud","Optimisation connexions"], tasks:"Tunnels IPSec/SSL, liaisons WAN, QoS accès Internet, basculement liens.", tools:["pfSense","OpenVPN","Azure","AWS"] },
+            { acts:["Filtrage IP avancé","Protection accès Internet","Reconfiguration multi-zone"], tasks:"Proxys filtrages, IDS/IPS périmétrique, règles ACL complexes, zero-trust accès.", tools:["pfSense","Suricata","Squid","iptables"] },
+            { acts:["Interconnexions dans le chef d'œuvre"], tasks:"Intégration des accès et interconnexions dans le projet final.", tools:["pfSense","OpenVPN"] },
+          ]
+        },
+        {
+          code: "C8", label: "Sauvegardes & restaurations", levels: [0,0,2,3,3],
+          activities: [
+            null,
+            null,
+            { acts:["Plan de sauvegarde 3-2-1","Tests de restauration","Automatisation sauvegardes"], tasks:"Stratégie de sauvegarde, scripts de backup automatiques, tests de restauration planifiés.", tools:["Veeam","rsync","Bacula","bash"] },
+            { acts:["Audit plan sauvegarde","PRA/PCA","Sauvegarde offsite"], tasks:"Évaluation RTO/RPO, procédures de reprise, sauvegardes chiffrées hors-site.", tools:["Veeam","rsync","Azure Backup"] },
+            { acts:["Stratégie sauvegardes dans le chef d'œuvre"], tasks:"Documentation et intégration du plan de sauvegarde dans le projet final.", tools:["Veeam","rsync"] },
+          ]
+        },
+        {
+          code: "C9", label: "Déploiement postes de travail", levels: [0,0,2,3,3],
+          activities: [
+            null,
+            null,
+            { acts:["Automatisation déploiement Windows","Séquences MDT/WDS","Images système"], tasks:"Capture d'image master, séquence de déploiement, intégration domaine automatique, installation logiciels.", tools:["MDT","WDS","Powershell","GLPI"] },
+            { acts:["Déploiement sécurisé","Chiffrement postes","Conformité configuration"], tasks:"BitLocker, stratégies de durcissement GPO, déploiement conforme aux politiques sécurité.", tools:["MDT","GPO","Bitlocker","GLPI"] },
+            { acts:["Déploiement dans le chef d'œuvre"], tasks:"Intégration déploiement de postes dans le projet final.", tools:["MDT","Powershell"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Compétences Cybersécurité",
+      type: "cs",
+      rows: [
+        {
+          code: "CS1", label: "Identifier les risques du SI", levels: [0,1,1,3,3],
+          activities: [
+            null,
+            { acts:["Cartographie des assets","Analyse risques télétravail","Évaluation menaces"], tasks:"Inventaire SI, identification des vulnérabilités, analyse d'impact basique.", tools:["GLPI","Excel"] },
+            { acts:["Analyse risques architecture","Identification risques cloud","Documentation risques"], tasks:"Méthodologie EBIOS/ISO 27005 initiation, cartographie détaillée, rapport de risques.", tools:["EBIOS RM","Excel"] },
+            { acts:["Note d'analyse complète risques/incidents","Identification incidents redoutés","Échelle de gravité"], tasks:"Analyse de risques formalisée, liste des menaces métiers, impacts sur la continuité d'activité.", tools:["EBIOS RM","Suricata","ELK Stack"] },
+            { acts:["Synthèse analyse de risques dans le chef d'œuvre"], tasks:"Intégration de l'analyse de risques dans le projet et la soutenance.", tools:["EBIOS RM"] },
+          ]
+        },
+        {
+          code: "CS2", label: "Stratégie de traitement des risques", levels: [1,2,0,3,3],
+          activities: [
+            { acts:["Sensibilisation utilisateurs","Recommandations basiques"], tasks:"Charte informatique, bonnes pratiques utilisateurs, recommandations ANSSI basiques.", tools:["ANSSI","Office 365"] },
+            { acts:["Sécurisation accès externes","VPN sécurisé","Hardening systèmes"], tasks:"Politique mots de passe, MFA, durcissement Windows/Linux ANSSI, procédures sécurité.", tools:["ANSSI","Windows Server","pfSense"] },
+            null,
+            { acts:["Reconfiguration réseau multi-zone","Plan de traitement des risques","DMZ sécurisée","Filtrage avancé"], tasks:"Stratégie complète de sécurisation, mesures correctives priorisées, architecture sécurisée.", tools:["pfSense","Suricata","ELK Stack","iptables"] },
+            { acts:["Stratégie sécurité dans le chef d'œuvre"], tasks:"Intégration de la stratégie de traitement des risques dans le projet final.", tools:["ANSSI","pfSense"] },
+          ]
+        },
+        {
+          code: "CS3", label: "Intégrer une sonde à un SIEM", levels: [0,0,0,3,3],
+          activities: [
+            null,
+            null,
+            null,
+            { acts:["Installation sonde Suricata","Configuration agents ELK","Règles de détection","Tableaux de bord SIEM"], tasks:"Déploiement sonde IDS, configuration collecteurs, règles de corrélation, alertes temps réel.", tools:["Suricata","ELK Stack","Logstash","Kibana"] },
+            { acts:["SIEM dans le chef d'œuvre"], tasks:"Intégration ou valorisation de la sonde SIEM dans le projet final.", tools:["ELK Stack","Suricata"] },
+          ]
+        },
+        {
+          code: "CS4", label: "Système de veille cybersécurité", levels: [0,1,0,3,3],
+          activities: [
+            null,
+            { acts:["Veille CVE","Sources CERT-FR","Bulletins sécurité"], tasks:"Abonnement flux CERT-FR/ANSSI, lecture bulletins, identification vulnérabilités produits utilisés.", tools:["CERT-FR","ANSSI","RSS"] },
+            null,
+            { acts:["Plan de veille structuré","Sources de collecte cyber","Automatisation alertes"], tasks:"Définition sources, fréquences de collecte, règles de filtrage, diffusion équipe.", tools:["CERT-FR","MITRE ATT&CK","RSS","ELK Stack"] },
+            { acts:["Veille intégrée dans le chef d'œuvre"], tasks:"Documentation de la démarche de veille dans le projet final.", tools:["CERT-FR","MITRE ATT&CK"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Compétences Transversales",
+      type: "ct",
+      rows: [
+        {
+          code: "CT1", label: "Organisation travail individuel", levels: [1,1,2,2,3],
+          activities: [
+            { acts:["Gestion du temps en alternance","Priorisation tâches"], tasks:"Agenda personnel, priorisation interventions, respect des délais.", tools:["Notion","Teams"] },
+            { acts:["Suivi de progression","Carnet de bord alternance"], tasks:"Journal de bord, traçabilité des apprentissages, bilan hebdomadaire.", tools:["Notion","Word"] },
+            { acts:["Planification projet","Gestion multi-tâches"], tasks:"Rétroplanning, gestion des priorités sur projets complexes.", tools:["Gantt","Trello","Notion"] },
+            { acts:["Gestion autonome de projets","Méthodes agiles"], tasks:"Sprint planning, Kanban, reporting d'avancement.", tools:["Trello","Jira"] },
+            { acts:["Gestion de projet chef d'œuvre"], tasks:"Organisation complète du projet final, respect des jalons.", tools:["Gantt","Trello"] },
+          ]
+        },
+        {
+          code: "CT2", label: "Organisation travail collectif", levels: [1,1,2,2,3],
+          activities: [
+            { acts:["Intégration équipe","Réunions binôme"], tasks:"Participation aux rituels d'équipe, communication avec le tuteur.", tools:["Teams","Slack"] },
+            { acts:["Projets en binôme","Partage documentation"], tasks:"Travaux collaboratifs, partage de ressources, coordination avec pairs.", tools:["Teams","GitHub","Confluence"] },
+            { acts:["Animation atelier","Coordination de projet"], tasks:"Facilitation de réunions, compte-rendu, suivi des décisions.", tools:["Teams","Confluence","Jira"] },
+            { acts:["Leadership technique","Revues entre pairs"], tasks:"Peer review, mentorat junior, coordination inter-équipes.", tools:["Teams","GitHub","Jira"] },
+            { acts:["Travail d'équipe soutenance"], tasks:"Préparation collaborative du projet et de la soutenance.", tools:["Teams","Confluence"] },
+          ]
+        },
+        {
+          code: "CT3", label: "Démarche résolution de problèmes", levels: [1,2,2,3,3],
+          activities: [
+            { acts:["Diagnostic incident basique","Arbre de causes"], tasks:"Identification symptômes, causes racines, solutions correctives documentées.", tools:["GLPI","Mindmap"] },
+            { acts:["Analyse incidents complexes","Méthode 5 pourquoi"], tasks:"Investigation structurée, escalade pertinente, retour d'expérience écrit.", tools:["GLPI","Confluence"] },
+            { acts:["Résolution problèmes techniques avancés","Post-mortems"], tasks:"Analyse d'incidents critiques, plans d'action, amélioration des procédures.", tools:["GLPI","Confluence","Zabbix"] },
+            { acts:["Diagnostic sécurité","Analyse incidents cyber"], tasks:"Investigation incidents de sécurité, forensic basique, remédiation.", tools:["ELK Stack","Suricata","Wireshark"] },
+            { acts:["Résolution problèmes dans le chef d'œuvre"], tasks:"Approche structurée pour les défis techniques du projet final.", tools:["GLPI","Confluence"] },
+          ]
+        },
+        {
+          code: "CT4", label: "Communication professionnelle orale", levels: [1,1,2,2,3],
+          activities: [
+            { acts:["Compte-rendu d'intervention","Communication avec utilisateurs"], tasks:"Reformulation claire, vocabulaire adapté au non-technique, écoute active.", tools:["Teams","Téléphone"] },
+            { acts:["Présentations techniques","Réunions de suivi"], tasks:"Support visuel, structuration du discours, gestion des questions.", tools:["PowerPoint","Teams"] },
+            { acts:["Présentation de projet","Soutenance intermédiaire"], tasks:"Argumentation technique, démonstration en live, adaptation au public.", tools:["PowerPoint","Teams"] },
+            { acts:["Restitution d'analyse","Présentation de résultats"], tasks:"Présentation d'audit, recommandations à la direction, défense de choix techniques.", tools:["PowerPoint","Teams"] },
+            { acts:["Soutenance du titre professionnel"], tasks:"Présentation du chef d'œuvre devant le jury, démonstration, questions/réponses.", tools:["PowerPoint"] },
+          ]
+        },
+        {
+          code: "CT5", label: "Communication professionnelle écrite", levels: [1,1,2,2,3],
+          activities: [
+            { acts:["Documentation interventions","Rédaction tickets"], tasks:"Tickets GLPI complets, procédures simples, schémas réseau commentés.", tools:["GLPI","Word","Draw.io"] },
+            { acts:["Procédures techniques","Cahier de tests"], tasks:"Documentation d'installation, procédures d'exploitation, cahier de recette.", tools:["Word","Confluence","Draw.io"] },
+            { acts:["Documentation de projet","Rapport d'analyse"], tasks:"Rapport complet projet, documentation architecture, note de recommandations.", tools:["Word","Confluence","Visio"] },
+            { acts:["Note d'analyse de risques","Documentation sécurité"], tasks:"Note EBIOS, rapport d'audit, procédures de réponse à incidents.", tools:["Word","Confluence"] },
+            { acts:["Rédaction rapport chef d'œuvre"], tasks:"Rapport de projet complet, documentation technique finale.", tools:["Word","Confluence"] },
+          ]
+        },
+        {
+          code: "CT6", label: "Valorisation expérience alternance", levels: [0,1,2,2,3],
+          activities: [
+            null,
+            { acts:["Journal de bord alternance","Bilan de compétences"], tasks:"Traçabilité des missions, identification des apprentissages en entreprise.", tools:["Word","Notion"] },
+            { acts:["Rapport d'alternance","Mise en lien formation/entreprise"], tasks:"Analyse des écarts, transposition des apprentissages, exemples concrets tirés de l'entreprise.", tools:["Word","PowerPoint"] },
+            { acts:["Valorisation en soutenance","Exemples terrain"], tasks:"Intégration d'exemples entreprise dans les présentations, lien formation/pratique.", tools:["PowerPoint","Confluence"] },
+            { acts:["Valorisation dans le chef d'œuvre et la soutenance"], tasks:"Projet ancré dans la réalité de l'entreprise, exemples concrets de missions réalisées.", tools:["Word","PowerPoint"] },
+          ]
+        },
+      ]
+    }
+  ]
+};
+
+// ─── BUILD TOOLTIP HTML ───
+function buildTooltipHTML(phIdx, code, lv, actData) {
+  const lvLabel = levelLabels[lv];
+  const phName  = phNames[phIdx];
+  const phColor = phColors[phIdx];
+
+  let inner = `
+    <div class="tt-header">
+      <div class="tt-phase-dot" style="background:${phColor}"></div>
+      <div class="tt-title">${phName}</div>
+      <div class="tt-level">${lvLabel}</div>
+    </div>`;
+
+  if (!actData) {
+    inner += `<div class="tt-empty">Compétence non mobilisée dans cette phase.</div>`;
+  } else {
+    if (actData.acts && actData.acts.length) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Activités</div>
+        <ul class="tt-activities">${actData.acts.map(a => `<li>${a}</li>`).join('')}</ul>
+      </div>`;
+    }
+    if (actData.tasks) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Tâches type</div>
+        <div class="tt-tasks">${actData.tasks}</div>
+      </div>`;
+    }
+    if (actData.tools && actData.tools.length) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Outils envisagés</div>
+        <div class="tt-tools">${actData.tools.map(t => `<span class="tt-tool">${t}</span>`).join('')}</div>
+      </div>`;
+    }
+  }
+  return inner;
+}
+
+// ─── GLOBAL TOOLTIP LOGIC ───
+const gTooltip = document.getElementById('global-tooltip');
+let ttVisible = false;
+
+function showTooltip(e, html) {
+  gTooltip.innerHTML = html;
+  gTooltip.classList.add('visible');
+  ttVisible = true;
+  positionTooltip(e);
+}
+function hideTooltip() {
+  gTooltip.classList.remove('visible');
+  ttVisible = false;
+}
+function positionTooltip(e) {
+  const margin = 12;
+  const tw = gTooltip.offsetWidth;
+  const th = gTooltip.offsetHeight;
+  let x = e.clientX + margin;
+  let y = e.clientY - th / 2;
+  if (x + tw > window.innerWidth - margin)  x = e.clientX - tw - margin;
+  if (y < margin)                            y = margin;
+  if (y + th > window.innerHeight - margin)  y = window.innerHeight - th - margin;
+  gTooltip.style.left = x + 'px';
+  gTooltip.style.top  = y + 'px';
+}
+document.addEventListener('mousemove', e => { if (ttVisible) positionTooltip(e); });
+
+// ─── RENDER HEATMAP ───
+const hmGrid = document.getElementById('heatmap');
+
+heatmapData.sections.forEach(section => {
+  const sh = document.createElement('div');
+  sh.className = 'hm-section-header';
+  sh.textContent = section.title;
+  hmGrid.appendChild(sh);
+
+  section.rows.forEach(row => {
+    const labelCell = document.createElement('div');
+    labelCell.className = 'hm-cell-label';
+    const codeSpan = document.createElement('span');
+    codeSpan.className = `hm-code code-${section.type}`;
+    codeSpan.textContent = row.code;
+    labelCell.appendChild(codeSpan);
+    labelCell.appendChild(document.createTextNode(row.label));
+    hmGrid.appendChild(labelCell);
+
+    row.levels.forEach((lv, i) => {
+      const cell = document.createElement('div');
+      const extraClass = lv > 0 ? ` ${section.type}` : '';
+      cell.className = `hm-cell lv${lv}${extraClass}`;
+      if (lv > 0) cell.textContent = lv;
+      const actData = row.activities ? row.activities[i] : null;
+      const html = buildTooltipHTML(i, row.code, lv, actData);
+      cell.addEventListener('mouseenter', e => showTooltip(e, html));
+      cell.addEventListener('mouseleave', hideTooltip);
+      hmGrid.appendChild(cell);
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcours Data Engineer — Expert en Infrastructures de Données Massives</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #090f18;
+    --surface: #0f1822;
+    --border: #1a2a3a;
+    --text: #e2e8f0;
+    --muted: #5a7285;
+    --p0: #38bdf8;
+    --p1: #818cf8;
+    --p2: #34d399;
+    --p3: #fb923c;
+    --p4: #f472b6;
+    --p5: #facc15;
+    --p6: #a78bfa;
+    --accent: #60a5fa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  .header { text-align: center; margin-bottom: 64px; }
+  .header-badge {
+    display: inline-block;
+    background: rgba(96,165,250,0.1);
+    border: 1px solid rgba(96,165,250,0.3);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: clamp(28px,5vw,52px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--accent); }
+  .header-sub { color: var(--muted); font-size: 15px; font-family: 'Space Mono', monospace; }
+
+  .section-title { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; margin-top: 72px; }
+  .section-title h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .section-num {
+    width: 32px; height: 32px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── FRISE ── */
+  .timeline-wrapper { overflow-x: auto; padding-bottom: 16px; }
+  .timeline { min-width: 1000px; position: relative; padding: 24px 0 0; }
+
+  .months-axis { display: grid; grid-template-columns: 180px repeat(18, 1fr); margin-bottom: 8px; }
+  .month-tick {
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    position: relative;
+  }
+  .month-tick::before {
+    content: ''; display: block; width: 1px; height: 6px;
+    background: var(--border); margin: 0 auto 4px;
+  }
+
+  .layers { display: flex; flex-direction: column; gap: 6px; }
+  .layer-row { display: grid; grid-template-columns: 180px 1fr; align-items: center; gap: 12px; min-height: 44px; }
+  .layer-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--muted);
+    text-align: right; padding-right: 12px; line-height: 1.3;
+  }
+  .layer-track { position: relative; height: 100%; min-height: 44px; display: flex; align-items: center; }
+
+  .grid-bg { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(18, 1fr); }
+  .grid-cell { border-left: 1px solid var(--border); }
+
+  .segment {
+    position: absolute; height: 34px; border-radius: 3px;
+    display: flex; align-items: center; padding: 0 10px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
+    overflow: hidden; cursor: default;
+    transition: filter 0.2s, transform 0.2s; white-space: nowrap;
+  }
+  .segment:hover { filter: brightness(1.25); transform: translateY(-2px); z-index: 10; }
+  .segment-label { overflow: hidden; text-overflow: ellipsis; }
+
+  .ph0 { background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.5); color: var(--p0); }
+  .ph1 { background: rgba(129,140,248,0.2); border: 1px solid rgba(129,140,248,0.5); color: var(--p1); }
+  .ph2 { background: rgba(52,211,153,0.2); border: 1px solid rgba(52,211,153,0.5); color: var(--p2); }
+  .ph3 { background: rgba(251,146,60,0.2); border: 1px solid rgba(251,146,60,0.5); color: var(--p3); }
+  .ph4 { background: rgba(244,114,182,0.2); border: 1px solid rgba(244,114,182,0.5); color: var(--p4); }
+  .ph5 { background: rgba(250,204,21,0.2); border: 1px solid rgba(250,204,21,0.5); color: var(--p5); }
+  .ph6 { background: rgba(167,139,250,0.2); border: 1px solid rgba(167,139,250,0.5); color: var(--p6); }
+
+  .alt-seg { background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.25); color: var(--accent); }
+  .alt-seg-ent { background: rgba(96,165,250,0.03); border: 1px dashed rgba(96,165,250,0.15); color: rgba(96,165,250,0.45); }
+
+  .phase-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── HEATMAP ── */
+  .heatmap-container { overflow-x: auto; padding-bottom: 16px; }
+  .heatmap { min-width: 820px; }
+  .heatmap-grid { display: grid; grid-template-columns: 280px repeat(7, 1fr); gap: 3px; }
+
+  .hm-col-label {
+    text-align: center; font-family: 'Space Mono', monospace;
+    font-size: 10px; font-weight: 700; padding: 10px 4px; letter-spacing: 0.04em;
+  }
+  .hm-cell-label { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 0; font-size: 12px; line-height: 1.3; }
+  .hm-code {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    padding: 2px 5px; border-radius: 2px; flex-shrink: 0;
+    font-weight: 700; min-width: 44px; text-align: center;
+  }
+  .code-c  { background: rgba(96,165,250,0.15); color: var(--accent); border: 1px solid rgba(96,165,250,0.3); }
+  .code-ct { background: rgba(52,211,153,0.15); color: var(--p2); border: 1px solid rgba(52,211,153,0.3); }
+
+  .hm-cell {
+    border-radius: 3px; display: flex; align-items: center; justify-content: center;
+    min-height: 40px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: default; transition: transform 0.15s, filter 0.15s; position: relative;
+  }
+  .hm-cell:hover { transform: scale(1.06); filter: brightness(1.3); z-index: 5; }
+
+  .lv0 { background: var(--surface); color: var(--border); }
+  .lv1.c  { background: rgba(96,165,250,0.15); color: var(--accent); border: 1px solid rgba(96,165,250,0.25); }
+  .lv2.c  { background: rgba(96,165,250,0.35); color: var(--accent); border: 1px solid rgba(96,165,250,0.55); }
+  .lv3.c  { background: rgba(96,165,250,0.62); color: #fff; border: 1px solid rgba(96,165,250,0.9); }
+  .lv1.ct { background: rgba(52,211,153,0.13); color: var(--p2); border: 1px solid rgba(52,211,153,0.25); }
+  .lv2.ct { background: rgba(52,211,153,0.33); color: var(--p2); border: 1px solid rgba(52,211,153,0.55); }
+  .lv3.ct { background: rgba(52,211,153,0.60); color: #fff; border: 1px solid rgba(52,211,153,0.9); }
+
+  .hm-section-header {
+    grid-column: 1 / -1; padding: 12px 0 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    border-top: 1px solid var(--border); margin-top: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hm-section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .hm-legend {
+    display: flex; align-items: center; gap: 6px; margin-top: 20px;
+    font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); flex-wrap: wrap;
+  }
+  .hm-legend-box { width: 20px; height: 20px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── TOOLTIP ── */
+  #global-tooltip {
+    position: fixed;
+    background: #0c1929;
+    border: 1px solid rgba(96,165,250,0.2);
+    padding: 12px 14px;
+    font-size: 11px; border-radius: 6px;
+    white-space: normal; pointer-events: none;
+    z-index: 9999; font-family: 'Space Mono', monospace;
+    color: var(--text); width: 300px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+    line-height: 1.5; opacity: 0; transition: opacity 0.12s;
+  }
+  #global-tooltip.visible { opacity: 1; }
+
+  .tt-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .tt-phase-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tt-title { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); text-transform: uppercase; }
+  .tt-level { margin-left: auto; font-size: 9px; padding: 2px 6px; border-radius: 2px; background: rgba(96,165,250,0.1); color: var(--accent); border: 1px solid rgba(96,165,250,0.2); white-space: nowrap; }
+  .tt-section { margin-bottom: 7px; }
+  .tt-section-label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .tt-activities { list-style: none; padding: 0; }
+  .tt-activities li { font-size: 10px; color: var(--text); padding: 2px 0 2px 10px; position: relative; line-height: 1.4; }
+  .tt-activities li::before { content: '›'; position: absolute; left: 0; color: var(--muted); }
+  .tt-tasks { font-size: 10px; color: rgba(226,232,240,0.65); line-height: 1.4; }
+  .tt-tools { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; }
+  .tt-tool { font-size: 9px; padding: 1px 5px; border-radius: 2px; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.2); color: var(--accent); }
+  .tt-empty { font-size: 10px; color: var(--muted); font-style: italic; }
+
+  .footer { margin-top: 80px; text-align: center; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+
+<div id="global-tooltip"></div>
+
+<div class="header">
+  <div class="header-badge">RNCP37638 · Niveau 7</div>
+  <h1>Parcours <span>Data Engineer</span><br>Expert en Infrastructures de Données Massives</h1>
+  <p class="header-sub">630h centre · 18 mois · Alternance 1/4</p>
+</div>
+
+<!-- ── FRISE ── -->
+<div class="section-title">
+  <div class="section-num">01</div>
+  <h2>Frise chronologique en couches</h2>
+</div>
+
+<div class="timeline-wrapper">
+<div class="timeline">
+  <div class="months-axis">
+    <div class="label-spacer"></div>
+    <div class="month-tick">M1</div><div class="month-tick">M2</div><div class="month-tick">M3</div>
+    <div class="month-tick">M4</div><div class="month-tick">M5</div><div class="month-tick">M6</div>
+    <div class="month-tick">M7</div><div class="month-tick">M8</div><div class="month-tick">M9</div>
+    <div class="month-tick">M10</div><div class="month-tick">M11</div><div class="month-tick">M12</div>
+    <div class="month-tick">M13</div><div class="month-tick">M14</div><div class="month-tick">M15</div>
+    <div class="month-tick">M16</div><div class="month-tick">M17</div><div class="month-tick">M18</div>
+  </div>
+  <div class="layers" id="frise"></div>
+</div>
+</div>
+
+<div class="phase-legend" style="margin-top:20px;">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p0)"></div>Phase 0 — La Prairie (1 mois · 70h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p1)"></div>Phase 1 — ETL & Bases de données (2 mois · 105h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p2)"></div>Phase 2 — Infrastructure Data (4 mois · 175h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p3)"></div>Phase 3 — Concevoir ETL & BDD (2 mois · 70h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p4)"></div>Phase 4 — Data Warehouse (2 mois · 70h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p5)"></div>Phase 5 — Data Lake (2 mois · 70h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--p6)"></div>Phase 6 — Certification (1 mois · 70h)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Semaines centre de formation</div>
+</div>
+
+<!-- ── HEATMAP ── -->
+<div class="section-title">
+  <div class="section-num">02</div>
+  <h2>Heatmap — Progression des compétences par phase</h2>
+</div>
+
+<div class="heatmap-container">
+<div class="heatmap">
+  <div class="heatmap-grid" id="heatmap">
+    <div class="hm-cell-label" style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;font-weight:700;">COMPÉTENCE</div>
+    <div class="hm-col-label" style="color:var(--p0)">PH0<br><span style="font-weight:400;font-size:9px;color:var(--muted)">1 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p1)">PH1<br><span style="font-weight:400;font-size:9px;color:var(--muted)">2 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p2)">PH2<br><span style="font-weight:400;font-size:9px;color:var(--muted)">4 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p3)">PH3<br><span style="font-weight:400;font-size:9px;color:var(--muted)">2 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p4)">PH4<br><span style="font-weight:400;font-size:9px;color:var(--muted)">2 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p5)">PH5<br><span style="font-weight:400;font-size:9px;color:var(--muted)">2 mois</span></div>
+    <div class="hm-col-label" style="color:var(--p6)">PH6<br><span style="font-weight:400;font-size:9px;color:var(--muted)">1 mois</span></div>
+  </div>
+</div>
+</div>
+
+<div class="hm-legend" style="margin-top:20px;">
+  <span>Niveau :</span>
+  <div class="hm-legend-box lv0" style="border:1px solid var(--border)"></div><span>—</span>
+  <div class="hm-legend-box" style="background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.3)"></div><span>1 · Imiter</span>
+  <div class="hm-legend-box" style="background:rgba(96,165,250,0.35);border:1px solid rgba(96,165,250,0.55)"></div><span>2 · Adapter</span>
+  <div class="hm-legend-box" style="background:rgba(96,165,250,0.62);border:1px solid rgba(96,165,250,0.9)"></div><span>3 · Transposer</span>
+  &nbsp;·&nbsp;
+  <div class="hm-legend-box" style="background:rgba(96,165,250,0.35);border:1px solid rgba(96,165,250,0.5)"></div><span>Compétences Data (C)</span>
+  <div class="hm-legend-box" style="background:rgba(52,211,153,0.33);border:1px solid rgba(52,211,153,0.5)"></div><span>Transversales (CT)</span>
+</div>
+
+<div class="footer">
+  Expert en Infrastructures de Données Massives · Simplon · RNCP37638 · Niveau 7
+</div>
+
+<script>
+// ════════════════════════════════════════
+// FRISE — 18 mois / 7 phases
+// PH0: M1 (1m) · PH1: M2-M3 (2m) · PH2: M4-M7 (4m)
+// PH3: M8-M9 (2m) · PH4: M10-M11 (2m) · PH5: M12-M13 (2m) · PH6: M14 (1m) — + alternance libre M15-M18
+// Note : 630h sur 18 mois, on étale PH5+PH6 jusqu'à M18
+// ════════════════════════════════════════
+const totalMonths = 18;
+
+const layers = [
+  {
+    label: "PHASES",
+    segments: [
+      { start:0,  dur:1,  label:"Phase 0 · La Prairie", ph:"ph0" },
+      { start:1,  dur:2,  label:"Phase 1 · ETL & BDD", ph:"ph1" },
+      { start:3,  dur:4,  label:"Phase 2 · Infrastructure Data", ph:"ph2" },
+      { start:7,  dur:2,  label:"Phase 3 · Concevoir ETL & BDD", ph:"ph3" },
+      { start:9,  dur:2,  label:"Phase 4 · Data Warehouse", ph:"ph4" },
+      { start:11, dur:3,  label:"Phase 5 · Data Lake", ph:"ph5" },
+      { start:14, dur:4,  label:"Phase 6 · Certification & Projet final", ph:"ph6" },
+    ]
+  },
+  {
+    label: "HEURES CENTRE",
+    segments: [
+      { start:0,  dur:1,  label:"70h", ph:"ph0" },
+      { start:1,  dur:2,  label:"105h", ph:"ph1" },
+      { start:3,  dur:4,  label:"175h", ph:"ph2" },
+      { start:7,  dur:2,  label:"70h", ph:"ph3" },
+      { start:9,  dur:2,  label:"70h", ph:"ph4" },
+      { start:11, dur:3,  label:"70h", ph:"ph5" },
+      { start:14, dur:4,  label:"70h + examen", ph:"ph6" },
+    ]
+  },
+  {
+    label: "RYTHME ALTERNANCE",
+    segments: buildAlternanceSegments()
+  },
+  {
+    label: "PILOTAGE PROJET\nC1–C7",
+    segments: [
+      { start:0,  dur:1,  label:"C4 C7 C8 C9 C10 C11", ph:"ph0" },
+      { start:1,  dur:2,  label:"C4 C7 C8 C9 C10 C11", ph:"ph1" },
+      { start:3,  dur:4,  label:"C4 C6 C7 + Data Infra", ph:"ph2" },
+      { start:7,  dur:2,  label:"C1 C2 C3 C4 C5 C7", ph:"ph3" },
+      { start:9,  dur:2,  label:"C1 C2 C3 C4 C5 C6 C7", ph:"ph4" },
+      { start:11, dur:3,  label:"C1→C7 (Maîtrise)", ph:"ph5" },
+      { start:14, dur:4,  label:"Toutes compétences", ph:"ph6" },
+    ]
+  },
+  {
+    label: "COLLECTE & STOCKAGE\nC8–C12",
+    segments: [
+      { start:0,  dur:1,  label:"C8 C9 C10 C11", ph:"ph0" },
+      { start:1,  dur:2,  label:"C8 C9 C10 C11", ph:"ph1" },
+      { start:3,  dur:4,  label:"C8→C12 (Adapter)", ph:"ph2" },
+      { start:7,  dur:2,  label:"C8 C9 C10 C11 C12", ph:"ph3" },
+      { start:9,  dur:2,  label:"C12 (avancé)", ph:"ph4" },
+      { start:11, dur:3,  label:"C12 (Maîtrise)", ph:"ph5" },
+      { start:14, dur:4,  label:"Toutes", ph:"ph6" },
+    ]
+  },
+  {
+    label: "DATA WAREHOUSE\nC13–C17",
+    segments: [
+      { start:3,  dur:4,  label:"C13 C14 C15 C16 C17", ph:"ph2" },
+      { start:7,  dur:2,  label:"C13 C14 C15 C16", ph:"ph3" },
+      { start:9,  dur:2,  label:"C13→C17 (Maîtrise)", ph:"ph4" },
+      { start:14, dur:4,  label:"Toutes", ph:"ph6" },
+    ]
+  },
+  {
+    label: "DATA LAKE\nC18–C21",
+    segments: [
+      { start:3,  dur:4,  label:"C18 C19 C20 C21", ph:"ph2" },
+      { start:11, dur:3,  label:"C18 C19 C20 C21 (Maîtrise)", ph:"ph5" },
+      { start:14, dur:4,  label:"Toutes", ph:"ph6" },
+    ]
+  },
+  {
+    label: "CERTIFICATIONS",
+    segments: [
+      { start:14, dur:4, label:"Préparation & Passage RNCP37638", ph:"ph6" },
+    ]
+  }
+];
+
+function buildAlternanceSegments() {
+  const segs = [];
+  for (let m = 0; m < 18; m++) {
+    segs.push({ start:m,       dur:0.25, label:"Ctr", ph:"alt-seg" });
+    segs.push({ start:m+0.25,  dur:0.75, label:"Entreprise", ph:"alt-seg-ent" });
+  }
+  return segs;
+}
+
+const friseEl = document.getElementById('frise');
+
+layers.forEach(layer => {
+  const row = document.createElement('div');
+  row.className = 'layer-row';
+  const labelEl = document.createElement('div');
+  labelEl.className = 'layer-label';
+  labelEl.style.whiteSpace = 'pre-line';
+  labelEl.textContent = layer.label;
+  row.appendChild(labelEl);
+
+  const track = document.createElement('div');
+  track.className = 'layer-track';
+  const gridBg = document.createElement('div');
+  gridBg.className = 'grid-bg';
+  for (let i = 0; i < totalMonths; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell';
+    gridBg.appendChild(cell);
+  }
+  track.appendChild(gridBg);
+
+  layer.segments.forEach(seg => {
+    const el = document.createElement('div');
+    el.className = `segment ${seg.ph}`;
+    el.style.left  = `${(seg.start / totalMonths) * 100}%`;
+    el.style.width = `calc(${(seg.dur / totalMonths) * 100}% - 3px)`;
+    el.innerHTML   = `<span class="segment-label">${seg.label}</span>`;
+    track.appendChild(el);
+  });
+
+  row.appendChild(track);
+  friseEl.appendChild(row);
+});
+
+// ════════════════════════════════════════
+// HEATMAP — 7 phases [PH0, PH1, PH2, PH3, PH4, PH5, PH6]
+// ════════════════════════════════════════
+
+const phNames  = ["Phase 0 · La Prairie","Phase 1 · ETL & BDD","Phase 2 · Infrastructure Data","Phase 3 · ETL & BDD (Concevoir)","Phase 4 · Data Warehouse","Phase 5 · Data Lake","Phase 6 · Certification"];
+const phColors = ["#38bdf8","#818cf8","#34d399","#fb923c","#f472b6","#facc15","#a78bfa"];
+const levelLabels = ["—","Niveau 1 · Imiter","Niveau 2 · Adapter","Niveau 3 · Transposer"];
+
+const heatmapData = {
+  sections: [
+    {
+      title: "Pilotage de projet data — C1 à C7",
+      type: "c",
+      rows: [
+        {
+          code:"C1", label:"Analyser un besoin data", levels:[0,0,0,2,2,3,3],
+          activities:[
+            null, null, null,
+            { acts:["Analyse besoin client","Étude faisabilité","Cadrage projet"], tasks:"Analyse de l'expression du besoin client, questionnement méthodique, identification des parties prenantes et des enjeux stratégiques.", tools:["Word","Confluence","Miro"] },
+            { acts:["Cadrage Data Warehouse","Expression besoin analytique"], tasks:"Analyse du besoin d'analyse et de reporting, cadrage des besoins data warehouse avec les utilisateurs métier.", tools:["Word","Confluence","Jira"] },
+            { acts:["Cadrage Data Lake","Analyse besoin massif"], tasks:"Analyse des besoins pour un data lake à l'échelle organisation, identification des contraintes de volume et de variété.", tools:["Word","Confluence","Miro"] },
+            { acts:["Audit patrimoine data","Cadrage projet final"], tasks:"Audit complet du patrimoine de données, formalisation complète du cadre de besoin, présentation au jury.", tools:["Word","PowerPoint","Confluence"] },
+          ]
+        },
+        {
+          code:"C2", label:"Cartographier les données", levels:[0,0,0,1,2,3,3],
+          activities:[
+            null, null, null,
+            { acts:["Inventaire sources","Cartographie données","Topographie"], tasks:"Inventaire des sources de données, qualification des flux, formalisation de la topographie des données disponibles.", tools:["draw.io","Excel","Confluence"] },
+            { acts:["Cartographie pour Data Warehouse","Modélisation faits/dimensions"], tasks:"Cartographie complète des données utiles au data warehouse, schéma étoile/flocon.", tools:["draw.io","dbt","Confluence"] },
+            { acts:["Cartographie Data Lake","Gouvernance des données"], tasks:"Cartographie complète incluant sources massives et non structurées, gestion du catalogue.", tools:["draw.io","Atlas","Confluence"] },
+            { acts:["Cartographie projet final"], tasks:"Cartographie complète des données du projet de certification.", tools:["draw.io","Confluence","Word"] },
+          ]
+        },
+        {
+          code:"C3", label:"Concevoir un cadre technique", levels:[0,0,0,2,2,3,3],
+          activities:[
+            null, null, null,
+            { acts:["Choix stack technique","Contraintes RGPD","Éco-responsabilité"], tasks:"Définition de la réponse technique adaptée aux contraintes et aux ressources, prise en compte du RGPD et de l'éco-conception.", tools:["draw.io","Word","RGPD"] },
+            { acts:["Architecture Data Warehouse","Sélection outils DW"], tasks:"Conception de l'architecture data warehouse, sélection des technologies appropriées.", tools:["Azure Synapse","draw.io","Snowflake"] },
+            { acts:["Architecture Data Lake","Sélection outils DL"], tasks:"Conception de l'architecture data lake en fonction des volumes et de la variété des données.", tools:["Azure Data Lake","AWS S3","draw.io"] },
+            { acts:["Conception projet final"], tasks:"Conception complète de la solution technique du projet de certification.", tools:["draw.io","Word","PowerPoint"] },
+          ]
+        },
+        {
+          code:"C4", label:"Veille technique & réglementaire", levels:[1,1,2,3,3,3,3],
+          activities:[
+            { acts:["Veille RGPD","Veille ETL/SQL","Routine de veille"], tasks:"Mise en place d'une routine de veille, initiation au RGPD, découverte des outils et pratiques du Data Engineer.", tools:["Feedly","LinkedIn","CNIL"] },
+            { acts:["Veille Git","Veille MERISE","Veille RGPD"], tasks:"Veille sur le versionnement, les normes de modélisation et la conformité des bases de données.", tools:["Feedly","GitHub","CNIL"] },
+            { acts:["Veille NoSQL","Veille OLAP/OLTP","Veille ETL/ELT"], tasks:"Veille sur les architectures data warehouse, data lake, les normes de modélisation et les nouvelles technologies.", tools:["Feedly","Medium","arXiv"] },
+            { acts:["Veille API REST","Veille orchestration"], tasks:"Veille sur les API REST, les outils d'orchestration et les nouvelles pratiques d'ingénierie data.", tools:["Feedly","FastAPI doc","Airflow doc"] },
+            { acts:["Veille lakehouse","Veille data mesh"], tasks:"Veille sur les architectures avancées (lakehouse, data mesh), les nouvelles pratiques d'organisation data.", tools:["Feedly","Databricks Blog","dbt Blog"] },
+            { acts:["Veille streaming","Veille DataOps","Veille catalogage"], tasks:"Veille sur les technologies de streaming, les pratiques DataOps et les outils de gouvernance.", tools:["Feedly","Kafka doc","Apache Hudi"] },
+            { acts:["Synthèse veille pour certification"], tasks:"Capitalisation et présentation de la veille réalisée tout au long de la formation.", tools:["Confluence","Word","PowerPoint"] },
+          ]
+        },
+        {
+          code:"C5", label:"Planifier un projet data", levels:[0,0,0,2,1,2,3],
+          activities:[
+            null, null, null,
+            { acts:["Planification ETL","Roadmap projet","Kanban"], tasks:"Organisation du pilotage technique, priorisation et répartition des tâches, planification Scrum/Kanban.", tools:["Jira","Trello","Notion"] },
+            { acts:["Planification Data Warehouse","Feuille de route"], tasks:"Planification complète de la réalisation du data warehouse, calendrier prévisionnel et chiffrage.", tools:["Jira","MS Project","Confluence"] },
+            { acts:["Planification Data Lake","Roadmap intégration"], tasks:"Planification du projet data lake, intégration des contraintes d'infrastructure et de gouvernance.", tools:["Jira","Confluence","Gantt"] },
+            { acts:["Planification projet final"], tasks:"Planification complète du projet de certification, suivi d'avancement.", tools:["Jira","MS Project","Confluence"] },
+          ]
+        },
+        {
+          code:"C6", label:"Superviser la réalisation", levels:[0,0,1,0,2,3,3],
+          activities:[
+            null, null,
+            { acts:["Supervision équipe data","Lead technique"], tasks:"Animation des échanges techniques, arbitrage des problèmes bloquants, suivi des indicateurs d'avancement.", tools:["Jira","Teams","Confluence"] },
+            null,
+            { acts:["Supervision Data Warehouse","Suivi SLA","Tableau de bord"], tasks:"Supervision de la réalisation et de la maintenance du data warehouse, suivi des SLA et des indicateurs de service.", tools:["Grafana","Jira","Confluence"] },
+            { acts:["Supervision Data Lake","DataOps"], tasks:"Supervision de l'implémentation du data lake, mise en place d'une démarche DataOps, orchestration.", tools:["Airflow","Dagster","Grafana"] },
+            { acts:["Supervision projet final"], tasks:"Supervision complète du projet de certification, présentation des choix de pilotage.", tools:["Jira","Confluence","PowerPoint"] },
+          ]
+        },
+        {
+          code:"C7", label:"Communiquer tout au long du projet", levels:[1,1,2,3,3,3,3],
+          activities:[
+            { acts:["Communication résultats","Documentation livrables"], tasks:"Communication des résultats au formateur/tuteur, documentation des livrables.", tools:["Word","Confluence","Teams"] },
+            { acts:["Communication ETL","Accompagnement utilisateurs"], tasks:"Communication sur les évolutions des ETL, accompagnement à la prise en main des outils data.", tools:["Word","Confluence","Teams"] },
+            { acts:["Communication projet infra","Reporting équipe"], tasks:"Communication des orientations et réalisations, élaboration de supports de communication à destination des parties prenantes.", tools:["PowerPoint","Confluence","Teams"] },
+            { acts:["Communication cadrage client","Présentation proposition"], tasks:"Communication du cadrage projet au commanditaire, présentation de la proposition technique.", tools:["PowerPoint","Confluence","Teams"] },
+            { acts:["Communication DW","Présentation client"], tasks:"Communication complète tout au long du projet data warehouse, présentation des livrables au client.", tools:["PowerPoint","Confluence","Teams"] },
+            { acts:["Communication DL","Présentation architecture"], tasks:"Communication sur l'architecture data lake, partage des recommandations aux parties prenantes.", tools:["PowerPoint","Confluence","Teams"] },
+            { acts:["Présentation certification","Soutenance jury"], tasks:"Présentation complète du projet devant le jury d'examen, réponse aux questions.", tools:["PowerPoint","Confluence","Teams"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Collecte, Stockage & Mise à disposition — C8 à C12",
+      type: "c",
+      rows: [
+        {
+          code:"C8", label:"Automatiser l'extraction de données", levels:[1,1,2,2,0,0,3],
+          activities:[
+            { acts:["Script extraction SQL","Requête HTTP REST","Scraping basique"], tasks:"Prise en main des outils d'extraction, évolution de scripts existants de collecte de données depuis API, fichiers, BDD.", tools:["Python","SQL","Bash"] },
+            { acts:["Mise à jour scripts ETL","Extraction multi-sources"], tasks:"Mise à jour des règles d'extraction et de parsing, versionnement des scripts.", tools:["Python","SQL","Git"] },
+            { acts:["Extraction données massives","Orchestration batch"], tasks:"Extraction depuis data warehouse et data lake, programmation des procédures automatisées.", tools:["PySpark","Hive","Airflow"] },
+            { acts:["Conception scripts extraction","Nouveaux flux données"], tasks:"Conception et création de nouveaux scripts d'extraction depuis API, fichiers et bases de données.", tools:["Python","FastAPI","Airbyte"] },
+            null, null,
+            { acts:["Extraction projet final"], tasks:"Mise en oeuvre complète des scripts d'extraction du projet de certification.", tools:["Python","SQL","Airflow"] },
+          ]
+        },
+        {
+          code:"C9", label:"Développer des requêtes SQL", levels:[1,1,2,2,0,0,3],
+          activities:[
+            { acts:["Requêtes SQL basiques","CRUD","Extraction BDD"], tasks:"Développement de requêtes SQL d'extraction depuis SGBD, initiation à Hive.", tools:["SQL","PostgreSQL","Hive"] },
+            { acts:["Requêtes SQL avancées","Contrats d'interface","Optimisation"], tasks:"Mise à jour des requêtes SQL, adaptation aux évolutions de schéma.", tools:["SQL","PostgreSQL","dbt"] },
+            { acts:["SQL sur Data Warehouse","Requêtes analytiques"], tasks:"Développement de requêtes analytiques complexes sur data warehouse et systèmes big data.", tools:["SQL","Hive","Spark SQL"] },
+            { acts:["SQL pour nouveaux flux","Optimisation requêtes"], tasks:"Création de requêtes SQL pour de nouveaux flux de données.", tools:["SQL","dbt","Airflow"] },
+            null, null,
+            { acts:["SQL projet final"], tasks:"Requêtes complètes pour le projet de certification.", tools:["SQL","dbt","PostgreSQL"] },
+          ]
+        },
+        {
+          code:"C10", label:"Développer des règles d'agrégation", levels:[1,1,2,2,0,0,3],
+          activities:[
+            { acts:["Nettoyage données","Harmonisation formats","Suppression doublons"], tasks:"Mise à jour des règles de filtrage, parsing et agrégation des données collectées, homogénéisation des formats.", tools:["Python","SQL","Pandas"] },
+            { acts:["Agrégation multi-sources","Mise à jour règles"], tasks:"Mise à jour des règles d'agrégation, correction des entrées corrompues.", tools:["Python","dbt","SQL"] },
+            { acts:["Agrégation données massives","ETL complexes"], tasks:"Développement de règles d'agrégation pour des données volumineuses et hétérogènes.", tools:["PySpark","dbt","Talend"] },
+            { acts:["Conception règles agrégation","Nouveaux jeux données"], tasks:"Conception complète des règles d'agrégation pour un nouveau projet.", tools:["Python","dbt","Airbyte"] },
+            null, null,
+            { acts:["Agrégation projet final"], tasks:"Règles d'agrégation complètes pour le projet de certification.", tools:["Python","dbt","SQL"] },
+          ]
+        },
+        {
+          code:"C11", label:"Créer une base de données", levels:[1,1,0,2,0,0,3],
+          activities:[
+            { acts:["Modélisation MERISE","Création BDD","Import données"], tasks:"Prise en main du SGBD, reproduction de configuration, mise à jour du script d'import.", tools:["PostgreSQL","SQL","MERISE"] },
+            { acts:["BDD Open Data","Modélisation cible","Création BDD"], tasks:"Modélisation et création d'une base de données Open Data à partir d'un data warehouse existant.", tools:["PostgreSQL","SQL","MERISE"] },
+            null,
+            { acts:["BDD pour analyses","Modélisation optimisée"], tasks:"Modélisation et création d'une base de données optimisée pour les requêtes analytiques.", tools:["PostgreSQL","MongoDB","SQL"] },
+            null, null,
+            { acts:["BDD projet final"], tasks:"Création de la base de données du projet de certification.", tools:["PostgreSQL","SQL","MERISE"] },
+          ]
+        },
+        {
+          code:"C12", label:"Partager le jeu de données (API)", levels:[0,0,1,2,0,3,3],
+          activities:[
+            null, null,
+            { acts:["Accès data lake","Configuration droits","Paramétrage"], tasks:"Paramétrage des droits d'accès au data lake, configuration des accès pour les équipes.", tools:["Python","PostgreSQL","RGPD"] },
+            { acts:["API REST exposition données","Interfaces logicielles"], tasks:"Développement des endpoints API REST exposant les données, gestion des droits d'accès.", tools:["FastAPI","Flask","Python"] },
+            null,
+            { acts:["Mise à disposition catalogue","Élargissement accès DL"], tasks:"Configuration des interfaces de partage du data lake, gestion du catalogue de données accessible.", tools:["FastAPI","Atlas","Confluence"] },
+            { acts:["API projet final"], tasks:"Mise à disposition complète des données du projet de certification.", tools:["FastAPI","Python","Confluence"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Data Warehouse — C13 à C17",
+      type: "c",
+      rows: [
+        {
+          code:"C13", label:"Modéliser la structure du DW", levels:[0,0,1,0,3,0,3],
+          activities:[
+            null, null,
+            { acts:["Schéma étoile/flocon","Faits & dimensions","Prise en main DW"], tasks:"Prise en connaissance des schémas faits/dimensions, reproduction de configuration en environnement de dev.", tools:["draw.io","dbt","SQL"] },
+            null,
+            { acts:["Modélisation Data Warehouse","Schéma cible complet"], tasks:"Production complète des schémas de faits et dimensions, définition des relations entre objets.", tools:["draw.io","dbt","Confluence"] },
+            null,
+            { acts:["Modélisation projet final"], tasks:"Modélisation complète du data warehouse du projet de certification.", tools:["draw.io","dbt","SQL"] },
+          ]
+        },
+        {
+          code:"C14", label:"Créer un entrepôt de données", levels:[0,0,1,0,2,0,3],
+          activities:[
+            null, null,
+            { acts:["Déploiement DW existant","Config datamarts","Test environnement"], tasks:"Reproduction de la configuration du data warehouse en dev, test du bon fonctionnement.", tools:["Azure Synapse","Snowflake","Docker"] },
+            null,
+            { acts:["Création Data Warehouse","Configuration datamarts","Gestion accès"], tasks:"Création complète d'un entrepôt de données, configuration des datamarts et des accès.", tools:["Azure Synapse","Snowflake","BigQuery"] },
+            null,
+            { acts:["DW projet final"], tasks:"Création du data warehouse du projet de certification.", tools:["Azure Synapse","Snowflake","BigQuery"] },
+          ]
+        },
+        {
+          code:"C15", label:"Intégrer les ETL entrée/sortie DW", levels:[0,0,1,0,2,0,3],
+          activities:[
+            null, null,
+            { acts:["Mise à jour ETL DW","Adaptation sources"], tasks:"Intégration de nouvelles sources de données en adaptant les ETL existants.", tools:["Talend","dbt","Airbyte"] },
+            null,
+            { acts:["Création ETL DW","Intégration sources","Configuration sorties"], tasks:"Identification et intégration des sources, configuration des ETL en entrée et en sortie du DW.", tools:["Talend","dbt","Airbyte"] },
+            null,
+            { acts:["ETL projet final"], tasks:"Intégration complète des ETL pour le projet de certification.", tools:["dbt","Airbyte","Airflow"] },
+          ]
+        },
+        {
+          code:"C16", label:"Gérer l'entrepôt de données", levels:[0,0,2,0,3,0,3],
+          activities:[
+            null, null,
+            { acts:["MCO Data Warehouse","Gestion accès","Tickets maintenance"], tasks:"Maintenance en condition opérationnelle, gestion des évolutions et des accès, suivi SLA.", tools:["Jira","Grafana","Confluence"] },
+            null,
+            { acts:["Gestion complète DW","Intégration évolutions","Scalabilité"], tasks:"Administration complète du data warehouse, intégration des évolutions structurelles, monitoring.", tools:["Grafana","Jira","Airflow"] },
+            null,
+            { acts:["Gestion DW projet final"], tasks:"Administration et maintenance du data warehouse du projet de certification.", tools:["Grafana","Jira","Confluence"] },
+          ]
+        },
+        {
+          code:"C17", label:"Variations dans les dimensions (SCD)", levels:[0,0,1,0,3,0,3],
+          activities:[
+            null, null,
+            { acts:["Intégration variations DW","Nouveaux pays/sources"], tasks:"Qualification et intégration des variations dans les dimensions du data warehouse (SCD).", tools:["dbt","SQL","Talend"] },
+            null,
+            { acts:["SCD complexes","Historisation","Audit trail"], tasks:"Implémentation des Slowly Changing Dimensions, historisation des évolutions.", tools:["dbt","SQL","Databricks"] },
+            null,
+            { acts:["SCD projet final"], tasks:"Implémentation des variations dimensionnelles du projet de certification.", tools:["dbt","SQL","Databricks"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Data Lake — C18 à C21",
+      type: "c",
+      rows: [
+        {
+          code:"C18", label:"Concevoir l'architecture du Data Lake", levels:[0,0,1,0,0,3,3],
+          activities:[
+            null, null,
+            { acts:["Prise en main DL","Réplication architecture","Ajout capacité"], tasks:"Prise en main de l'architecture data lake existante, reproduction de configuration, augmentation capacité.", tools:["Azure Data Lake","AWS S3","GCP GCS"] },
+            null, null,
+            { acts:["Conception Data Lake","Sélection technos","Architecture complète"], tasks:"Conception de l'architecture data lake en sélectionnant les technologies appropriées selon la volumétrie et la variété.", tools:["Azure Data Lake","AWS Lake Formation","draw.io"] },
+            { acts:["Architecture DL projet final"], tasks:"Conception de l'architecture data lake du projet de certification.", tools:["draw.io","Confluence","Word"] },
+          ]
+        },
+        {
+          code:"C19", label:"Intégrer les composants du Data Lake", levels:[0,0,1,0,0,3,3],
+          activities:[
+            null, null,
+            { acts:["Config outils batch/streaming","Connexion nouvelles sources","Procédures alimentation"], tasks:"Prise en main des outils batch et streaming, reproduction des configurations, connexion de nouvelles sources.", tools:["Kafka","Flume","Airflow"] },
+            null, null,
+            { acts:["Intégration complète DL","Outils batch & streaming","Catalogage"], tasks:"Sélection et configuration complète des outils batch, streaming et catalogage du data lake.", tools:["Kafka","Airflow","Dagster"] },
+            { acts:["Intégration DL projet final"], tasks:"Intégration complète des composants du data lake du projet de certification.", tools:["Kafka","Airflow","Docker"] },
+          ]
+        },
+        {
+          code:"C20", label:"Gérer le catalogue des données", levels:[0,0,1,0,0,3,3],
+          activities:[
+            null, null,
+            { acts:["Prise en main catalogue","Installation outil catalogage"], tasks:"Installation de l'outil de catalogue, prise en main et configuration initiale.", tools:["Apache Atlas","DataHub","Confluence"] },
+            null, null,
+            { acts:["Gestion catalogue DL","Cycle de vie","RGPD"], tasks:"Gestion complète du catalogue des données en tenant compte de leur nature, sources et cycle de vie (RGPD).", tools:["Apache Atlas","DataHub","CNIL"] },
+            { acts:["Catalogue projet final"], tasks:"Gestion du catalogue de données du projet de certification.", tools:["Apache Atlas","DataHub","Confluence"] },
+          ]
+        },
+        {
+          code:"C21", label:"Implémenter les règles de gouvernance", levels:[0,0,1,0,0,3,3],
+          activities:[
+            null, null,
+            { acts:["Paramétrage droits accès","RGPD sources nouvelles"], tasks:"Paramétrage des droits pour l'alimentation et la recherche sur l'index des données ajoutées.", tools:["Azure IAM","AWS IAM","CNIL"] },
+            null, null,
+            { acts:["Gouvernance complète DL","DataOps","Sécurité données"], tasks:"Implémentation complète des règles de gouvernance, sécurisation de la recherche et de la récupération des données.", tools:["Azure IAM","CNIL","Apache Ranger"] },
+            { acts:["Gouvernance projet final"], tasks:"Implémentation des règles de gouvernance du projet de certification.", tools:["Azure IAM","CNIL","Confluence"] },
+          ]
+        },
+      ]
+    },
+    {
+      title: "Compétences Transversales",
+      type: "ct",
+      rows: [
+        {
+          code:"CT1", label:"Planifier le travail individuel et collectif", levels:[1,1,1,2,2,2,3],
+          activities:[
+            { acts:["Organisation Prairie","Outils numériques","Gestion du temps"], tasks:"Planification du travail en Prairie, utilisation des outils numériques de gestion.", tools:["Notion","Trello","Discord"] },
+            { acts:["Planification sprints","Kanban équipe"], tasks:"Mise en place d'une organisation Kanban/Scrum pour les projets ETL.", tools:["Jira","Trello","Notion"] },
+            { acts:["Planification projet infra","Roadmap technique"], tasks:"Planification de la réalisation technique, feuille de route et indicateurs d'avancement.", tools:["Jira","Confluence","Gantt"] },
+            { acts:["Planification ETL conception"], tasks:"Planification complète d'un projet de conception ETL.", tools:["Jira","Confluence","MS Project"] },
+            { acts:["Planification DW"], tasks:"Planification du projet data warehouse.", tools:["Jira","MS Project","Confluence"] },
+            { acts:["Planification DL"], tasks:"Planification du projet data lake.", tools:["Jira","MS Project","Confluence"] },
+            { acts:["Planification certification"], tasks:"Planification finale du projet de certification.", tools:["Jira","Confluence","Word"] },
+          ]
+        },
+        {
+          code:"CT2", label:"Piloter l'organisation du travail collectif", levels:[1,1,2,2,2,3,3],
+          activities:[
+            { acts:["Dynamique promotion","Travail en équipe"], tasks:"Participation à la dynamique collective, engagement dans les projets de groupe.", tools:["Discord","Teams"] },
+            { acts:["Animation équipe","Arbitrage blocages"], tasks:"Animation des échanges entre membres de l'équipe technique, arbitrage et résolution des problèmes bloquants.", tools:["Teams","Jira","Slack"] },
+            { acts:["Pilotage lead technique","Rotation rôle pilote"], tasks:"Prise du rôle de pilote d'équipe par rotation, coordination de la réalisation technique.", tools:["Teams","Jira","Confluence"] },
+            { acts:["Pilotage projet ETL"], tasks:"Pilotage de la réalisation d'un projet ETL en équipe.", tools:["Jira","Teams","Confluence"] },
+            { acts:["Pilotage projet DW"], tasks:"Pilotage de la réalisation du data warehouse.", tools:["Jira","Teams","Confluence"] },
+            { acts:["Pilotage projet DL"], tasks:"Pilotage du projet data lake à l'échelle organisation.", tools:["Jira","Teams","Confluence"] },
+            { acts:["Pilotage certification"], tasks:"Pilotage complet du projet de certification.", tools:["Jira","Teams","Confluence"] },
+          ]
+        },
+        {
+          code:"CT3", label:"Définir le périmètre d'un problème", levels:[1,1,2,2,2,2,3],
+          activities:[
+            { acts:["Diagnostic bug script","Identification périmètre"], tasks:"Analyse des journaux d'erreur, identification de la nature du problème technique.", tools:["Python","Git","Bash"] },
+            { acts:["Analyse problème ETL","Qualification périmètre"], tasks:"Qualification du périmètre d'un bug ou d'une évolution dans les scripts ETL.", tools:["Python","SQL","Git"] },
+            { acts:["Analyse impact infra","Définition périmètre DW/DL"], tasks:"Définition précise du périmètre des évolutions à intégrer dans l'infrastructure data.", tools:["draw.io","Word","Confluence"] },
+            { acts:["Périmètre projet ETL conception"], tasks:"Définition du périmètre d'un nouveau projet ETL.", tools:["Word","draw.io","Jira"] },
+            { acts:["Périmètre projet DW"], tasks:"Définition du périmètre du data warehouse.", tools:["Word","draw.io","Jira"] },
+            { acts:["Périmètre projet DL"], tasks:"Définition du périmètre du data lake.", tools:["Word","draw.io","Jira"] },
+            { acts:["Périmètre certification"], tasks:"Définition précise du périmètre du projet de certification.", tools:["Word","draw.io","PowerPoint"] },
+          ]
+        },
+        {
+          code:"CT4", label:"Rechercher des pistes de résolution", levels:[1,1,2,2,2,2,3],
+          activities:[
+            { acts:["Débogage script","Recherche solution technique"], tasks:"Recherche méthodique d'une solution pour corriger un bug ou faire évoluer un script.", tools:["Google","Stack Overflow","Documentation"] },
+            { acts:["Recherche solution ETL","Veille technique"], tasks:"Recherche méthodique de solutions pour les évolutions ETL.", tools:["Stack Overflow","Documentation","Feedly"] },
+            { acts:["Évaluation solutions DW/DL","Benchmark outils"], tasks:"Recherche et évaluation comparative de solutions techniques pour l'infrastructure data.", tools:["Documentation","Feedly","Gartner"] },
+            { acts:["Recherche solution ETL conception"], tasks:"Veille et recherche de solutions pour la conception de nouveaux ETL.", tools:["Feedly","Documentation","Medium"] },
+            { acts:["Recherche solution DW"], tasks:"Recherche et évaluation des solutions data warehouse.", tools:["Feedly","Databricks Blog","dbt Blog"] },
+            { acts:["Recherche solution DL"], tasks:"Recherche et évaluation des solutions data lake.", tools:["Feedly","AWS Blog","Azure Blog"] },
+            { acts:["Recherche certification"], tasks:"Recherche des solutions techniques du projet de certification.", tools:["Documentation","Feedly","Stack Overflow"] },
+          ]
+        },
+        {
+          code:"CT5", label:"Partager la solution (documentation)", levels:[1,1,2,2,2,3,3],
+          activities:[
+            { acts:["Documentation script","Versionnement Git","Registre RGPD"], tasks:"Mise à jour de la documentation technique, versionnement des scripts, registre des traitements RGPD.", tools:["Confluence","Git","Word"] },
+            { acts:["Documentation ETL","Mise à jour RGPD","Procédures"], tasks:"Mise à jour des documentations techniques ETL et des procédures de mise en conformité RGPD.", tools:["Confluence","Git","Word"] },
+            { acts:["Documentation infra","Spécifications techniques","Notices utilisateurs"], tasks:"Rédaction des spécifications techniques et des notices d'utilisation des outils et services data.", tools:["Confluence","Word","Markdown"] },
+            { acts:["Documentation ETL conception"], tasks:"Documentation complète des nouveaux flux ETL conçus.", tools:["Confluence","Markdown","Git"] },
+            { acts:["Documentation DW"], tasks:"Documentation technique complète du data warehouse.", tools:["Confluence","dbt docs","Word"] },
+            { acts:["Documentation DL"], tasks:"Documentation du data lake, catalogue de données, registre RGPD.", tools:["Confluence","Apache Atlas","Word"] },
+            { acts:["Dossier certification"], tasks:"Constitution du dossier de certification, documentation complète du projet final.", tools:["Word","Confluence","PowerPoint"] },
+          ]
+        },
+        {
+          code:"CT6", label:"Présenter un travail réalisé", levels:[1,1,1,2,2,3,3],
+          activities:[
+            { acts:["Restitution Prairie","Présentation projet"], tasks:"Présentation du projet réalisé en Prairie, démonstration, réponse aux questions.", tools:["PowerPoint","Teams"] },
+            { acts:["Présentation livrables ETL","Communication client"], tasks:"Communication des résultats et livrables, accompagnement à la prise en main.", tools:["PowerPoint","Teams","Confluence"] },
+            { acts:["Présentation infra data","Soutenance intermédiaire"], tasks:"Présentation de l'infrastructure data mise en place, démonstration des solutions.", tools:["PowerPoint","draw.io","Teams"] },
+            { acts:["Présentation proposition ETL","Démonstration live"], tasks:"Présentation de la proposition technique ETL, démonstration.", tools:["PowerPoint","draw.io","Teams"] },
+            { acts:["Présentation DW","Démonstration client"], tasks:"Présentation et démonstration du data warehouse devant le client.", tools:["PowerPoint","Grafana","Teams"] },
+            { acts:["Présentation DL","Démonstration architecture"], tasks:"Présentation de l'architecture data lake et démonstration des flux.", tools:["PowerPoint","draw.io","Teams"] },
+            { acts:["Soutenance certification"], tasks:"Présentation complète du projet devant le jury d'examen, démonstration, réponse aux questions.", tools:["PowerPoint","draw.io","Teams"] },
+          ]
+        },
+        {
+          code:"CT7", label:"S'intégrer à l'environnement pro", levels:[1,0,1,0,0,0,0],
+          activities:[
+            { acts:["Découverte métier DE","Veille professionnelle","Règlement intérieur"], tasks:"Intégration à la promotion, découverte du métier de Data Engineer, mise en place de la routine de veille.", tools:["Simplonline","Discord","LinkedIn"] },
+            null,
+            { acts:["Culture data","Codes pros numériques","Intégration entreprise"], tasks:"Adoption des pratiques professionnelles en entreprise, culture data et enjeux de la donnée.", tools:["Slack","Teams","Jira"] },
+            null, null, null, null,
+          ]
+        },
+        {
+          code:"CT8", label:"Interagir de façon constructive", levels:[1,1,2,2,2,2,3],
+          activities:[
+            { acts:["Communication promotion","Pair learning","Feedback bienveillant"], tasks:"Communication bienveillante, apprentissage par les pairs, échanges constructifs.", tools:["Discord","Teams"] },
+            { acts:["Communication client simulé","Code review","Feedback formateur"], tasks:"Communication sur les livrables, retours constructifs.", tools:["Teams","Confluence","Jira"] },
+            { acts:["Communication inter-équipes","Rituels agiles"], tasks:"Communication entre équipes data, résolution de problèmes bloquants, rituels d'équipe.", tools:["Teams","Jira","Slack"] },
+            { acts:["Communication projet ETL","Client interne"], tasks:"Communication constructive avec le client interne tout au long du projet ETL.", tools:["Teams","Confluence","Jira"] },
+            { acts:["Communication projet DW","Client externe"], tasks:"Communication tout au long du projet data warehouse avec les parties prenantes.", tools:["Teams","Confluence","Jira"] },
+            { acts:["Communication projet DL"], tasks:"Communication tout au long du projet data lake.", tools:["Teams","Confluence","Jira"] },
+            { acts:["Communication certification","Réponse jury"], tasks:"Communication professionnelle devant le jury, échanges constructifs.", tools:["PowerPoint","Teams"] },
+          ]
+        },
+        {
+          code:"CT9", label:"Faciliter un temps de travail collectif", levels:[0,1,2,2,2,3,3],
+          activities:[
+            null,
+            { acts:["Animation stand-up","Facilitation réunion"], tasks:"Animation des rituels d'équipe, organisation des réunions d'avancement.", tools:["Miro","Teams","Jira"] },
+            { acts:["Facilitation sprint review","Rétrospective"], tasks:"Animation des retrospectives et sprint reviews, partage des bonnes pratiques data.", tools:["Miro","Teams","Confluence"] },
+            { acts:["Facilitation projet ETL"], tasks:"Facilitation des décisions collectives lors du projet ETL.", tools:["Miro","Teams","Jira"] },
+            { acts:["Facilitation projet DW"], tasks:"Facilitation des échanges dans le projet data warehouse.", tools:["Miro","Teams","Confluence"] },
+            { acts:["Facilitation projet DL"], tasks:"Facilitation des décisions d'architecture data lake.", tools:["Miro","Teams","Confluence"] },
+            { acts:["Facilitation soutenance","Organisation présentation"], tasks:"Organisation de la soutenance de certification.", tools:["Teams","Miro","PowerPoint"] },
+          ]
+        },
+      ]
+    }
+  ]
+};
+
+// ─── TOOLTIP ───
+const gTooltip = document.getElementById('global-tooltip');
+let ttVisible = false;
+
+function buildTooltipHTML(phIdx, code, lv, actData) {
+  const lvLabel = levelLabels[lv];
+  const phName  = phNames[phIdx];
+  const phColor = phColors[phIdx];
+
+  let inner = `
+    <div class="tt-header">
+      <div class="tt-phase-dot" style="background:${phColor}"></div>
+      <div class="tt-title">${phName}</div>
+      <div class="tt-level">${lvLabel}</div>
+    </div>`;
+
+  if (!actData) {
+    inner += `<div class="tt-empty">Compétence non mobilisée dans cette phase.</div>`;
+  } else {
+    if (actData.acts?.length) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Activités</div>
+        <ul class="tt-activities">${actData.acts.map(a => `<li>${a}</li>`).join('')}</ul>
+      </div>`;
+    }
+    if (actData.tasks) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Tâches type</div>
+        <div class="tt-tasks">${actData.tasks}</div>
+      </div>`;
+    }
+    if (actData.tools?.length) {
+      inner += `<div class="tt-section">
+        <div class="tt-section-label">Outils envisagés</div>
+        <div class="tt-tools">${actData.tools.map(t => `<span class="tt-tool">${t}</span>`).join('')}</div>
+      </div>`;
+    }
+  }
+  return inner;
+}
+
+function showTooltip(e, html) {
+  gTooltip.innerHTML = html;
+  gTooltip.classList.add('visible');
+  ttVisible = true;
+  positionTooltip(e);
+}
+function hideTooltip() {
+  gTooltip.classList.remove('visible');
+  ttVisible = false;
+}
+function positionTooltip(e) {
+  const margin = 12;
+  const tw = gTooltip.offsetWidth;
+  const th = gTooltip.offsetHeight;
+  let x = e.clientX + margin;
+  let y = e.clientY - th / 2;
+  if (x + tw > window.innerWidth  - margin) x = e.clientX - tw - margin;
+  if (y < margin)                           y = margin;
+  if (y + th > window.innerHeight - margin) y = window.innerHeight - th - margin;
+  gTooltip.style.left = x + 'px';
+  gTooltip.style.top  = y + 'px';
+}
+document.addEventListener('mousemove', e => { if (ttVisible) positionTooltip(e); });
+
+// ─── RENDER HEATMAP ───
+const hmGrid = document.getElementById('heatmap');
+
+heatmapData.sections.forEach(section => {
+  const sh = document.createElement('div');
+  sh.className = 'hm-section-header';
+  sh.textContent = section.title;
+  hmGrid.appendChild(sh);
+
+  section.rows.forEach(row => {
+    const labelCell = document.createElement('div');
+    labelCell.className = 'hm-cell-label';
+    const codeSpan = document.createElement('span');
+    codeSpan.className = `hm-code code-${section.type}`;
+    codeSpan.textContent = row.code;
+    labelCell.appendChild(codeSpan);
+    labelCell.appendChild(document.createTextNode(row.label));
+    hmGrid.appendChild(labelCell);
+
+    row.levels.forEach((lv, i) => {
+      const cell = document.createElement('div');
+      const extraClass = lv > 0 ? ` ${section.type}` : '';
+      cell.className = `hm-cell lv${lv}${extraClass}`;
+      if (lv > 0) cell.textContent = lv;
+      const actData = row.activities ? row.activities[i] : null;
+      const html = buildTooltipHTML(i, row.code, lv, actData);
+      cell.addEventListener('mouseenter', e => showTooltip(e, html));
+      cell.addEventListener('mouseleave', hideTooltip);
+      hmGrid.appendChild(cell);
+    });
+  });
+});
+</script>
+</body>
+</html>

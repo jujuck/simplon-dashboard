@@ -43,6 +43,21 @@ const dashboardData = {
       ],
     },
     {
+      title: "Ressources",
+      description: "Ressources",
+      links: [
+        { name: "Github WCS", url: "https://github.com/WildCodeSchool" },
+        {
+          name: "Ressources et vous",
+          url: "https://sites.google.com/simplon.co/ressourcesetvous/accueil?authuser=0",
+        },
+        {
+          name: "Atelier pédago",
+          url: "https://sites.google.com/simplon.co/offre-de-formations-simplon/accueil?pli=1&authuser=1",
+        },
+      ],
+    },
+    {
       title: "Outils",
       description: "Outils de gestion",
       links: [
@@ -63,18 +78,14 @@ const dashboardData = {
       ],
     },
     {
-      title: "Ressources",
-      description: "Ressources",
+      title: "Parcours",
+      description: "Aide au suivi des parcours",
       links: [
-        { name: "Github WCS", url: "https://github.com/WildCodeSchool" },
-        {
-          name: "Ressources et vous",
-          url: "https://sites.google.com/simplon.co/ressourcesetvous/accueil?authuser=0",
-        },
-        {
-          name: "Atelier pédago",
-          url: "https://sites.google.com/simplon.co/offre-de-formations-simplon/accueil?pli=1&authuser=1",
-        },
+        { name: "TIP", url: "./TIP" },
+        { name: "TSSR", url: "./TSSR" },
+        { name: "AIS", url: "./AIS" },
+        { name: "CDA", url: "./CDA" },
+        { name: "DATA ING", url: "./DE" },
       ],
     },
     {
