@@ -55,6 +55,10 @@ const dashboardData = {
           name: "Atelier pédago",
           url: "https://sites.google.com/simplon.co/offre-de-formations-simplon/accueil?pli=1&authuser=1",
         },
+        {
+          name: "Simplon Line",
+          url: "https://simplonline.co/login?redirect=%2F",
+        },
       ],
     },
     {
