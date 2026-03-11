@@ -174,12 +174,20 @@ const dashboardData = {
           url: "https://docs.google.com/spreadsheets/d/1eNu-PW_4jMJs5QY5zKfSK8_rkELry2glefSsB1bmX4M/edit?gid=0#gid=0",
         },
         {
+          name: "Prévisionnel pédago",
+          url: "https://docs.google.com/presentation/d/1zXhMQNHQZ9ce6R4xWq57V_ypDuWiYJGju4HeBmeZxyI/edit?usp=sharing",
+        },
+        {
           name: "Suivi tuteur",
           url: "https://docs.google.com/spreadsheets/d/1N8Q988KGNTAC6j6imX1fN6Dg2lsv14qHU0mdjooComM/edit?gid=817305296#gid=817305296",
         },
         {
           name: "Synchro CDP - météo",
           url: "https://docs.google.com/spreadsheets/d/1N8Q988KGNTAC6j6imX1fN6Dg2lsv14qHU0mdjooComM/edit?gid=0#gid=0",
+        },
+        {
+          name: "GitHub",
+          url: "https://github.com/Simplon-DE-P1-2025",
         },
       ],
     },
@@ -202,7 +210,7 @@ const dashboardData = {
         },
         {
           name: "Drive partagé formateur",
-          url: "",
+          url: "https://drive.google.com/drive/folders/1h9vLi_DhsHOOl0WnVnQkVdv29zkwXzvA?usp=drive_link",
         },
         {
           name: "Suivi de présence formateur",
@@ -234,15 +242,15 @@ const dashboardData = {
       links: [
         {
           name: "Drive partagé apprenant",
-          url: "",
+          url: "https://drive.google.com/drive/folders/0ACbdfHdoTqdHUk9PVA",
         },
         {
           name: "Drive partagé formateur",
-          url: "",
+          url: "https://drive.google.com/drive/folders/1-4T_JDGUo98MRuvtnuDpebOW05fjHPpT?usp=drive_link",
         },
         {
           name: "Suivi de présence formateur",
-          url: "",
+          url: "https://docs.google.com/spreadsheets/d/1rtKHmlUcIa_PbmerRcUS_TW18JEF80Nf/edit?gid=371731150#gid=371731150",
         },
         {
           name: "Synchro pedago",
