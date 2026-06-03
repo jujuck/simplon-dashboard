@@ -101,12 +101,16 @@ const dashboardData = {
       description: "Process de recrutement et suivi du vivier",
       links: [
         {
+          name: "Formulaire besoins de recrutement",
+          url: "https://docs.google.com/forms/d/e/1FAIpQLSfITXHmnw31WqeLmmcd4Z2YI0YbTGONq6ZtHU8hoNkyN6MspA/viewform",
+        },
+        {
           name: "Suivi Ticketing RH",
           url: "https://docs.google.com/spreadsheets/d/1EDjxPT_zb3Bstn3eT0TPdMYsGInjEyCFrwDhbejEZ08/edit?gid=1285447619#gid=1285447619",
         },
         {
-          name: "Form de ticketing",
-          url: "https://docs.google.com/forms/d/e/1FAIpQLSfITXHmnw31WqeLmmcd4Z2YI0YbTGONq6ZtHU8hoNkyN6MspA/viewform",
+          name: "Formulaire des nouveauax arrivants",
+          url: "https://docs.google.com/forms/d/e/1FAIpQLSfM1j4wJx3Z0XqEDVnLumcdb6yK7NpYnpmIX2NbqdebxhyAPA/viewform",
         },
         {
           name: "Process recrutement",
@@ -155,53 +159,6 @@ const dashboardData = {
         },
       ],
     },
-    // Data Eng P1
-    {
-      name: " Data Eng P1 / Naïdine - Alison",
-      emoji: "🎯",
-      active: false,
-      links: [
-        {
-          name: "Drive partagé apprenant",
-          url: "https://drive.google.com/drive/folders/0AHb1VLaZA9OcUk9PVA",
-        },
-        {
-          name: "Drive partagé formateur",
-          url: "https://drive.google.com/drive/folders/0ALArZ1XaoQmJUk9PVA",
-        },
-        {
-          name: "Suivi de présence formateur",
-          url: "https://docs.google.com/spreadsheets/d/1bvMHkwEdOvvm8nHc3zfCEgDFk2wBWOBx/edit?gid=709708434#gid=709708434",
-        },
-        {
-          name: "Suivi pédago studio",
-          url: "https://docs.google.com/spreadsheets/d/1eNu-PW_4jMJs5QY5zKfSK8_rkELry2glefSsB1bmX4M/edit?gid=0#gid=0",
-        },
-        {
-          name: "Prévisionnel pédago",
-          url: "https://docs.google.com/presentation/d/1zXhMQNHQZ9ce6R4xWq57V_ypDuWiYJGju4HeBmeZxyI/edit?usp=sharing",
-        },
-        {
-          name: "Suivi tuteur",
-          url: "https://docs.google.com/spreadsheets/d/1N8Q988KGNTAC6j6imX1fN6Dg2lsv14qHU0mdjooComM/edit?gid=817305296#gid=817305296",
-        },
-        {
-          name: "Synchro CDP - météo",
-          url: "https://docs.google.com/spreadsheets/d/1N8Q988KGNTAC6j6imX1fN6Dg2lsv14qHU0mdjooComM/edit?gid=0#gid=0",
-        },
-        {
-          name: "GitHub",
-          url: "https://github.com/Simplon-DE-P1-2025",
-        },
-      ],
-    },
-    // Data Eng P2
-    {
-      name: "Data Eng P2 / Alison - Orkun - Naïdine",
-      emoji: "🚀",
-      active: false,
-      links: [],
-    },
     // TAI P3
     {
       name: "TAI P3 / Abdelilah - Arnaud",
@@ -238,311 +195,57 @@ const dashboardData = {
         },
       ],
     },
-    // TSSR P6
+    // Data Eng P1
     {
-      name: "TSSR P6 / Abdelilah - Nicolas S",
+      name: " Suivi studio Pédago",
+      emoji: "🎯",
+      active: false,
+      links: [
+        {
+          name: "Fichier F2F inscription",
+          url: "https://docs.google.com/spreadsheets/d/1N8Q988KGNTAC6j6imX1fN6Dg2lsv14qHU0mdjooComM/edit?gid=817305296#gid=817305296",
+        },
+        {
+          name: "Synchro CDP - météo",
+          url: "https://docs.google.com/spreadsheets/d/1N8Q988KGNTAC6j6imX1fN6Dg2lsv14qHU0mdjooComM/edit?gid=0#gid=0",
+        },
+        {
+          name: "Dossier REX de formation",
+          url: "https://drive.google.com/drive/folders/13ZA4As0ybZs4iOXzcxI6zrKAJZsqKbTR",
+        },
+      ],
+    },
+    {
+      name: "Montage formation",
       emoji: "🏆",
-      active: false,
+      active: true,
       links: [
         {
-          name: "Drive partagé apprenant",
-          url: "https://drive.google.com/drive/folders/0ACbdfHdoTqdHUk9PVA",
-        },
-        {
-          name: "Drive partagé formateur",
-          url: "https://drive.google.com/drive/folders/1-4T_JDGUo98MRuvtnuDpebOW05fjHPpT?usp=drive_link",
-        },
-        {
-          name: "Suivi de présence formateur",
-          url: "https://docs.google.com/spreadsheets/d/1rtKHmlUcIa_PbmerRcUS_TW18JEF80Nf/edit?gid=371731150#gid=371731150",
-        },
-        {
-          name: "Synchro pedago",
-          url: "https://docs.google.com/document/d/1PSo739rI1ysq_D8qz6Tdrr41Ca6ScncW6Nnm-e2rCIw/edit?tab=t.0",
-        },
-        {
-          name: "Suivi pédago studio",
-          url: "",
-        },
-        {
-          name: "Suivi tuteur",
-          url: "",
-        },
-        {
-          name: "Synchro CDP - météo",
-          url: "https://docs.google.com/spreadsheets/d/1HCnFM0eusfF-BnD6fpAk5uzispgzgiquKT2p5bUCBwA/edit?gid=0#gid=0",
-        },
-      ],
-    },
-    // TSSR P7
-    {
-      name: "TSSR P7 / Yanis - Mohammed",
-      emoji: "🏆",
-      active: false,
-      links: [
-        {
-          name: "Drive partagé",
-          url: "https://drive.google.com/drive/folders/0AJ4_HhcdjMqjUk9PVA",
-        },
-        {
-          name: "NA Suivi de présence formateur",
-          url: "",
-        },
-        {
-          name: "Synchro pedago",
-          url: "https://docs.google.com/document/d/1PSo739rI1ysq_D8qz6Tdrr41Ca6ScncW6Nnm-e2rCIw/edit?tab=t.0",
-        },
-        {
-          name: "Suivi pédago studio",
-          url: "https://docs.google.com/spreadsheets/d/1dEXkYTcVrDur_Siqizwxl8WtQZzErj3-/edit?gid=479885670#gid=479885670",
-        },
-        {
-          name: "Suivi tuteur",
-          url: "https://docs.google.com/document/d/1I9xjqze27VT1U-Qhy2TxbuBIXGHUhmCvhDSshcgbfIg/edit?tab=t.fvuk8adobmi3#heading=h.4mkh842jbd88",
-        },
-        {
-          name: "Synchro CDP - météo",
-          url: "https://docs.google.com/document/d/1I9xjqze27VT1U-Qhy2TxbuBIXGHUhmCvhDSshcgbfIg/edit?tab=t.0",
-        },
-      ],
-    },
-    // TSSR P8
-    {
-      name: "TSSR P8 / Nicolas B - Nicolas S",
-      emoji: "🚀",
-      active: false,
-      links: [
-        {
-          name: "NA Drive partagé apprenant",
-          url: "",
-        },
-        {
-          name: "NA Drive partagé formateur",
-          url: "",
-        },
-        {
-          name: "NA Suivi de présence formateur",
-          url: "",
-        },
-        {
-          name: "NA Suivi pédago studio",
-          url: "",
-        },
-        {
-          name: "NA Suivi tuteur",
-          url: "",
-        },
-        {
-          name: "NA Synchro CDP - météo",
-          url: "",
-        },
-      ],
-    },
-    // AIS P6
-    {
-      name: "AIS P6 / Yanis - Rémi",
-      emoji: "🎬",
-      active: false,
-      links: [
-        {
-          name: "Drive partagé apprenant",
-          url: "https://drive.google.com/drive/folders/0ANXDvNxTvgWuUk9PVA",
-        },
-        {
-          name: "Drive partagé formateur",
-          url: "",
-        },
-        {
-          name: "Suivi de présence formateur",
-          url: "",
-        },
-        {
-          name: "Synchro pedago",
-          url: "https://docs.google.com/document/d/1PSo739rI1ysq_D8qz6Tdrr41Ca6ScncW6Nnm-e2rCIw/edit?tab=t.0",
-        },
-        {
-          name: "Suivi pédago studio",
-          url: "https://docs.google.com/spreadsheets/d/1V9mCDC0V0vVfaPcwz6xr7Fo-xGZzLRW9/edit?gid=1057226364#gid=1057226364",
-        },
-        {
-          name: "Suivi tuteur",
-          url: "https://docs.google.com/spreadsheets/d/1GAagVOqtMZKtfpUgUN-CJgqbDqFlbRUeM004TmgJsvs/edit?gid=0#gid=0",
-        },
-        {
-          name: "Synchro CDP - météo",
-          url: "",
-        },
-      ],
-    },
-    // AIS P7
-    {
-      name: "AIS P7 / Abdelilah - Nicolas",
-      emoji: "🎬",
-      active: false,
-      links: [
-        {
-          name: "Drive partagé apprenant",
-          url: "https://drive.google.com/drive/folders/0AEfUcoB6SfHNUk9PVA",
-        },
-        {
-          name: "NA Drive partagé formateur",
-          url: "",
-        },
-        {
-          name: "NA Suivi de présence formateur",
-          url: "",
-        },
-        {
-          name: "Synchro pedago",
-          url: "https://docs.google.com/document/d/1PSo739rI1ysq_D8qz6Tdrr41Ca6ScncW6Nnm-e2rCIw/edit?tab=t.0",
-        },
-        {
-          name: "NA Suivi pédago studio",
-          url: "",
-        },
-        {
-          name: "NA Suivi tuteur",
-          url: "",
-        },
-        {
-          name: "Synchro CDP - météo",
+          name: "Template BF Distanciel",
           url: "https://docs.google.com/spreadsheets/d/1YF6hFX67H7Ej7Dpw6ddVq_kXfG5HDjvveZlD0ekhOO0/edit?gid=0#gid=0",
         },
-      ],
-    },
-    // AIS P8
-    {
-      name: "AIS P8 / Yanis - Rémi",
-      emoji: "🚀",
-      active: false,
-      links: [
         {
-          name: "NA Drive partagé apprenant",
-          url: "",
+          name: "Rentrées 2026 Simplon x WCS",
+          url: "https://docs.google.com/spreadsheets/d/1n_s_HE_F6rzIYZqXmxkKPj0DvV38QJJjSfWH92X4kj0/edit?gid=521527096#gid=521527096",
         },
         {
-          name: "NA Drive partagé formateur",
-          url: "",
-        },
-        {
-          name: "NA Suivi de présence formateur",
-          url: "",
-        },
-        {
-          name: "NA Suivi pédago studio",
-          url: "",
-        },
-        {
-          name: "NA Suivi tuteur",
-          url: "",
-        },
-        {
-          name: "NA Synchro CDP - météo",
-          url: "",
+          name: "Calendrier de Bootcamp 2026",
+          url: "https://docs.google.com/spreadsheets/d/1AtUs0HvBI5tYMy8Ael4yejk3oGyJmA-g98n3fbpVHGo/edit?pli=1&gid=150977751#gid=150977751",
         },
       ],
     },
-    // CDA P6
     {
-      name: "CDA P6 /  Christophe / Thomas",
-      emoji: "🎸",
-      active: false,
+      name: "Synchro Pédago",
+      emoji: "🏆",
+      active: true,
       links: [
         {
-          name: "Drive partagé apprenant",
-          url: "",
-        },
-        {
-          name: "Drive partagé formateur",
-          url: "",
-        },
-        {
-          name: "Suivi de présence formateur",
-          url: "https://docs.google.com/spreadsheets/d/140ZP1aM91ELdlWJrjCewEu9siNO-mQ8H/edit?gid=1111891056#gid=1111891056",
-        },
-        {
-          name: "Synchro pedago",
+          name: "Synchro Pédago Dev",
           url: "https://docs.google.com/document/d/173OGFpBpT_QErP-IMkLK5erh-JsHFob_UxBIeA59RoU/edit?tab=t.0",
         },
         {
-          name: "Suivi pédago studio",
-          url: "",
-        },
-        {
-          name: "Suivi tuteur",
-          url: "https://docs.google.com/spreadsheets/d/1Dk2S1x4bKgH3XU3gIYljIugcRPcRLDTDDxJDwSvabCI/edit?gid=626640596#gid=626640596",
-        },
-        {
-          name: "Synchro CDP - météo",
-          url: "",
-        },
-      ],
-    },
-    // CDA P7
-    {
-      name: "CDA P7 / Jean-Baptiste - Frank",
-      emoji: "🎸",
-      active: false,
-      links: [
-        {
-          name: "Drive partagé apprenant",
-          url: "",
-        },
-        {
-          name: "Drive partagé formateur",
-          url: "",
-        },
-        {
-          name: "Suivi de présence formateur",
-          url: "https://docs.google.com/spreadsheets/d/140ZP1aM91ELdlWJrjCewEu9siNO-mQ8H/edit?gid=1111891056#gid=1111891056",
-        },
-        {
-          name: "Synchro pedago",
-          url: "https://docs.google.com/document/d/173OGFpBpT_QErP-IMkLK5erh-JsHFob_UxBIeA59RoU/edit?tab=t.0",
-        },
-        {
-          name: "Suivi pédago studio",
-          url: "",
-        },
-        {
-          name: "Suivi tuteur",
-          url: "",
-        },
-        {
-          name: "Synchro CDP - météo",
-          url: "",
-        },
-      ],
-    },
-    // CDA P8
-    {
-      name: "CDA P8 / Christophe - Jean-Baptiste",
-      emoji: "🚀",
-      active: false,
-      links: [
-        {
-          name: "NA Drive partagé apprenant",
-          url: "",
-        },
-        {
-          name: "NA Drive partagé formateur",
-          url: "",
-        },
-        {
-          name: "NA Suivi de présence formateur",
-          url: "",
-        },
-        {
-          name: "NA Suivi pédago studio",
-          url: "",
-        },
-        {
-          name: "NA Suivi tuteur",
-          url: "",
-        },
-        {
-          name: "NA Synchro CDP - météo",
-          url: "",
+          name: "Synchro Pédago Infra",
+          url: "https://docs.google.com/document/d/1PSo739rI1ysq_D8qz6Tdrr41Ca6ScncW6Nnm-e2rCIw/edit?tab=t.0",
         },
       ],
     },
