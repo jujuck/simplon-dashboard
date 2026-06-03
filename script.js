@@ -2,7 +2,7 @@
 const dashboardData = {
   toolsAndResources: [
     {
-      title: "Accès WildCodeSchool",
+      title: "Communication interne",
       description: "Outil et ressources liées à WCS",
       links: [
         {
@@ -17,39 +17,18 @@ const dashboardData = {
           name: "Drive formation",
           url: "https://drive.google.com/drive/folders/16cPwCJTwq9JmW_sMp1ML2JOIw_fNSpGJ?usp=drive_link",
         },
+        { name: "Discord", url: "https://discord.com/channels/@me" },
         { name: "Slack", url: "https://app.slack.com/client/T6SG2QGG2/dms" },
-        {
-          name: "Lucca",
-          url: "https://simplon2co.ilucca.net/timmi-absences/leave-request",
-        },
-      ],
-    },
-    {
-      title: "Accès Simplon",
-      description: "Outils et ressources liées à Simplon",
-      links: [
-        {
-          name: "G Mail",
-          url: "https://mail.google.com/mail/u/0/?pli=1#inbox",
-        },
-        {
-          name: "G Calendar",
-          url: "https://calendar.google.com/calendar?authuser=0",
-        },
-        {
-          name: "Odoo",
-          url: "https://simplon.odoo.com/web/login#cids=1&action=menu",
-        },
-        {
-          name: "Tableau de bord simplifions",
-          url: "https://lookerstudio.google.com/u/0/reporting/5b17308b-61e7-4a1c-a47d-5d1720605fe2/page/p_1497r7j9ud",
-        },
       ],
     },
     {
       title: "Ressources",
       description: "Ressources",
       links: [
+        {
+          name: "Github Organisation Simplon",
+          url: "https://github.com/settings/organizations",
+        },
         { name: "Github WCS", url: "https://github.com/WildCodeSchool" },
         {
           name: "Ressources et vous",
@@ -63,6 +42,10 @@ const dashboardData = {
           name: "Simplon Line",
           url: "https://simplonline.co/login?redirect=%2F",
         },
+        {
+          name: "Tableau de bord simplifions",
+          url: "https://lookerstudio.google.com/u/0/reporting/5b17308b-61e7-4a1c-a47d-5d1720605fe2/page/p_1497r7j9ud",
+        },
       ],
     },
     {
@@ -70,10 +53,10 @@ const dashboardData = {
       description: "Outils de gestion",
       links: [
         {
-          name: "Notion",
-          url: "https://www.notion.so/2fcef066787580988e49ecd9dbbcc863?v=2fcef0667875800ba7c4000c088ebd16",
+          name: "Lucca",
+          url: "https://simplon2co.ilucca.net/timmi-absences/leave-request",
         },
-        { name: "Discord", url: "https://discord.com/channels/@me" },
+
         { name: "Claude", url: "https://claude.ai/new" },
         {
           name: "Bitwarden",
@@ -82,6 +65,10 @@ const dashboardData = {
         {
           name: "One Login",
           url: "https://simplon.onelogin.com/login2/",
+        },
+        {
+          name: "Odoo",
+          url: "https://simplon.odoo.com/web/login#cids=1&action=menu",
         },
       ],
     },
@@ -117,48 +104,13 @@ const dashboardData = {
           url: "https://drive.google.com/file/d/12EOsLgpdfi507RnT7h7eS92bbCZxXdQh/view?ts=6989a5f2",
         },
         {
-          name: "Suivi des TMJ",
-          url: "https://docs.google.com/spreadsheets/d/15G4ZnJvnQHxmkNk2IC7VvenIggGPJz9qC3OFLjgThSQ/edit?gid=0#gid=0",
-        },
-        {
-          name: "Vivier distanciel",
-          url: "https://docs.google.com/spreadsheets/d/1Gv2ShplKrs9YA2dV5Xx-DCkJmoWMapZ91yn6cnZXRXA/edit?gid=1092550030#gid=1092550030",
-        },
-        {
           name: "Vivier National",
           url: "https://docs.google.com/spreadsheets/d/1kNkk1tKOEMpCojkXMAfKTNvec547hsnmIDuS-TrDBJ4/edit?gid=236023154#gid=236023154",
-        },
-        {
-          name: "Drive recrutement CV et entretien",
-          url: "https://drive.google.com/drive/folders/10uAGRUMIVHjKGl35GK4KF4bWvJHTGckl",
         },
       ],
     },
   ],
   promos: [
-    {
-      name: "Ressources partagées",
-      emoji: "🔥",
-      active: true,
-      links: [
-        {
-          name: "Planning des rentrées",
-          url: "https://docs.google.com/spreadsheets/d/1n_s_HE_F6rzIYZqXmxkKPj0DvV38QJJjSfWH92X4kj0/edit?gid=1889710442#gid=1889710442",
-        },
-        {
-          name: "Tableau de placement",
-          url: "https://docs.google.com/spreadsheets/d/1TlSzbH5TtaGSbjLdjxK1KP0zKnoHjb-CXeCBsZ9gJFY/edit?gid=966022037#gid=966022037",
-        },
-        {
-          name: "Placement rentrée de mars / avril",
-          url: "https://docs.google.com/spreadsheets/d/1qF5mg_AkmBSRzzjlBGyDhpnkeWchkO7Je0cIWAA4f_o/edit?gid=0#gid=0",
-        },
-        {
-          name: "Pedago Parcours infra",
-          url: "https://drive.google.com/drive/folders/0AGOHaDL1McfhUk9PVA",
-        },
-      ],
-    },
     // TAI P3
     {
       name: "TAI P3 / Abdelilah - Arnaud",
@@ -195,7 +147,25 @@ const dashboardData = {
         },
       ],
     },
-    // Data Eng P1
+    {
+      name: "Ressources partagées",
+      emoji: "🔥",
+      active: true,
+      links: [
+        {
+          name: "Planning des rentrées",
+          url: "https://docs.google.com/spreadsheets/d/1n_s_HE_F6rzIYZqXmxkKPj0DvV38QJJjSfWH92X4kj0/edit?gid=1889710442#gid=1889710442",
+        },
+        {
+          name: "OLD Tableau de placement",
+          url: "https://docs.google.com/spreadsheets/d/1TlSzbH5TtaGSbjLdjxK1KP0zKnoHjb-CXeCBsZ9gJFY/edit?gid=966022037#gid=966022037",
+        },
+        {
+          name: "Pedago Parcours infra",
+          url: "https://drive.google.com/drive/folders/0AGOHaDL1McfhUk9PVA",
+        },
+      ],
+    },
     {
       name: " Suivi studio Pédago",
       emoji: "🎯",
@@ -218,7 +188,7 @@ const dashboardData = {
     {
       name: "Montage formation",
       emoji: "🏆",
-      active: true,
+      active: false,
       links: [
         {
           name: "Template BF Distanciel",
@@ -232,12 +202,24 @@ const dashboardData = {
           name: "Calendrier de Bootcamp 2026",
           url: "https://docs.google.com/spreadsheets/d/1AtUs0HvBI5tYMy8Ael4yejk3oGyJmA-g98n3fbpVHGo/edit?pli=1&gid=150977751#gid=150977751",
         },
+        {
+          name: "Suivi des TMJ",
+          url: "https://docs.google.com/spreadsheets/d/15G4ZnJvnQHxmkNk2IC7VvenIggGPJz9qC3OFLjgThSQ/edit?gid=0#gid=0",
+        },
+        {
+          name: "Vivier distanciel",
+          url: "https://docs.google.com/spreadsheets/d/1Gv2ShplKrs9YA2dV5Xx-DCkJmoWMapZ91yn6cnZXRXA/edit?gid=1092550030#gid=1092550030",
+        },
+        {
+          name: "Drive recrutement CV et entretien",
+          url: "https://drive.google.com/drive/folders/10uAGRUMIVHjKGl35GK4KF4bWvJHTGckl",
+        },
       ],
     },
     {
       name: "Synchro Pédago",
       emoji: "🏆",
-      active: true,
+      active: false,
       links: [
         {
           name: "Synchro Pédago Dev",
