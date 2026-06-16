@@ -5,6 +5,9 @@
   --dark-bg: #0d0d0d;
   --mid-bg: #1a1a1a;
   --border: #333;
+  --danger: #e07856;
+  --warning: #d4a843;
+  --success: #6fae7f;
 }
 
 * {
@@ -41,6 +44,17 @@ body {
   margin-bottom: 25px;
 }
 
+.header-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-spacer {
+  /* équilibre visuellement la colonne des actions pour garder la date/heure centrée */
+}
+
 .datetime-box {
   background: var(--mid-bg);
   border: 1px solid var(--border);
@@ -49,6 +63,7 @@ body {
   font-family: "Courier Prime", monospace;
   letter-spacing: 1px;
   font-size: 0.95em;
+  justify-self: center;
 }
 
 .datetime-item {
@@ -66,6 +81,34 @@ body {
   color: var(--primary);
   margin-left: 8px;
   font-weight: bold;
+}
+
+/* BOUTONS D'ACTION (header) */
+.header-actions {
+  display: flex;
+  gap: 12px;
+  justify-self: end;
+}
+
+.action-btn {
+  font-family: "Bebas Neue", sans-serif;
+  background: var(--mid-bg);
+  border: 1px solid var(--border);
+  color: var(--primary);
+  padding: 12px 18px;
+  font-size: 1em;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+  white-space: nowrap;
+}
+
+.action-btn:hover {
+  background: rgba(192, 192, 192, 0.08);
+  border-color: var(--primary);
 }
 
 /* ZONES PRINCIPALES */
@@ -221,6 +264,272 @@ body {
   border-left-color: var(--primary);
 }
 
+/* ====== MODALES (Espace Recrutement / To Do Liste) ====== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-box {
+  background: var(--dark-bg);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 720px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  background: var(--mid-bg);
+}
+
+.modal-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.5em;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.modal-close {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 1.1em;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.modal-body {
+  padding: 20px 22px;
+  overflow-y: auto;
+}
+
+/* Formulaires dans les modales */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed var(--border);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-field-full {
+  grid-column: 1 / -1;
+}
+
+.form-field label {
+  font-size: 0.75em;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-field input,
+.form-field select {
+  background: var(--mid-bg);
+  border: 1px solid var(--border);
+  color: var(--primary);
+  padding: 9px 10px;
+  font-family: "Courier Prime", monospace;
+  font-size: 0.9em;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.btn-submit {
+  grid-column: 1 / -1;
+  background: var(--primary);
+  color: var(--dark-bg);
+  border: none;
+  padding: 12px;
+  font-family: "Bebas Neue", sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.btn-submit:hover {
+  background: #e2e2e2;
+}
+
+/* Listes communes */
+.list-empty {
+  color: var(--accent);
+  font-size: 0.9em;
+  text-align: center;
+  padding: 30px 0;
+}
+
+.btn-delete {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  cursor: pointer;
+  padding: 6px 10px;
+  font-family: "Courier Prime", monospace;
+  font-size: 0.8em;
+  white-space: nowrap;
+}
+
+.btn-delete:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* Liste prestataires */
+.prestataire-item {
+  border: 1px solid var(--border);
+  background: var(--mid-bg);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.prestataire-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.prestataire-info .name {
+  font-weight: bold;
+  font-size: 1.05em;
+  letter-spacing: 0.5px;
+}
+
+.prestataire-info .meta {
+  color: var(--accent);
+  font-size: 0.85em;
+}
+
+/* Liste todos */
+.todo-item {
+  border: 1px solid var(--border);
+  background: var(--mid-bg);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.todo-main {
+  flex: 1;
+  min-width: 200px;
+}
+
+.todo-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+}
+
+.todo-item.status-termine .todo-title {
+  text-decoration: line-through;
+  color: var(--accent);
+}
+
+.todo-desc {
+  color: var(--accent);
+  font-size: 0.85em;
+  margin-top: 6px;
+}
+
+.todo-link {
+  color: var(--primary);
+  font-size: 0.8em;
+  text-decoration: underline;
+  margin-top: 6px;
+  display: inline-block;
+}
+
+.item-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.priority-badge {
+  font-size: 0.65em;
+  padding: 3px 8px;
+  border: 1px solid;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.priority-haute {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.priority-moyenne {
+  color: var(--warning);
+  border-color: var(--warning);
+}
+
+.priority-basse {
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.status-select {
+  background: var(--dark-bg);
+  border: 1px solid var(--border);
+  color: var(--primary);
+  font-family: "Courier Prime", monospace;
+  font-size: 0.8em;
+  padding: 6px 8px;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
   .main-grid {
@@ -237,12 +546,42 @@ body {
     font-size: 1.8em;
   }
 
+  .header-top {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .header-spacer {
+    display: none;
+  }
+
+  .datetime-box {
+    justify-self: stretch;
+  }
+
   .datetime-item {
     display: block;
     margin: 8px 0;
   }
 
+  .header-actions {
+    justify-self: stretch;
+    justify-content: stretch;
+  }
+
+  .action-btn {
+    flex: 1;
+  }
+
   .zone-title {
     font-size: 1.3em;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-box {
+    max-height: 90vh;
   }
 }

@@ -21,15 +21,26 @@
   <body>
     <div class="container">
       <div class="header">
-        <div class="datetime-box">
-          <span class="datetime-item">
-            <span class="datetime-label">📅 DATE:</span>
-            <span class="datetime-value" id="date"></span>
-          </span>
-          <span class="datetime-item">
-            <span class="datetime-label">⏰ HEURE:</span>
-            <span class="datetime-value" id="time"></span>
-          </span>
+        <div class="header-top">
+          <div class="header-spacer"></div>
+          <div class="datetime-box">
+            <span class="datetime-item">
+              <span class="datetime-label">📅 DATE:</span>
+              <span class="datetime-value" id="date"></span>
+            </span>
+            <span class="datetime-item">
+              <span class="datetime-label">⏰ HEURE:</span>
+              <span class="datetime-value" id="time"></span>
+            </span>
+          </div>
+          <div class="header-actions">
+            <button class="action-btn" id="open-recrutement" type="button">
+              🧑‍💼 Espace Recrutement
+            </button>
+            <button class="action-btn" id="open-todo" type="button">
+              ✅ To Do Liste
+            </button>
+          </div>
         </div>
       </div>
       <div class="main-grid">
@@ -46,6 +57,89 @@
         </div>
       </div>
     </div>
+
+    <!-- MODALE : ESPACE RECRUTEMENT -->
+    <div class="modal-overlay" id="modal-recrutement">
+      <div class="modal-box">
+        <div class="modal-header">
+          <span class="modal-title">🧑‍💼 Espace Recrutement</span>
+          <button
+            class="modal-close"
+            data-close="modal-recrutement"
+            type="button"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="form-prestataire" class="form-grid">
+            <div class="form-field">
+              <label for="p-nom">Nom</label>
+              <input type="text" id="p-nom" required />
+            </div>
+            <div class="form-field">
+              <label for="p-prenom">Prénom</label>
+              <input type="text" id="p-prenom" required />
+            </div>
+            <div class="form-field">
+              <label for="p-email">Email</label>
+              <input type="email" id="p-email" required />
+            </div>
+            <div class="form-field">
+              <label for="p-tel">Téléphone</label>
+              <input type="tel" id="p-tel" />
+            </div>
+            <div class="form-field form-field-full">
+              <label for="p-cursus">Cursus</label>
+              <input type="text" id="p-cursus" required />
+            </div>
+            <button type="submit" class="btn-submit">
+              + Ajouter à la liste d'attente
+            </button>
+          </form>
+          <div id="liste-prestataires"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODALE : TO DO LISTE -->
+    <div class="modal-overlay" id="modal-todo">
+      <div class="modal-box">
+        <div class="modal-header">
+          <span class="modal-title">✅ To Do Liste</span>
+          <button class="modal-close" data-close="modal-todo" type="button">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="form-todo" class="form-grid">
+            <div class="form-field form-field-full">
+              <label for="t-nom">Nom de la tâche</label>
+              <input type="text" id="t-nom" required />
+            </div>
+            <div class="form-field form-field-full">
+              <label for="t-desc">Description courte</label>
+              <input type="text" id="t-desc" />
+            </div>
+            <div class="form-field">
+              <label for="t-priorite">Priorité</label>
+              <select id="t-priorite">
+                <option value="basse">Basse</option>
+                <option value="moyenne" selected>Moyenne</option>
+                <option value="haute">Haute</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="t-url">Lien URL</label>
+              <input type="url" id="t-url" placeholder="https://..." />
+            </div>
+            <button type="submit" class="btn-submit">+ Ajouter la tâche</button>
+          </form>
+          <div id="liste-todos"></div>
+        </div>
+      </div>
+    </div>
+
     <script src="./script.js"></script>
   </body>
 </html>

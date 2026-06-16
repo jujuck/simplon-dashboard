@@ -234,7 +234,7 @@ const dashboardData = {
   ],
 };
 
-// ====== GÉNÉRATION DU DOM ======
+// ====== GÉNÉRATION DU DOM (existant) ======
 function renderToolsAndResources() {
   const container = document.querySelector(".tools-grid");
   container.innerHTML = "";
@@ -336,10 +336,254 @@ function updateDateTime() {
   document.getElementById("time").textContent = timeStr;
 }
 
+// ====== UTILITAIRE ======
+function escapeHtml(str = "") {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function generateId() {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+// ====== ESPACE RECRUTEMENT (localStorage) ======
+const STORAGE_KEYS = {
+  prestataires: "wcs_dashboard_prestataires",
+  todos: "wcs_dashboard_todos",
+};
+
+function getPrestataires() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.prestataires)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function savePrestataires(list) {
+  localStorage.setItem(STORAGE_KEYS.prestataires, JSON.stringify(list));
+}
+
+function renderPrestataires() {
+  const container = document.getElementById("liste-prestataires");
+  const list = getPrestataires();
+
+  if (list.length === 0) {
+    container.innerHTML = `<div class="list-empty">Aucun prestataire en liste d'attente</div>`;
+    return;
+  }
+
+  container.innerHTML = list
+    .map(
+      (p) => `
+        <div class="prestataire-item" data-id="${p.id}">
+          <div class="prestataire-info">
+            <span class="name">${escapeHtml(p.nom)} ${escapeHtml(p.prenom)}</span>
+            <span class="meta">📧 ${escapeHtml(p.email)}${p.tel ? " · 📞 " + escapeHtml(p.tel) : ""}</span>
+            <span class="meta">🎓 ${escapeHtml(p.cursus)}</span>
+          </div>
+          <div class="item-actions">
+            <button class="btn-delete" data-action="delete-prestataire" data-id="${p.id}" type="button">✕ Retirer</button>
+          </div>
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function addPrestataire(data) {
+  const list = getPrestataires();
+  list.push({ id: generateId(), ...data });
+  savePrestataires(list);
+  renderPrestataires();
+}
+
+function deletePrestataire(id) {
+  const list = getPrestataires().filter((p) => p.id !== id);
+  savePrestataires(list);
+  renderPrestataires();
+}
+
+// ====== TO DO LISTE (localStorage) ======
+function getTodos() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveTodos(list) {
+  localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(list));
+}
+
+const STATUS_LABELS = {
+  "a-faire": "À faire",
+  "en-cours": "En cours",
+  termine: "Terminé",
+};
+
+function renderTodos() {
+  const container = document.getElementById("liste-todos");
+  const list = getTodos();
+
+  if (list.length === 0) {
+    container.innerHTML = `<div class="list-empty">Aucune tâche pour le moment</div>`;
+    return;
+  }
+
+  // Tri : tâches actives avant les terminées, puis par priorité (haute > moyenne > basse)
+  const priorityOrder = { haute: 0, moyenne: 1, basse: 2 };
+  const sorted = [...list].sort((a, b) => {
+    if ((a.statut === "termine") !== (b.statut === "termine")) {
+      return a.statut === "termine" ? 1 : -1;
+    }
+    return priorityOrder[a.priorite] - priorityOrder[b.priorite];
+  });
+
+  container.innerHTML = sorted
+    .map(
+      (t) => `
+        <div class="todo-item status-${t.statut}" data-id="${t.id}">
+          <div class="todo-main">
+            <div class="todo-title">
+              <span class="priority-badge priority-${t.priorite}">${t.priorite}</span>
+              ${escapeHtml(t.nom)}
+            </div>
+            ${t.description ? `<div class="todo-desc">${escapeHtml(t.description)}</div>` : ""}
+            ${t.url ? `<a href="${escapeHtml(t.url)}" target="_blank" class="todo-link">🔗 Lien associé</a>` : ""}
+          </div>
+          <div class="item-actions">
+            <select class="status-select" data-action="change-status" data-id="${t.id}">
+              ${Object.entries(STATUS_LABELS)
+                .map(
+                  ([value, label]) =>
+                    `<option value="${value}" ${t.statut === value ? "selected" : ""}>${label}</option>`,
+                )
+                .join("")}
+            </select>
+            <button class="btn-delete" data-action="delete-todo" data-id="${t.id}" type="button">✕</button>
+          </div>
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function addTodo(data) {
+  const list = getTodos();
+  list.push({ id: generateId(), statut: "a-faire", ...data });
+  saveTodos(list);
+  renderTodos();
+}
+
+function deleteTodo(id) {
+  const list = getTodos().filter((t) => t.id !== id);
+  saveTodos(list);
+  renderTodos();
+}
+
+function updateTodoStatus(id, statut) {
+  const list = getTodos();
+  const todo = list.find((t) => t.id === id);
+  if (todo) {
+    todo.statut = statut;
+    saveTodos(list);
+    renderTodos();
+  }
+}
+
+// ====== MODALES ======
+function openModal(id) {
+  document.getElementById(id).classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function attachModalListeners() {
+  document
+    .getElementById("open-recrutement")
+    .addEventListener("click", () => openModal("modal-recrutement"));
+  document
+    .getElementById("open-todo")
+    .addEventListener("click", () => openModal("modal-todo"));
+
+  document.querySelectorAll(".modal-close").forEach((btn) => {
+    btn.addEventListener("click", () => closeModal(btn.dataset.close));
+  });
+
+  document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeModal(overlay.id);
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document
+        .querySelectorAll(".modal-overlay.active")
+        .forEach((overlay) => closeModal(overlay.id));
+    }
+  });
+
+  document
+    .getElementById("form-prestataire")
+    .addEventListener("submit", (e) => {
+      e.preventDefault();
+      addPrestataire({
+        nom: document.getElementById("p-nom").value.trim(),
+        prenom: document.getElementById("p-prenom").value.trim(),
+        email: document.getElementById("p-email").value.trim(),
+        tel: document.getElementById("p-tel").value.trim(),
+        cursus: document.getElementById("p-cursus").value.trim(),
+      });
+      e.target.reset();
+    });
+
+  document.getElementById("form-todo").addEventListener("submit", (e) => {
+    e.preventDefault();
+    addTodo({
+      nom: document.getElementById("t-nom").value.trim(),
+      description: document.getElementById("t-desc").value.trim(),
+      priorite: document.getElementById("t-priorite").value,
+      url: document.getElementById("t-url").value.trim(),
+    });
+    e.target.reset();
+  });
+
+  // Délégation d'événements pour suppression / changement de statut
+  document
+    .getElementById("liste-prestataires")
+    .addEventListener("click", (e) => {
+      const btn = e.target.closest('[data-action="delete-prestataire"]');
+      if (btn) deletePrestataire(btn.dataset.id);
+    });
+
+  document.getElementById("liste-todos").addEventListener("click", (e) => {
+    const btn = e.target.closest('[data-action="delete-todo"]');
+    if (btn) deleteTodo(btn.dataset.id);
+  });
+
+  document.getElementById("liste-todos").addEventListener("change", (e) => {
+    if (e.target.dataset.action === "change-status") {
+      updateTodoStatus(e.target.dataset.id, e.target.value);
+    }
+  });
+}
+
 // ====== INITIALISATION ======
 document.addEventListener("DOMContentLoaded", function () {
   renderToolsAndResources();
   renderPromos();
   updateDateTime();
   setInterval(updateDateTime, 1000);
+
+  renderPrestataires();
+  renderTodos();
+  attachModalListeners();
 });
