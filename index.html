@@ -22,7 +22,6 @@
     <div class="container">
       <div class="header">
         <div class="header-top">
-          <div class="header-spacer"></div>
           <div class="datetime-box">
             <span class="datetime-item">
               <span class="datetime-label">📅 DATE:</span>
@@ -40,6 +39,12 @@
             <button class="action-btn" id="open-todo" type="button">
               ✅ To Do Liste
             </button>
+            <button class="action-btn" id="open-questions" type="button">
+              ❓ Questions Équipe
+            </button>
+            <button class="action-btn" id="open-dossiers" type="button">
+              📁 Dossiers en cours
+            </button>
           </div>
         </div>
       </div>
@@ -52,7 +57,7 @@
 
         <!-- ZONE 2: ACCORDÉON PROMOS -->
         <div class="zone accordion-container">
-          <div class="zone-title">Promos</div>
+          <div class="zone-title">Dossiers</div>
           <div class="accordion"></div>
         </div>
       </div>
@@ -136,6 +141,94 @@
             <button type="submit" class="btn-submit">+ Ajouter la tâche</button>
           </form>
           <div id="liste-todos"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODALE : QUESTIONS À L'ÉQUIPE -->
+    <div class="modal-overlay" id="modal-questions">
+      <div class="modal-box">
+        <div class="modal-header">
+          <span class="modal-title">❓ Questions à l'équipe</span>
+          <button
+            class="modal-close"
+            data-close="modal-questions"
+            type="button"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="form-question" class="form-grid">
+            <div class="form-field">
+              <label for="q-priorite">Priorité</label>
+              <select id="q-priorite">
+                <option value="basse">Basse</option>
+                <option value="moyenne" selected>Moyenne</option>
+                <option value="haute">Haute</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="q-lien">Lien</label>
+              <input type="url" id="q-lien" placeholder="https://..." />
+            </div>
+            <div class="form-field form-field-full">
+              <label for="q-question">Question</label>
+              <input type="text" id="q-question" required />
+            </div>
+            <div class="form-field form-field-full">
+              <label for="q-piste">Piste / éléments de réponse</label>
+              <input type="text" id="q-piste" />
+            </div>
+            <button type="submit" class="btn-submit">
+              + Poser la question
+            </button>
+          </form>
+          <div id="liste-questions"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODALE : DOSSIERS EN COURS -->
+    <div class="modal-overlay" id="modal-dossiers">
+      <div class="modal-box">
+        <div class="modal-header">
+          <span class="modal-title">📁 Dossiers en cours</span>
+          <button class="modal-close" data-close="modal-dossiers" type="button">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="form-dossier" class="form-grid">
+            <div class="form-field">
+              <label for="d-priorite">Priorité</label>
+              <select id="d-priorite">
+                <option value="basse">Basse</option>
+                <option value="moyenne" selected>Moyenne</option>
+                <option value="haute">Haute</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="d-date">Date</label>
+              <input type="date" id="d-date" />
+            </div>
+            <div class="form-field form-field-full">
+              <label for="d-intitule">Intitulé du dossier</label>
+              <input type="text" id="d-intitule" required />
+            </div>
+            <div class="form-field">
+              <label for="d-collaborateur">Collaborateur</label>
+              <input type="text" id="d-collaborateur" />
+            </div>
+            <div class="form-field">
+              <label for="d-url">URL</label>
+              <input type="url" id="d-url" placeholder="https://..." />
+            </div>
+            <button type="submit" class="btn-submit">
+              + Ajouter le dossier
+            </button>
+          </form>
+          <div id="liste-dossiers"></div>
         </div>
       </div>
     </div>

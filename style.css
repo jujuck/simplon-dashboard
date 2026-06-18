@@ -46,13 +46,9 @@ body {
 
 .header-top {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 20px;
-}
-
-.header-spacer {
-  /* équilibre visuellement la colonne des actions pour garder la date/heure centrée */
+  gap: 35px;
 }
 
 .datetime-box {
@@ -83,11 +79,13 @@ body {
   font-weight: bold;
 }
 
-/* BOUTONS D'ACTION (header) */
+/* BOUTONS D'ACTION (header) — alignés sur la colonne "Promos" */
 .header-actions {
   display: flex;
-  gap: 12px;
-  justify-self: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-self: center;
+  justify-content: center;
 }
 
 .action-btn {
@@ -536,6 +534,11 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .header-top {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
   .header h1 {
     font-size: 2.5em;
   }
@@ -551,10 +554,6 @@ body {
     gap: 14px;
   }
 
-  .header-spacer {
-    display: none;
-  }
-
   .datetime-box {
     justify-self: stretch;
   }
@@ -566,7 +565,7 @@ body {
 
   .header-actions {
     justify-self: stretch;
-    justify-content: stretch;
+    justify-content: center;
   }
 
   .action-btn {

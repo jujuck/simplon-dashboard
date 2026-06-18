@@ -351,6 +351,8 @@ function generateId() {
 const STORAGE_KEYS = {
   prestataires: "wcs_dashboard_prestataires",
   todos: "wcs_dashboard_todos",
+  questions: "wcs_dashboard_questions",
+  dossiers: "wcs_dashboard_dossiers",
 };
 
 function getPrestataires() {
@@ -494,6 +496,138 @@ function updateTodoStatus(id, statut) {
   }
 }
 
+function formatDateFr(isoDate) {
+  if (!isoDate) return "";
+  const [y, m, d] = isoDate.split("-");
+  return `${d}/${m}/${y}`;
+}
+
+// ====== QUESTIONS À L'ÉQUIPE (localStorage) ======
+function getQuestions() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.questions)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveQuestions(list) {
+  localStorage.setItem(STORAGE_KEYS.questions, JSON.stringify(list));
+}
+
+function renderQuestions() {
+  const container = document.getElementById("liste-questions");
+  const list = getQuestions();
+
+  if (list.length === 0) {
+    container.innerHTML = `<div class="list-empty">Aucune question en attente</div>`;
+    return;
+  }
+
+  const priorityOrder = { haute: 0, moyenne: 1, basse: 2 };
+  const sorted = [...list].sort(
+    (a, b) => priorityOrder[a.priorite] - priorityOrder[b.priorite],
+  );
+
+  container.innerHTML = sorted
+    .map(
+      (q) => `
+        <div class="todo-item" data-id="${q.id}">
+          <div class="todo-main">
+            <div class="todo-title">
+              <span class="priority-badge priority-${q.priorite}">${q.priorite}</span>
+              ${escapeHtml(q.question)}
+            </div>
+            ${q.piste ? `<div class="todo-desc">💡 ${escapeHtml(q.piste)}</div>` : ""}
+            ${q.lien ? `<a href="${escapeHtml(q.lien)}" target="_blank" class="todo-link">🔗 Lien associé</a>` : ""}
+          </div>
+          <div class="item-actions">
+            <button class="btn-delete" data-action="delete-question" data-id="${q.id}" type="button">✕</button>
+          </div>
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function addQuestion(data) {
+  const list = getQuestions();
+  list.push({ id: generateId(), ...data });
+  saveQuestions(list);
+  renderQuestions();
+}
+
+function deleteQuestion(id) {
+  const list = getQuestions().filter((q) => q.id !== id);
+  saveQuestions(list);
+  renderQuestions();
+}
+
+// ====== DOSSIERS EN COURS (localStorage) ======
+function getDossiers() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.dossiers)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveDossiers(list) {
+  localStorage.setItem(STORAGE_KEYS.dossiers, JSON.stringify(list));
+}
+
+function renderDossiers() {
+  const container = document.getElementById("liste-dossiers");
+  const list = getDossiers();
+
+  if (list.length === 0) {
+    container.innerHTML = `<div class="list-empty">Aucun dossier en cours</div>`;
+    return;
+  }
+
+  const priorityOrder = { haute: 0, moyenne: 1, basse: 2 };
+  const sorted = [...list].sort((a, b) => {
+    const diff = priorityOrder[a.priorite] - priorityOrder[b.priorite];
+    if (diff !== 0) return diff;
+    return (a.date || "").localeCompare(b.date || "");
+  });
+
+  container.innerHTML = sorted
+    .map(
+      (d) => `
+        <div class="todo-item" data-id="${d.id}">
+          <div class="todo-main">
+            <div class="todo-title">
+              <span class="priority-badge priority-${d.priorite}">${d.priorite}</span>
+              ${escapeHtml(d.intitule)}
+            </div>
+            <div class="todo-desc">
+              ${d.date ? `📅 ${formatDateFr(d.date)}` : ""}${d.collaborateur ? ` · 🧑 ${escapeHtml(d.collaborateur)}` : ""}
+            </div>
+            ${d.url ? `<a href="${escapeHtml(d.url)}" target="_blank" class="todo-link">🔗 Lien associé</a>` : ""}
+          </div>
+          <div class="item-actions">
+            <button class="btn-delete" data-action="delete-dossier" data-id="${d.id}" type="button">✕</button>
+          </div>
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function addDossier(data) {
+  const list = getDossiers();
+  list.push({ id: generateId(), ...data });
+  saveDossiers(list);
+  renderDossiers();
+}
+
+function deleteDossier(id) {
+  const list = getDossiers().filter((d) => d.id !== id);
+  saveDossiers(list);
+  renderDossiers();
+}
+
 // ====== MODALES ======
 function openModal(id) {
   document.getElementById(id).classList.add("active");
@@ -512,6 +646,12 @@ function attachModalListeners() {
   document
     .getElementById("open-todo")
     .addEventListener("click", () => openModal("modal-todo"));
+  document
+    .getElementById("open-questions")
+    .addEventListener("click", () => openModal("modal-questions"));
+  document
+    .getElementById("open-dossiers")
+    .addEventListener("click", () => openModal("modal-dossiers"));
 
   document.querySelectorAll(".modal-close").forEach((btn) => {
     btn.addEventListener("click", () => closeModal(btn.dataset.close));
@@ -556,6 +696,29 @@ function attachModalListeners() {
     e.target.reset();
   });
 
+  document.getElementById("form-question").addEventListener("submit", (e) => {
+    e.preventDefault();
+    addQuestion({
+      priorite: document.getElementById("q-priorite").value,
+      question: document.getElementById("q-question").value.trim(),
+      piste: document.getElementById("q-piste").value.trim(),
+      lien: document.getElementById("q-lien").value.trim(),
+    });
+    e.target.reset();
+  });
+
+  document.getElementById("form-dossier").addEventListener("submit", (e) => {
+    e.preventDefault();
+    addDossier({
+      priorite: document.getElementById("d-priorite").value,
+      date: document.getElementById("d-date").value,
+      intitule: document.getElementById("d-intitule").value.trim(),
+      collaborateur: document.getElementById("d-collaborateur").value.trim(),
+      url: document.getElementById("d-url").value.trim(),
+    });
+    e.target.reset();
+  });
+
   // Délégation d'événements pour suppression / changement de statut
   document
     .getElementById("liste-prestataires")
@@ -574,6 +737,16 @@ function attachModalListeners() {
       updateTodoStatus(e.target.dataset.id, e.target.value);
     }
   });
+
+  document.getElementById("liste-questions").addEventListener("click", (e) => {
+    const btn = e.target.closest('[data-action="delete-question"]');
+    if (btn) deleteQuestion(btn.dataset.id);
+  });
+
+  document.getElementById("liste-dossiers").addEventListener("click", (e) => {
+    const btn = e.target.closest('[data-action="delete-dossier"]');
+    if (btn) deleteDossier(btn.dataset.id);
+  });
 }
 
 // ====== INITIALISATION ======
@@ -585,5 +758,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   renderPrestataires();
   renderTodos();
+  renderQuestions();
+  renderDossiers();
   attachModalListeners();
 });
