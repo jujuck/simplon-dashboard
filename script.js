@@ -183,6 +183,14 @@ const dashboardData = {
           name: "Dossier REX de formation",
           url: "https://drive.google.com/drive/folders/13ZA4As0ybZs4iOXzcxI6zrKAJZsqKbTR",
         },
+        {
+          name: "Bootcamp DWWM Abdou",
+          url: "https://odyssey.wildcodeschool.com/admin/crews/sync/826",
+        },
+        {
+          name: "Bootcamp TSSR Dominique",
+          url: "https://odyssey.wildcodeschool.com/admin/crews/sync/830",
+        },
       ],
     },
     {
