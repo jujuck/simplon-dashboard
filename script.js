@@ -169,10 +169,6 @@ const dashboardData = {
           url: "https://docs.google.com/document/d/1GMpU2YgjOmd7oAC6GPrCDv9UL6-eaqMlc6HdY7iWoq0/edit?tab",
         },
         {
-          name: "Synchro Cloé",
-          url: "https://docs.google.com/document/d/1GMpU2YgjOmd7oAC6GPrCDv9UL6-eaqMlc6HdY7iWoq0/edit?tab",
-        },
-        {
           name: "Réunion équipe distanciel",
           url: "https://docs.google.com/document/d/1ogHa5fArUJ9mket7SDV3iDLyHA4AO5aJVdbuFA1GHsg/edit?tab=t.ax0fmx9xsygh#heading=h.fkg4xesc0wls",
         },
