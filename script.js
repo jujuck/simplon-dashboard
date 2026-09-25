@@ -43,6 +43,10 @@ const dashboardData = {
           url: "https://simplonline.co/login?redirect=%2F",
         },
         {
+          name: "Simplon Line Wild",
+          url: "https://wildcodeschool.simplonline.co/login?redirect=%2F",
+        },
+        {
           name: "Tableau de bord simplifions",
           url: "https://lookerstudio.google.com/u/0/reporting/5b17308b-61e7-4a1c-a47d-5d1720605fe2/page/p_1497r7j9ud",
         },
@@ -84,7 +88,7 @@ const dashboardData = {
       ],
     },
     {
-      title: "Recrutement",
+      title: "Recrutement - Admin",
       description: "Process de recrutement et suivi du vivier",
       links: [
         {
@@ -106,6 +110,10 @@ const dashboardData = {
         {
           name: "Vivier National",
           url: "https://docs.google.com/spreadsheets/d/1kNkk1tKOEMpCojkXMAfKTNvec547hsnmIDuS-TrDBJ4/edit?gid=236023154#gid=236023154",
+        },
+        {
+          name: "Contractualisation - Facturation",
+          url: "https://docs.google.com/spreadsheets/d/1lmZR8LSGiLHVT7lvTxk8JNTZi6reFRIxUQvCR3LdCB0/edit?usp=drive_link",
         },
       ],
     },
@@ -182,6 +190,14 @@ const dashboardData = {
         {
           name: "Fichier F2F inscription",
           url: "https://docs.google.com/spreadsheets/d/1RRb2dfQwukCvg8OJZ9_U_f7r00PbyaOHfPNOpewT2J0/edit?gid=233928917#gid=233928917",
+        },
+        {
+          name: "Synchro Pédago Alternance",
+          url: "https://docs.google.com/forms/d/e/1FAIpQLScd5oxxx8tDjvRbcNr5xDc-C8xPGKVp1DCP0m9hpyktKtOxsw/viewform?usp=dialog",
+        },
+        {
+          name: "Synchro Pédago Bootcamp",
+          url: "https://docs.google.com/forms/d/e/1FAIpQLSf3pM-OeCOfQr24B3O7VHaMc-VdY01xuSYUd_wA1Nz7N-S0JQ/viewform?usp=dialog",
         },
         {
           name: "Synchro CDP - météo",
